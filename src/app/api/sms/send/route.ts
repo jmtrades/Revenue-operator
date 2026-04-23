@@ -9,7 +9,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { parseBody, phoneSchema } from "@/lib/api/validate";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { getTelephonyService } from "@/lib/telephony";
 import { sendSms as sendSmsTelnyx } from "@/lib/telephony/telnyx-sms";
@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
-  const rl = await checkRateLimit(`sms:${session.workspaceId}`, 100, 60_000);
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`sms-send:${ip}`, 20, 60_000);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }

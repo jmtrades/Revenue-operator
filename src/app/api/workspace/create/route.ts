@@ -15,6 +15,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 import { enrollWorkspaceInTrialNurture } from "@/lib/sequences/trial-nurture-playbook";
+import { ALL_PERSONAS } from "@/lib/workspace/personalization";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,9 @@ const workspaceCreateSchema = z.object({
   voiceId: z.string().max(100).optional(),
   elevenlabsVoiceId: z.string().max(100).optional(), // Deprecated: kept for backwards compatibility
   billingTier: z.string().max(50).optional(),
+  // Phase 1 personalization: persona + primary goals captured in activation wizard.
+  persona: z.enum(ALL_PERSONAS as readonly [string, ...string[]]).optional(),
+  primaryGoals: z.array(z.string().max(64)).max(12).optional(),
 });
 
 
@@ -77,6 +81,10 @@ export async function POST(req: NextRequest) {
   // Accept both voiceId and elevenlabsVoiceId for backwards compatibility
   const voiceId = ((body.voiceId ?? body.elevenlabsVoiceId) ?? "").trim() || null;
   const billingTier = (body.billingTier ?? "").trim() || null;
+  const persona = body.persona ?? null;
+  const primaryGoals = Array.isArray(body.primaryGoals) && body.primaryGoals.length > 0
+    ? body.primaryGoals
+    : null;
 
   try {
     const db = getDb();
@@ -112,7 +120,15 @@ export async function POST(req: NextRequest) {
       starterKnowledge,
     );
 
-    const update: Record<string, unknown> = { name, updated_at: new Date().toISOString() };
+    const update: Record<string, unknown> = {
+      name,
+      updated_at: new Date().toISOString(),
+      // Phase 77 — Without this, /app/page.tsx would see
+      // onboarding_completed_at=null next session and redirect the user
+      // back into /activate, making it look like their setup was lost.
+      // The finalize endpoint IS the completion of onboarding, so stamp it.
+      onboarding_completed_at: new Date().toISOString(),
+    };
     if (phone !== null) update.phone = phone;
     if (website !== null) update.website = website;
     if (address !== null) update.address = address;
@@ -147,7 +163,8 @@ export async function POST(req: NextRequest) {
       // Non-fatal; billing record can be created later by webhook
     }
 
-    // Ensure workspace_members record exists (required for authorization)
+    // Ensure workspace_members record exists (required for authorization),
+    // and persist persona/primary_goals captured in activation.
     try {
       const { data: existing } = await db
         .from("workspace_members")
@@ -155,15 +172,35 @@ export async function POST(req: NextRequest) {
         .eq("workspace_id", workspaceId)
         .eq("user_id", session.userId)
         .maybeSingle();
+
+      const personalizationPayload: Record<string, unknown> = {};
+      if (persona !== null) personalizationPayload.persona = persona;
+      if (primaryGoals !== null) personalizationPayload.primary_goals = primaryGoals;
+      if (persona !== null || primaryGoals !== null) {
+        personalizationPayload.personalized_at = new Date().toISOString();
+      }
+
       if (!existing) {
         await db.from("workspace_members").insert({
           workspace_id: workspaceId,
           user_id: session.userId,
           role: "owner",
+          ...personalizationPayload,
         });
+      } else if (Object.keys(personalizationPayload).length > 0) {
+        // Preserve the row's role; only update personalization fields.
+        await db
+          .from("workspace_members")
+          .update(personalizationPayload)
+          .eq("workspace_id", workspaceId)
+          .eq("user_id", session.userId);
       }
-    } catch {
-      // Non-fatal; member record can be created later
+    } catch (err) {
+      // Non-fatal; member record can be created later. Log for visibility.
+      log("warn", "[workspace/create] workspace_members upsert failed", {
+        error: err instanceof Error ? err.message : String(err),
+        workspaceId,
+      });
     }
 
     // Ensure workspace_business_context has the business_name for sidebar and brain.

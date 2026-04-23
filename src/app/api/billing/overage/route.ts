@@ -8,12 +8,12 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 import { getDb } from "@/lib/db/queries";
 import { calculateOverageCharges } from "@/lib/billing/overage";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
+import { getStripe } from "@/lib/billing/stripe-client";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -23,13 +23,15 @@ export async function POST(req: NextRequest) {
     const authErr = assertCronAuthorized(req);
     if (authErr) return authErr;
 
-    if (!process.env.STRIPE_SECRET_KEY) {
+    // Phase 78/Phase 6: shared factory pins apiVersion centrally. If the
+    // env var is missing the factory throws; we surface that as a 503 so
+    // cron can treat it as "not configured yet" rather than a bug.
+    let stripe;
+    try {
+      stripe = getStripe();
+    } catch {
       return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
     }
-
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-12-18.acacia" as unknown as Stripe.StripeConfig["apiVersion"],
-    });
 
     const db = getDb();
 

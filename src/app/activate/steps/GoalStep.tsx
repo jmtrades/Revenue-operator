@@ -2,12 +2,29 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { PhoneIncoming, PhoneOutgoing, CalendarCheck, UserPlus, Headphones, Zap, Sparkles } from "lucide-react";
+import {
+  PhoneIncoming,
+  PhoneOutgoing,
+  CalendarCheck,
+  UserPlus,
+  Headphones,
+  Zap,
+  Sparkles,
+  Building2,
+  LineChart,
+  Users,
+  User,
+} from "lucide-react";
 import { GOAL_OPTIONS } from "./types";
 import type { ActivationState } from "./types";
+import { PERSONA_OPTIONS, type Persona } from "@/lib/workspace/personalization";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   PhoneIncoming, PhoneOutgoing, CalendarCheck, UserPlus, Headphones, Zap,
+};
+
+const PERSONA_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  Building2, LineChart, PhoneOutgoing, Headphones, Users, User,
 };
 
 export function GoalStep({
@@ -22,11 +39,18 @@ export function GoalStep({
   const t = useTranslations("activate.goalStep");
   const tActivate = useTranslations("activate");
   const goals = state.goals ?? [];
+  const persona = state.persona ?? null;
 
   const toggle = (id: string) => {
     const next = goals.includes(id) ? goals.filter((g) => g !== id) : [...goals, id];
     onUpdate({ goals: next });
   };
+
+  const selectPersona = (id: Persona) => {
+    onUpdate({ persona: persona === id ? null : id });
+  };
+
+  const canContinue = goals.length > 0 && persona !== null;
 
   return (
     <div className="space-y-6">
@@ -54,6 +78,52 @@ export function GoalStep({
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-[var(--border-default)]" />
         <span className="text-xs text-[var(--text-tertiary)] font-medium uppercase tracking-wider">{t("orCustomize")}</span>
+        <div className="flex-1 h-px bg-[var(--border-default)]" />
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+          What kind of operator are you?
+        </h2>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          One click. This tailors your templates, dashboard, and settings so you skip the manual setup.
+        </p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {PERSONA_OPTIONS.map((opt) => {
+          const Icon = PERSONA_ICONS[opt.icon] ?? User;
+          const selected = persona === opt.id;
+          return (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => selectPersona(opt.id)}
+              aria-pressed={selected}
+              className={`text-left p-4 rounded-xl border-2 transition-[border-color,box-shadow,transform] ${
+                selected
+                  ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/5"
+                  : "border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-[var(--border-medium)]"
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${selected ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]" : "bg-[var(--bg-inset)] text-[var(--text-secondary)]"}`}>
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <p className={`text-sm font-semibold ${selected ? "text-[var(--accent-primary)]" : "text-[var(--text-primary)]"}`}>
+                    {opt.label}
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{opt.description}</p>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-[var(--border-default)]" />
+        <span className="text-xs text-[var(--text-tertiary)] font-medium uppercase tracking-wider">Now pick goals</span>
         <div className="flex-1 h-px bg-[var(--border-default)]" />
       </div>
 
@@ -97,7 +167,7 @@ export function GoalStep({
       <button
         type="button"
         onClick={onNext}
-        disabled={goals.length === 0}
+        disabled={!canContinue}
         className="w-full py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-40 transition-colors"
       >
         {tActivate("continue")}

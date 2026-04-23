@@ -11,7 +11,6 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import {
   TrendingUp,
   PhoneOff,
-  Clock,
   Zap,
   ArrowUpRight,
   Target,
@@ -27,10 +26,14 @@ interface Recommendation {
   priority: "high" | "medium" | "low";
 }
 
+type CallRow = { outcome?: string | null; call_started_at?: string | null };
+type LeadRow = { last_contacted_at?: string | null; status?: string | null };
+type CampaignRow = { status?: string | null; completed_at?: string | null };
+
 interface RecommendationsData {
-  calls: any[];
-  leads: any[];
-  campaigns: any[];
+  calls: CallRow[];
+  leads: LeadRow[];
+  campaigns: CampaignRow[];
   workspace_id: string;
 }
 
@@ -79,6 +82,7 @@ const RecommendationCard = ({ rec }: { rec: Recommendation }) => {
 
 export default function RecommendationsPage() {
   const t = useTranslations("recommendations");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const { workspaceId } = useWorkspace();
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -112,7 +116,7 @@ export default function RecommendationsPage() {
 
   return (
     <div className="space-y-8 p-6">
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/app/dashboard" }, { label: "Recommendations" }]} />
+      <Breadcrumbs items={[{ label: tBreadcrumbs("dashboard"), href: "/app/dashboard" }, { label: tBreadcrumbs("recommendations") }]} />
       <div>
         <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>Recommendations</h1>
         <p style={{ color: "var(--text-secondary)" }}>Actionable insights to improve call performance and recover revenue.</p>
@@ -133,13 +137,13 @@ export default function RecommendationsPage() {
   );
 }
 
-function generateRecommendations(data: RecommendationsData, t: any): Recommendation[] {
+function generateRecommendations(data: RecommendationsData, _t: (key: string, opts?: Record<string, string | number | Date>) => string): Recommendation[] {
   const recs: Recommendation[] = [];
-  const missedCalls = data.calls.filter((c: any) => (c.outcome === "missed" || c.outcome === "voicemail") && c.call_started_at);
+  const missedCalls = data.calls.filter((c) => (c.outcome === "missed" || c.outcome === "voicemail") && c.call_started_at);
   if (missedCalls.length > 0) {
     recs.push({ id: "missed-calls", category: "revenue_recovery", title: `Follow up on ${missedCalls.length} missed calls`, description: `Estimated recovery value: $${missedCalls.length * 150}`, actionLabel: "Follow up", actionHref: "/app/follow-ups", priority: "high" });
   }
-  const staleLead = data.leads.filter((l: any) => {
+  const staleLead = data.leads.filter((l) => {
     if (!l.last_contacted_at) return true;
     const daysAgo = Math.floor((Date.now() - new Date(l.last_contacted_at).getTime()) / (1000 * 60 * 60 * 24));
     return daysAgo >= 7 && l.status !== "converted";
@@ -147,15 +151,15 @@ function generateRecommendations(data: RecommendationsData, t: any): Recommendat
   if (staleLead.length > 0) {
     recs.push({ id: "stale-leads", category: "revenue_recovery", title: `Re-engage ${staleLead.length} inactive leads`, description: "Contacted 7+ days ago with no appointment", actionLabel: "Re-engage", actionHref: "/app/leads", priority: "high" });
   }
-  const appointmentRate = data.calls.length > 0 ? Math.round((data.calls.filter((c: any) => c.outcome === "appointment").length / data.calls.length) * 100) : 0;
+  const appointmentRate = data.calls.length > 0 ? Math.round((data.calls.filter((c) => c.outcome === "appointment").length / data.calls.length) * 100) : 0;
   if (data.calls.length > 10 && appointmentRate < 15) {
     recs.push({ id: "low-conversion", category: "performance_optimization", title: `Improve booking script — ${appointmentRate}% conversion rate`, description: "Industry avg: 18-25%. Review agent tone and objection handling.", actionLabel: "Review", actionHref: "/app/agents", priority: "medium" });
   }
-  const recentCalls = data.calls.filter((c: any) => c.call_started_at && Date.now() - new Date(c.call_started_at).getTime() < 7 * 24 * 60 * 60 * 1000);
+  const recentCalls = data.calls.filter((c) => c.call_started_at && Date.now() - new Date(c.call_started_at).getTime() < 7 * 24 * 60 * 60 * 1000);
   if (recentCalls.length > 30) {
     recs.push({ id: "volume-growth", category: "growth_opportunity", title: `${recentCalls.length} calls this week — consider upgrading`, description: "Unlock more concurrent minutes and advanced analytics", actionLabel: "Upgrade plan", actionHref: "/app/billing", priority: "low" });
   }
-  const idleCampaigns = data.campaigns.filter((c: any) => c.status === "paused" && !c.completed_at);
+  const idleCampaigns = data.campaigns.filter((c) => c.status === "paused" && !c.completed_at);
   if (idleCampaigns.length > 0) {
     recs.push({ id: "idle-campaigns", category: "growth_opportunity", title: `Reactivate ${idleCampaigns.length} paused campaign${idleCampaigns.length > 1 ? "s" : ""}`, description: "Resume calling to build your pipeline", actionLabel: "Reactivate", actionHref: "/app/operations", priority: "medium" });
   }

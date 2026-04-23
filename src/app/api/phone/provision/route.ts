@@ -17,6 +17,8 @@ import { log } from "@/lib/logger";
 import { canProvisionNumber } from "@/lib/billing/plan-enforcement";
 import { USAGE_RATES } from "@/lib/billing-plans";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 export const dynamic = "force-dynamic";
 
@@ -83,10 +85,8 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        const Stripe = (await import("stripe")).default;
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-          apiVersion: "2024-12-18.acacia" as unknown as import("stripe").Stripe.StripeConfig["apiVersion"],
-        });
+        // Phase 78/Phase 6: shared factory with pinned apiVersion
+        const stripe = getStripe();
         const paymentMethods = await stripe.paymentMethods.list({
           customer: stripeCustomerId,
           type: "card",
@@ -326,16 +326,18 @@ export async function POST(req: NextRequest) {
         .maybeSingle();
       const stripeCustomerId = (wsData as { stripe_customer_id?: string } | null)?.stripe_customer_id;
       if (stripeCustomerId && process.env.STRIPE_SECRET_KEY) {
-        const Stripe = (await import("stripe")).default;
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-          apiVersion: "2024-12-18.acacia" as unknown as import("stripe").Stripe.StripeConfig["apiVersion"],
-        });
+        // Phase 78/Phase 6: shared factory with pinned apiVersion
+        const stripe = getStripe();
+        // Phase 78/Phase 6.2: idempotency-key by (workspace, e164) so a retried
+        // provision call cannot double-charge the setup fee.
         await stripe.invoiceItems.create({
           customer: stripeCustomerId,
           amount: setupFeeCents,
           currency: "usd",
           description: `Phone number setup fee: ${e164}`,
           metadata: { workspace_id: session.workspaceId, type: "phone_setup_fee" },
+        }, {
+          idempotencyKey: stripeIdempotencyKey("phone-setup-fee", session.workspaceId, e164),
         });
       }
     } catch (err) {

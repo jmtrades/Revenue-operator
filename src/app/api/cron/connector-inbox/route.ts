@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       await markInboxEventProcessed(event.id);
       if (mapped) processed++;
     } catch (err) {
-      // Map failed; skip event
+      log("error", "[cron/connector-inbox] Failed to map inbox event", { error: err instanceof Error ? err.message : String(err) });
     }
   }
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");

@@ -76,7 +76,7 @@ export default function IndustryTemplatesPage() {
     };
 
     fetchTemplates();
-  }, []);
+  }, [tTemplates]);
 
   const copyToClipboard = async (text: string) => {
     try {

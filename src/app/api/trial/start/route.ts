@@ -12,6 +12,8 @@ import { createSessionCookie } from "@/lib/auth/session";
 import { getPriceId } from "@/lib/stripe-prices";
 import { randomUUID } from "crypto";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 function log(_event: string, _data: Record<string, unknown>): void {
   if (process.env.NODE_ENV === "development") {
@@ -22,7 +24,7 @@ function log(_event: string, _data: Record<string, unknown>): void {
 function effectiveOrigin(req: NextRequest): string | null {
   const fromReq = new URL(req.url).origin;
   const isLocal = fromReq.includes("localhost") || fromReq.includes("127.0.0.1");
-  const isPreview = fromReq.includes("preview") || fromReq.includes("vercel.app");
+  const isPreview = fromReq.includes("preview") || fromReq.includes("onrender.com");
   if (isLocal || isPreview) return process.env.NEXT_PUBLIC_APP_URL ?? null;
   return fromReq || (process.env.NEXT_PUBLIC_APP_URL ?? null);
 }
@@ -166,8 +168,8 @@ export async function POST(req: NextRequest) {
         }
         const stripePriceId = priceResult.price_id;
         try {
-          const Stripe = (await import("stripe")).default;
-          const stripe = new Stripe(stripeKeyInner);
+          // Phase 78/Phase 6: shared factory with pinned apiVersion
+          const stripe = getStripe();
           let customerId: string | null = null;
           const { data: wsRow } = await db.from("workspaces").select("stripe_customer_id").eq("id", wsIdForCheckout).maybeSingle();
           customerId = (wsRow as { stripe_customer_id?: string | null })?.stripe_customer_id ?? null;
@@ -175,6 +177,9 @@ export async function POST(req: NextRequest) {
             const customer = await stripe.customers.create({
               email,
               metadata: { workspace_id: wsIdForCheckout },
+            }, {
+              // Phase 78/Phase 6.2: never create two Stripe customers for one workspace
+              idempotencyKey: stripeIdempotencyKey("customer-create", wsIdForCheckout),
             });
             customerId = customer.id;
             await db.from("workspaces").update({ stripe_customer_id: customerId, updated_at: new Date().toISOString() }).eq("id", wsIdForCheckout);
@@ -189,6 +194,10 @@ export async function POST(req: NextRequest) {
             subscription_data: { trial_period_days: 14, metadata: { workspace_id: wsIdForCheckout } },
             success_url: `${origin}/connect?workspace_id=${encodeURIComponent(wsIdForCheckout)}&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${origin}/activate?canceled=1`,
+          }, {
+            // Phase 78/Phase 6.2: idempotent by (workspace, tier, interval) so a
+            // retried trial-start in the same day reuses the same checkout session.
+            idempotencyKey: stripeIdempotencyKey("trial-checkout", wsIdForCheckout, tier, interval),
           });
           const checkoutUrl = session.url ?? null;
           if (!checkoutUrl) {
@@ -281,8 +290,8 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      const Stripe = (await import("stripe")).default;
-      const stripe = new Stripe(stripeKey);
+      // Phase 78/Phase 6: shared factory with pinned apiVersion
+      const stripe = getStripe();
       let customerId: string | null = null;
       const { data: wsRow } = await db.from("workspaces").select("stripe_customer_id").eq("id", workspaceId).maybeSingle();
       customerId = (wsRow as { stripe_customer_id?: string | null })?.stripe_customer_id ?? null;
@@ -290,6 +299,9 @@ export async function POST(req: NextRequest) {
         const customer = await stripe.customers.create({
           email,
           metadata: { workspace_id: workspaceId },
+        }, {
+          // Phase 78/Phase 6.2: never create two Stripe customers for one workspace
+          idempotencyKey: stripeIdempotencyKey("customer-create", workspaceId),
         });
         customerId = customer.id;
         await db.from("workspaces").update({ stripe_customer_id: customerId, updated_at: new Date().toISOString() }).eq("id", workspaceId);
@@ -304,6 +316,9 @@ export async function POST(req: NextRequest) {
         subscription_data: { metadata: { workspace_id: workspaceId } },
         success_url: `${origin}/connect?workspace_id=${encodeURIComponent(workspaceId)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/activate?canceled=1`,
+      }, {
+        // Phase 78/Phase 6.2: idempotent checkout session per (workspace, tier, interval, day)
+        idempotencyKey: stripeIdempotencyKey("subscription-checkout", workspaceId, tier, interval),
       });
       const checkoutUrl = session.url ?? null;
       if (!checkoutUrl) {

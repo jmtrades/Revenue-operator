@@ -5,8 +5,11 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowLeft, RefreshCw, Inbox, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SUPPORTED_CRM_PROVIDERS } from "@/lib/crm/providers";
 
-const SYNC_LOG_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365", "airtable"] as const;
+// Phase 78 Task 9.3: the sync log is filterable by any CRM provider the
+// system supports. Source of truth: `SUPPORTED_CRM_PROVIDERS`.
+const SYNC_LOG_PROVIDERS = SUPPORTED_CRM_PROVIDERS;
 
 type SyncLogEntry = {
   id: string;

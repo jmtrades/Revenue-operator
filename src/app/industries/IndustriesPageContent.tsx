@@ -7,12 +7,19 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { getAllIndustries } from "@/lib/data/industries";
 import { ROUTES } from "@/lib/constants";
-import * as LucideIcons from "lucide-react";
+import { Wrench, Smile, Scale, Home, Heart, Users } from "lucide-react";
 
-type IconName = keyof typeof LucideIcons;
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Wrench,
+  Smile,
+  Scale,
+  Home,
+  Heart,
+  Users,
+};
 
 function getIconComponent(iconName: string) {
-  const Icon = LucideIcons[iconName as IconName] as React.ComponentType<{ className?: string }> | undefined;
+  const Icon = iconMap[iconName];
   return Icon ? <Icon className="w-8 h-8" /> : null;
 }
 

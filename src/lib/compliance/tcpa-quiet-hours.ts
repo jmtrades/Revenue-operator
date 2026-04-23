@@ -1,12 +1,21 @@
 /**
- * TCPA Quiet Hours Compliance
- * Enforces TCPA regulations requiring that automated/prerecorded calls cannot be made
- * before 8:00 AM or after 9:00 PM in the RECIPIENT'S local time zone.
+ * TCPA Quiet Hours Compliance (layered).
  *
- * Reference: 47 CFR § 64.1200(c)(1)
+ * Layers applied in order — any one of them blocking short-circuits the call:
+ *   1. Federal TCPA: 8am-9pm recipient-local (47 CFR § 64.1200(c)(1))
+ *   2. State-specific stricter windows (AL, FL, TX, LA, MS, KS, WY, AR, ...) — see
+ *      state-calling-rules.ts. Includes forbidden weekdays (e.g., Sundays in AL/FL/LA).
+ *   3. Federal holiday blackout — see calling-holidays.ts.
+ *
+ * The caller supplies the lead's phone (for area-code → timezone fallback) and
+ * optionally the lead's state code. State code is stronger than phone area code
+ * because people keep their numbers when they move; area code only resolves
+ * TIMEZONE, state code resolves JURISDICTION. Always prefer state when known.
  */
 
 import { log } from "@/lib/logger";
+import { getEffectiveCallingWindow } from "./state-calling-rules";
+import { isFederalHoliday, getFederalHolidayName, localDateInTimezone } from "./calling-holidays";
 
 /**
  * US Area Code to Timezone Mapping
@@ -196,13 +205,23 @@ const AREA_CODE_TIMEZONE_MAP: Record<string, string> = {
  */
 function getLeadTimezoneFromAreaCode(leadPhone: string): string {
   const digits = leadPhone.replace(/\D/g, "");
-  if (digits.length < 10) {
+  // Strip the US/Canada country code (1) when present. E.164 US numbers are
+  // "+1NPAxxxxxxx" — after digit-extraction that's 11 digits starting with 1,
+  // and the area code lives at positions 1..4, not 0..3. Without this strip,
+  // every E.164 US lead resolved to a bogus area code like "121" or "180",
+  // fell through to the Pacific fallback, and was evaluated against
+  // Los_Angeles local time — a Hawaii lead at 4am could end up allowed
+  // because LA at 10am is "compliant". Pre-existing P0 surfaced by Task 7.5
+  // when we started feeding real lead phones through the dialer gate.
+  const nationalDigits =
+    digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+  if (nationalDigits.length < 10) {
     // Invalid phone number, default to strictest (Eastern)
     return "America/New_York";
   }
 
   // Extract area code (first 3 digits for US)
-  const areaCode = digits.slice(0, 3);
+  const areaCode = nationalDigits.slice(0, 3);
   const timezone = AREA_CODE_TIMEZONE_MAP[areaCode];
 
   if (timezone) {
@@ -216,91 +235,213 @@ function getLeadTimezoneFromAreaCode(leadPhone: string): string {
 }
 
 /**
- * Checks if the current time in the lead's timezone is within TCPA quiet hours
- * TCPA requires calls between 8:00 AM and 9:00 PM in the recipient's local time
- *
- * @param leadPhone - Lead's phone number
- * @returns true if compliant (within quiet hours), false if blocked
+ * Result of a layered compliance check. Callers that only care about the
+ * boolean use `isTCPACompliant`; callers that want to explain WHY a call
+ * was blocked (for UI, scheduling retries, or audit logs) use `checkCallingCompliance`.
  */
-export function isTCPACompliant(leadPhone: string): boolean {
+export interface CallingComplianceResult {
+  allowed: boolean;
+  reason:
+    | "ok"
+    | "federal_quiet_hours"
+    | "state_quiet_hours"
+    | "forbidden_weekday"
+    | "federal_holiday"
+    | "timezone_error";
+  detail?: string;
+  timezone: string;
+  /** Minutes-from-midnight at time of check, in recipient-local. Useful for retry scheduling. */
+  localMinutes?: number;
+  /** 0=Sun..6=Sat in recipient-local */
+  localWeekday?: number;
+  /** YYYY-MM-DD in recipient-local */
+  localDate?: string;
+}
+
+/**
+ * Full layered compliance check. Returns structured result instead of a bare
+ * boolean so callers can log and schedule intelligently.
+ *
+ * @param leadPhone Lead's phone — used for timezone resolution
+ * @param leadState Optional USPS state code — used for state-specific rules (preferred over area code for jurisdiction)
+ */
+export function checkCallingCompliance(
+  leadPhone: string,
+  leadState?: string | null,
+): CallingComplianceResult {
   const now = new Date();
   const leadTimezone = getLeadTimezoneFromAreaCode(leadPhone);
 
   try {
-    // Get current time in the lead's timezone
     const leadLocalTime = new Date(now.toLocaleString("en-US", { timeZone: leadTimezone }));
     const hours = leadLocalTime.getHours();
     const minutes = leadLocalTime.getMinutes();
     const currentMinutes = hours * 60 + minutes;
+    const weekday = leadLocalTime.getDay(); // 0=Sun..6=Sat
+    const localDate = localDateInTimezone(now, leadTimezone);
 
-    // TCPA quiet hours: 8:00 AM = 480 minutes, 9:00 PM = 1260 minutes
-    const TCPA_START_MINUTES = 8 * 60; // 480
-    const TCPA_END_MINUTES = 21 * 60; // 1260
-
-    const isCompliant = currentMinutes >= TCPA_START_MINUTES && currentMinutes <= TCPA_END_MINUTES;
-
-    if (!isCompliant) {
-      log("info", "[tcpa-compliance] Call blocked by TCPA quiet hours", {
-        leadPhone: leadPhone.slice(-4), // Log only last 4 digits for privacy
+    // Layer 3: Federal holiday blackout — applied first because it's calendar-day
+    // scoped, not time-of-day. Cheapest to check.
+    if (isFederalHoliday(localDate)) {
+      const holidayName = getFederalHolidayName(localDate) ?? "holiday";
+      log("info", "[calling-compliance] Blocked by federal holiday", {
+        leadPhone: leadPhone.slice(-4),
         leadTimezone,
-        leadLocalTime: leadLocalTime.toLocaleString(),
-        currentTime: `${hours}:${String(minutes).padStart(2, "0")}`,
-        allowedWindow: "8:00 AM - 9:00 PM",
+        localDate,
+        holidayName,
       });
+      return {
+        allowed: false,
+        reason: "federal_holiday",
+        detail: holidayName,
+        timezone: leadTimezone,
+        localMinutes: currentMinutes,
+        localWeekday: weekday,
+        localDate,
+      };
     }
 
-    return isCompliant;
+    // Layer 2: State-specific rules (falls back to federal window if state unknown).
+    const window = getEffectiveCallingWindow(leadState);
+
+    // Forbidden weekday (e.g., no Sunday in AL/FL/LA/TX).
+    if (window.forbiddenWeekdays.includes(weekday)) {
+      const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][weekday];
+      log("info", "[calling-compliance] Blocked by forbidden weekday", {
+        leadPhone: leadPhone.slice(-4),
+        leadTimezone,
+        weekday,
+        dayName,
+        state: window.state,
+        citation: window.citation,
+      });
+      return {
+        allowed: false,
+        reason: "forbidden_weekday",
+        detail: `${dayName} calling prohibited${window.citation ? ` (${window.citation})` : ""}`,
+        timezone: leadTimezone,
+        localMinutes: currentMinutes,
+        localWeekday: weekday,
+        localDate,
+      };
+    }
+
+    // State window is narrower than federal by construction — so a single
+    // bounds check honors both layers 1 and 2.
+    const inWindow = currentMinutes >= window.startMinutes && currentMinutes <= window.endMinutes;
+    if (!inWindow) {
+      const stateSpecific = window.startMinutes !== 480 || window.endMinutes !== 1260;
+      log("info", "[calling-compliance] Blocked by quiet hours", {
+        leadPhone: leadPhone.slice(-4),
+        leadTimezone,
+        currentTime: `${hours}:${String(minutes).padStart(2, "0")}`,
+        windowStart: minutesToLabel(window.startMinutes),
+        windowEnd: minutesToLabel(window.endMinutes),
+        state: window.state,
+        citation: window.citation,
+      });
+      return {
+        allowed: false,
+        reason: stateSpecific ? "state_quiet_hours" : "federal_quiet_hours",
+        detail: `Outside ${minutesToLabel(window.startMinutes)}-${minutesToLabel(window.endMinutes)} ${window.state ?? ""}`.trim(),
+        timezone: leadTimezone,
+        localMinutes: currentMinutes,
+        localWeekday: weekday,
+        localDate,
+      };
+    }
+
+    return {
+      allowed: true,
+      reason: "ok",
+      timezone: leadTimezone,
+      localMinutes: currentMinutes,
+      localWeekday: weekday,
+      localDate,
+    };
   } catch (err) {
-    // If timezone conversion fails, log and fail closed (block call for safety)
-    log("error", "[tcpa-compliance] Timezone conversion failed, blocking call", {
+    // Fail closed for safety.
+    log("error", "[calling-compliance] Timezone conversion failed, blocking call", {
       leadPhone: leadPhone.slice(-4),
       leadTimezone,
       error: err instanceof Error ? err.message : String(err),
     });
-    return false;
+    return {
+      allowed: false,
+      reason: "timezone_error",
+      detail: err instanceof Error ? err.message : String(err),
+      timezone: leadTimezone,
+    };
   }
 }
 
+function minutesToLabel(m: number): string {
+  const h = Math.floor(m / 60);
+  const mm = m % 60;
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${String(mm).padStart(2, "0")} ${ampm}`;
+}
+
 /**
- * Gets the next compliant time in the lead's timezone when a call can be made
- * Useful for scheduling retries
- *
- * @param leadPhone - Lead's phone number
- * @returns ISO string of next compliant time
+ * Back-compat wrapper. Returns true when ALL layers allow the call.
+ * New callers should prefer `checkCallingCompliance` so they can report WHY.
  */
-export function getNextCompliantTime(leadPhone: string): string {
+export function isTCPACompliant(leadPhone: string, leadState?: string | null): boolean {
+  return checkCallingCompliance(leadPhone, leadState).allowed;
+}
+
+/**
+ * Next compliant time — layered: honors federal quiet hours, state rules,
+ * state-forbidden weekdays, AND federal holidays. Walks forward at most
+ * 14 days (amply enough for any US holiday/weekend combo). If even 14 days
+ * out is blocked, returns now+24h as a safety net rather than looping forever.
+ */
+export function getNextCompliantTime(leadPhone: string, leadState?: string | null): string {
   const now = new Date();
   const leadTimezone = getLeadTimezoneFromAreaCode(leadPhone);
 
   try {
-    const leadLocalTime = new Date(now.toLocaleString("en-US", { timeZone: leadTimezone }));
-    const hours = leadLocalTime.getHours();
+    // Start from "current time in recipient-local"
+    const leadLocalNow = new Date(now.toLocaleString("en-US", { timeZone: leadTimezone }));
+    const window = getEffectiveCallingWindow(leadState);
+    const cursor = new Date(leadLocalNow);
 
-    const nextTime = new Date(leadLocalTime);
-
-    // If it's before 8 AM, schedule for 8 AM today
-    if (hours < 8) {
-      nextTime.setHours(8, 0, 0, 0);
-    } else if (hours >= 21) {
-      // If it's after 9 PM, schedule for 8 AM tomorrow
-      nextTime.setDate(nextTime.getDate() + 1);
-      nextTime.setHours(8, 0, 0, 0);
-    } else {
-      // Within hours, shouldn't happen but return current + 1 hour
-      nextTime.setHours(nextTime.getHours() + 1);
+    // Try today first; if today's window already closed, advance to tomorrow 00:00
+    if (cursor.getHours() * 60 + cursor.getMinutes() >= window.endMinutes) {
+      cursor.setDate(cursor.getDate() + 1);
+      cursor.setHours(0, 0, 0, 0);
     }
 
-    // Convert back to UTC for storage
-    const offset = leadLocalTime.getTime() - new Date(leadLocalTime.toLocaleString("en-US", { timeZone: "UTC" })).getTime();
-    const utcTime = new Date(nextTime.getTime() - offset);
+    // Walk forward up to 14 days until we find a day that:
+    //   - isn't a federal holiday
+    //   - isn't a forbidden weekday for this state
+    for (let i = 0; i < 14; i++) {
+      const isoDate = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}-${String(cursor.getDate()).padStart(2, "0")}`;
+      const weekday = cursor.getDay();
+      const forbidden = window.forbiddenWeekdays.includes(weekday) || isFederalHoliday(isoDate);
+      if (!forbidden) break;
+      cursor.setDate(cursor.getDate() + 1);
+      cursor.setHours(0, 0, 0, 0);
+    }
 
+    // Snap to the earliest allowed minute of the chosen day
+    const currentMin = cursor.getHours() * 60 + cursor.getMinutes();
+    if (currentMin < window.startMinutes) {
+      cursor.setHours(Math.floor(window.startMinutes / 60), window.startMinutes % 60, 0, 0);
+    }
+
+    // Convert recipient-local back to UTC for storage
+    const offset =
+      leadLocalNow.getTime() -
+      new Date(leadLocalNow.toLocaleString("en-US", { timeZone: "UTC" })).getTime();
+    const utcTime = new Date(cursor.getTime() - offset);
     return utcTime.toISOString();
   } catch (err) {
-    log("error", "[tcpa-compliance] Failed to calculate next compliant time", {
+    log("error", "[calling-compliance] Failed to calculate next compliant time", {
       leadPhone: leadPhone.slice(-4),
       error: err instanceof Error ? err.message : String(err),
     });
-    // Default: retry in 24 hours
     return new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
   }
 }

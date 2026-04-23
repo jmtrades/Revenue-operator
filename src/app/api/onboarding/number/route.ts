@@ -11,6 +11,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getTelephonyService } from "@/lib/telephony";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
+import { assertStepAllowed } from "@/lib/onboarding/state-machine";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -26,6 +27,16 @@ export async function POST(req: NextRequest) {
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   const authErr = await requireWorkspaceAccess(req, workspace_id);
   if (authErr) return authErr;
+
+  // Phase 69 — state machine guard: phone number provisioning is the last
+  // step; require all earlier steps to be complete first.
+  const gate = await assertStepAllowed(workspace_id, "number");
+  if (!gate.ok) {
+    return NextResponse.json(
+      { error: "Previous onboarding step not complete", missing: gate.missing },
+      { status: 409 },
+    );
+  }
 
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).maybeSingle();

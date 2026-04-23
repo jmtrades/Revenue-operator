@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     status: voiceServerReachable ? "ready" : !voiceServerUrl ? "unconfigured" : "blocked",
     detail: voiceServerReachable ? "Healthy and reachable" : !voiceServerUrl ? "Not configured" : "Server unreachable or unhealthy",
     impact: "Live calls and test calls will not work",
-    action: !voiceServerUrl ? "Set Voice Server URL in Vercel environment variables" : "Check voice server deployment and health endpoint",
+    action: !voiceServerUrl ? "Set Voice Server URL in environment variables" : "Check voice server deployment and health endpoint",
     dependency_type: "infrastructure",
   });
 
@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
     status: telephonyReady ? "ready" : "unconfigured",
     detail: telephonyReady ? `${telephonyProvider} — fully configured` : `Missing: ${telephonyMissingLabel}`,
     impact: "Inbound/outbound calls and SMS will not work",
-    action: `Configure ${telephonyMissingLabel} in Vercel environment variables`,
+    action: `Configure ${telephonyMissingLabel} in environment variables`,
     dependency_type: "env_var",
   });
 
@@ -129,7 +129,7 @@ export async function GET(req: NextRequest) {
     status: hasResendKey ? "ready" : "unconfigured",
     detail: hasResendKey ? "Resend API configured" : "Not configured",
     impact: "Follow-up emails, sequence email steps, and notifications will not send",
-    action: "Set Resend API key in Vercel environment variables",
+    action: "Set Resend API key in environment variables",
     dependency_type: "env_var",
   });
 
@@ -248,17 +248,17 @@ export async function GET(req: NextRequest) {
     status: hasCronSecret ? "ready" : "blocked",
     detail: hasCronSecret ? "Cron authentication configured" : "Not configured",
     impact: "ALL background automations are blocked: follow-ups, sequence processing, reactivation campaigns, appointment reminders, sync queue, no-show detection",
-    action: "Configure cron authentication in Vercel environment variables and set up Vercel Cron Jobs",
+    action: "Configure cron authentication in environment variables and set up cron scheduler",
     dependency_type: "env_var",
   });
 
-  const hasAppUrl = !!process.env.NEXT_PUBLIC_APP_URL || !!process.env.VERCEL_URL;
+  const hasAppUrl = !!process.env.NEXT_PUBLIC_APP_URL;
   checks.push({
     key: "app_url",
     label: "Application URL",
     category: "Automation",
     status: hasAppUrl ? "ready" : "degraded",
-    detail: hasAppUrl ? `URL: ${process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`}` : "Not configured",
+    detail: hasAppUrl ? `URL: ${process.env.NEXT_PUBLIC_APP_URL}` : "Not configured",
     impact: "Cron core dispatcher cannot fan out to sub-crons; webhook URLs may be incorrect",
     action: "Configure your application's public domain URL in environment variables",
     dependency_type: "env_var",
@@ -310,7 +310,7 @@ export async function GET(req: NextRequest) {
     status: hasStripeKey ? "ready" : "unconfigured",
     detail: hasStripeKey ? "Stripe configured" : "Not configured",
     impact: "Subscription billing, plan upgrades, and usage-based billing will not process",
-    action: "Configure Stripe API keys in Vercel environment variables",
+    action: "Configure Stripe API keys in environment variables",
     dependency_type: "env_var",
   });
 

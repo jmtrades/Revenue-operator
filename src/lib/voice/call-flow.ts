@@ -10,7 +10,8 @@ import { compileSystemPrompt, type BusinessBrainInput } from "@/lib/business-bra
 import { getAgentTools } from "@/lib/voice/agent-tools";
 import { getTemplateCapabilities } from "@/lib/data/agent-templates";
 import { getModelForPhase, type CallPhase, type ModelConfig } from "@/lib/voice/cost-optimizer";
-import { getLeadStrategy, type CampaignType } from "@/lib/campaigns/prompt";
+import { getLeadStrategy, type CampaignType, type LeadState } from "@/lib/campaigns/prompt";
+import { injectConsentDisclosure } from "@/lib/voice/consent-states";
 import { log } from "@/lib/logger";
 
 export interface CallResult {
@@ -338,7 +339,7 @@ export async function initiateCall(
     if (params.leadContext) {
       leadContext = {
         name: params.leadContext.name,
-        state: params.leadContext.state as any,
+        state: params.leadContext.state as LeadState | undefined,
         score: params.leadContext.score,
         tags: params.leadContext.tags,
         notes: params.leadContext.notes,
@@ -387,7 +388,7 @@ export async function initiateCall(
       leadStrategy = getLeadStrategy(
         {
           name: leadContext.name,
-          state: leadContext.state as any,
+          state: leadContext.state as LeadState | undefined,
           score: leadContext.score,
           tags: leadContext.tags,
           notes: leadContext.notes,
@@ -584,8 +585,14 @@ export async function handleInboundCall(
   params: HandleInboundCallParams
 ): Promise<string> {
   const db = getDb();
-  const busyVoicemailTwiml =
-    '<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">All agents are busy. Please hold or leave a message after the tone.</Say><Record maxLength="120" playBeep="true" /></Response>';
+  // Phase 78 / Task 7.1: busy voicemail TwiML ends in <Record>, which is a
+  // recording under all US wiretap statutes. Run it through the consent
+  // helper so it carries the disclosure ahead of <Record>; the helper is
+  // a pure string op and idempotent, so this is cheap to evaluate once
+  // per handler invocation.
+  const busyVoicemailTwiml = injectConsentDisclosure(
+    '<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">All agents are busy. Please hold or leave a message after the tone.</Say><Record maxLength="120" playBeep="true" /></Response>',
+  );
 
   // 0) Workspace guardrails before call processing.
   const { data: workspace } = await db

@@ -7,6 +7,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import type { OutcomeType } from "@/lib/intelligence/outcome-taxonomy";
 import { routeOutcomeToFollowUp, getDefaultFollowUpTemplate } from "@/lib/intelligence/outcome-followup-router";
 import type { FollowUpRouting } from "@/lib/intelligence/outcome-followup-router";
@@ -214,7 +215,7 @@ async function executeFollowUpRouting(
         }
       }
     } catch (err) {
-      // Error sending SMS (error details omitted to protect PII)
+      log("error", "[intelligence/auto-followup] Failed to send immediate SMS", { error: err instanceof Error ? err.message : String(err) });
     }
     return { action_taken: "send_immediate_sms", success: false, details: "SMS send failed" };
   }
@@ -243,7 +244,7 @@ async function executeFollowUpRouting(
         }
       }
     } catch (err) {
-      // Error sending email (error details omitted to protect PII)
+      log("error", "[intelligence/auto-followup] Failed to send follow-up email", { error: err instanceof Error ? err.message : String(err) });
     }
     return { action_taken: "send_follow_up_email", success: false, details: "Email send failed" };
   }

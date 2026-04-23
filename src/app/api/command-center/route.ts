@@ -52,30 +52,50 @@ export async function GET(req: NextRequest) {
   const todayStart = new Date(now);
   todayStart.setUTCHours(0, 0, 0, 0);
 
-  const { data: ws } = await db.from("workspaces").select("status, pause_reason, created_at").eq("id", workspaceId).maybeSingle();
+  const { data: ws, error: wsError } = await db.from("workspaces").select("status, pause_reason, created_at").eq("id", workspaceId).maybeSingle();
+  if (wsError) {
+    log("error", "[command-center] Failed to query workspaces", { error: wsError.message });
+    return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+  }
   const wsRow = ws as { status?: string; pause_reason?: string; created_at?: string } | undefined;
-  const { data: actState } = await db.from("activation_states").select("activated_at").eq("workspace_id", workspaceId).maybeSingle();
+  const { data: actState, error: actStateError } = await db.from("activation_states").select("activated_at").eq("workspace_id", workspaceId).maybeSingle();
+  if (actStateError) {
+    log("error", "[command-center] Failed to query activation_states", { error: actStateError.message });
+    return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+  }
   const activatedAt = (actState as { activated_at?: string } | null)?.activated_at ?? null;
-  const { data: settingsRow } = await db.from("settings").select("preview_mode, weekly_call_target, business_type").eq("workspace_id", workspaceId).maybeSingle();
+  const { data: settingsRow, error: settingsError } = await db.from("settings").select("preview_mode, weekly_call_target, business_type").eq("workspace_id", workspaceId).maybeSingle();
+  if (settingsError) {
+    log("error", "[command-center] Failed to query settings", { error: settingsError.message });
+    return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+  }
   const previewMode = (settingsRow as { preview_mode?: boolean })?.preview_mode ?? false;
   const weeklyTarget = (settingsRow as { weekly_call_target?: number })?.weekly_call_target ?? 12;
   const businessType = (settingsRow as { business_type?: string })?.business_type ?? null;
 
   const operatorStatus = wsRow?.pause_reason ? "Paused" : previewMode ? "Preview" : wsRow?.status === "active" ? "Active" : "Monitoring";
 
-  const { data: deals } = await db
+  const { data: deals, error: dealsError } = await db
     .from("deals")
     .select("id, lead_id, value_cents, status")
     .eq("workspace_id", workspaceId)
     .in("status", ["open", "booked"])
     .neq("status", "lost");
+  if (dealsError) {
+    log("error", "[command-center] Failed to query deals", { error: dealsError.message });
+    return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+  }
 
   const hotLeads: Array<{ id: string; lead_id: string; name?: string; email?: string; company?: string; probability: number; value_cents: number; contribution?: string }> = [];
   const _dealIds = (deals ?? []).map((d: { id: string; lead_id: string }) => d.id);
   const leadIds = [...new Set((deals ?? []).map((d: { lead_id: string }) => d.lead_id))];
 
   if (leadIds.length > 0) {
-    const { data: leads } = await db.from("leads").select("id, name, email, company, state").in("id", leadIds);
+    const { data: leads, error: leadsError } = await db.from("leads").select("id, name, email, company, state").in("id", leadIds);
+    if (leadsError) {
+      log("error", "[command-center] Failed to query leads", { error: leadsError.message });
+      return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+    }
     const leadMap = ((leads ?? []) as { id: string; name?: string; email?: string; company?: string; state?: string }[]).reduce(
       (acc, l) => { acc[l.id] = l; return acc; },
       {} as Record<string, { name?: string; email?: string; company?: string; state?: string }>
@@ -380,7 +400,11 @@ export async function GET(req: NextRequest) {
   });
   const recoveredList: Array<{ id: string; name?: string; company?: string }> = [];
   if (recoveredIds.size > 0) {
-    const { data: recLeads } = await db.from("leads").select("id, name, email, company").in("id", [...recoveredIds]).limit(5);
+    const { data: recLeads, error: recLeadsError } = await db.from("leads").select("id, name, email, company").in("id", [...recoveredIds]).limit(5);
+    if (recLeadsError) {
+      log("error", "[command-center] Failed to query recovered leads", { error: recLeadsError.message });
+      return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+    }
     recoveredList.push(...((recLeads ?? []) as { id: string; name?: string; email?: string; company?: string }[]).map((l) => ({
       id: l.id,
       name: l.name ?? l.email ?? "Unknown",
@@ -464,7 +488,10 @@ export async function GET(req: NextRequest) {
   // workspace_objectives may not be provisioned yet — default to stale so we re-evaluate
   let lastEval: string | undefined;
   try {
-    const { data: objRow } = await db.from("workspace_objectives").select("last_evaluated_at").eq("workspace_id", workspaceId).eq("objective_type", "bookings").maybeSingle();
+    const { data: objRow, error: objRowError } = await db.from("workspace_objectives").select("last_evaluated_at").eq("workspace_id", workspaceId).eq("objective_type", "bookings").maybeSingle();
+    if (objRowError) {
+      log("error", "[command-center] Failed to query workspace_objectives", { error: objRowError.message });
+    }
     lastEval = (objRow as { last_evaluated_at?: string })?.last_evaluated_at;
   } catch {
     // Table doesn't exist yet — proceed with evaluation
@@ -487,7 +514,10 @@ export async function GET(req: NextRequest) {
     if (obj) await planWorkspaceStrategy(workspaceId, obj.status, revenueStatus);
   } else {
     try {
-      const { data: revRow } = await db.from("workspace_objectives").select("status").eq("workspace_id", workspaceId).eq("objective_type", "revenue").maybeSingle();
+      const { data: revRow, error: revRowError } = await db.from("workspace_objectives").select("status").eq("workspace_id", workspaceId).eq("objective_type", "revenue").maybeSingle();
+      if (revRowError) {
+        log("error", "[command-center] Failed to query revenue objective", { error: revRowError.message });
+      }
       const revStatus = (revRow as { status?: string })?.status;
       if (revStatus === "behind") revenue_trajectory = "At risk";
     } catch {
@@ -632,7 +662,11 @@ export async function GET(req: NextRequest) {
     return "pacing";
   };
 
-  const { data: leadPhaseData } = await db.from("leads").select("id, state").in("id", cardLeadIds);
+  const { data: leadPhaseData, error: leadPhaseError } = await db.from("leads").select("id, state").in("id", cardLeadIds);
+  if (leadPhaseError) {
+    log("error", "[command-center] Failed to query lead phases", { error: leadPhaseError.message });
+    return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+  }
   const leadMapForPhase = (leadPhaseData ?? []) as { id: string; state?: string }[];
   const stateByLead = Object.fromEntries(leadMapForPhase.map((l) => [l.id, l.state ?? "ENGAGED"]));
 

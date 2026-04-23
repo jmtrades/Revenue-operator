@@ -10,22 +10,18 @@ import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
 import {
   getDefaultMappings,
-  type CrmProviderId,
   type FieldMappingConfig,
   type MapEntry,
 } from "@/lib/integrations/field-mapper";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import {
+  SUPPORTED_CRM_PROVIDERS,
+  type CrmProviderId,
+} from "@/lib/crm/providers";
 
-const ALLOWED_PROVIDERS: CrmProviderId[] = [
-  "salesforce",
-  "hubspot",
-  "zoho_crm",
-  "pipedrive",
-  "gohighlevel",
-  "google_contacts",
-  "microsoft_365",
-  "airtable",
-];
+// Phase 78 Task 9.3: mapping is supported for every CRM provider we ship.
+// Source of truth: `SUPPORTED_CRM_PROVIDERS` from `@/lib/crm/providers`.
+const ALLOWED_PROVIDERS: readonly CrmProviderId[] = SUPPORTED_CRM_PROVIDERS;
 
 const MapEntrySchema = z.object({
   rtField: z.string(),

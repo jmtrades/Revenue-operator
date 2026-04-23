@@ -144,7 +144,7 @@ export default function AppSettingsBillingPage() {
     } finally {
       setBuyingPack(null);
     }
-  }, [workspaceId, buyingPack]);
+  }, [workspaceId, buyingPack, tBilling]);
 
   const [redirectReason, setRedirectReason] = useState<string | null>(null);
 
@@ -209,7 +209,7 @@ export default function AppSettingsBillingPage() {
   }, [workspaceId]);
 
   // Initial load on mount
-  useEffect(() => { loadBillingData(); }, []);
+  useEffect(() => { loadBillingData(); }, [loadBillingData]);
 
   // Safety timeout: if billing status hasn't loaded in 10s, force error state
   useEffect(() => {
@@ -338,13 +338,14 @@ export default function AppSettingsBillingPage() {
       {billingStatus === "payment_failed" && dunning && (
         <div className="p-4 rounded-xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)] text-sm mb-4">
           <p className="font-semibold">{tBilling("paymentFailedBanner")}</p>
-          <p className="mt-1">
+          <p className="mt-1 text-[var(--accent-danger,#ef4444)]/80">{tBilling("paymentFailedDescription")}</p>
+          <p className="mt-2 text-xs text-[var(--accent-danger,#ef4444)]/70">
             {tBilling("amountDue")} {(dunning.amount_due_cents / 100).toLocaleString(undefined, {
               style: "currency",
               currency: (dunning.currency || "usd").toUpperCase(),
-            })}.
+            })}
           </p>
-          <p className="mt-1">
+          <p className="mt-1 text-xs text-[var(--accent-danger,#ef4444)]/70">
             {tBilling("retryAttempts")}: {dunning.failure_count}
             {dunning.next_retry_at ? ` · ${tBilling("nextRetry")}: ${new Date(dunning.next_retry_at).toLocaleString()}` : ""}
           </p>
@@ -367,7 +368,7 @@ export default function AppSettingsBillingPage() {
                 setToast(tBilling("toast.paymentFailed"));
               }
             }}
-            className="mt-3 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90"
+            className="mt-3 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             {tBilling("updatePaymentMethod")}
           </button>

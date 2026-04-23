@@ -10,17 +10,7 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-
-/**
- * Normalize phone to E.164 digits for comparison.
- * Keeps full country code to avoid false matches across countries.
- * 10-digit numbers (US/CA without country code) get "1" prepended.
- */
-function normalizePhone(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length === 10) return `1${digits}`;
-  return digits;
-}
+import { normalizePhone } from "@/lib/security/phone";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -35,27 +25,23 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "phone required" }, { status: 400 });
   }
 
-  const db = getDb();
-  const needle = normalizePhone(phone);
-
-  if (!needle) {
+  // Phase 78/Phase 3 (D7): `phone` is a URL query parameter and
+  // attacker-controlled. The previous implementation built a `variants` array
+  // that included the raw `phone.trim()` — a comma or `.or.` there would graft
+  // an arbitrary filter onto the PostgREST query. `normalizePhone` fails
+  // closed and returns null for anything that isn't strict E.164-producible.
+  const e164 = normalizePhone(phone);
+  if (!e164) {
     return NextResponse.json({ error: "Invalid phone number" }, { status: 400 });
   }
+  const digits = e164.slice(1); // strip leading '+'
 
-  // Build multiple phone format variants for DB-level matching
-  const variants = [
-    phone.trim(),
-    needle,
-    `+${needle}`,
-    `+1${needle.length === 10 ? needle : ""}`.replace("+1", "+1"),
-  ].filter(Boolean);
-
-  // Use database-level OR filter instead of fetching all leads
+  const db = getDb();
   const { data: leads } = await db
     .from("leads")
     .select("id, name, phone")
     .eq("workspace_id", session.workspaceId)
-    .or(variants.map(v => `phone.eq.${v}`).join(","))
+    .or(`phone.eq.${e164},phone.eq.${digits}`)
     .limit(1);
 
   const row = (leads ?? [])[0] as { id: string; name: string | null } | undefined;

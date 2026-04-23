@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
   }
 
   const db = getDb();
-  const result: Record<string, any> = {};
+  const result: Record<string, unknown> = {};
 
   // Get all workspaces with billing info
   try {
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     const revenueByPlan: Record<string, number> = {};
     const revenueByInterval: Record<string, number> = { monthly: 0, annual: 0 };
 
-    workspaces.forEach((ws: any) => {
+    workspaces.forEach((ws: { billing_tier: string | null; billing_interval: string | null; stripe_subscription_id: string | null; status: string | null }) => {
       const tier = ws.billing_tier?.toLowerCase() || "solo";
       const price = TIER_PRICING[tier] || 0;
 
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
     if (revEvents && revEvents.length > 0) {
       const trendByMonth: Record<string, { new: number; expansion: number; contraction: number; churn: number }> = {};
 
-      revEvents.forEach((evt: any) => {
+      revEvents.forEach((evt: { created_at: string; amount: number | null; event_type: string | null }) => {
         const monthKey = evt.created_at.split("T")[0].split("-").slice(0, 2).join("-");
         if (!trendByMonth[monthKey]) {
           trendByMonth[monthKey] = { new: 0, expansion: 0, contraction: 0, churn: 0 };
@@ -114,7 +114,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data: minutePacks } = await db.from("minute_pack_purchases").select("id, amount, created_at");
     let totalMinutePackRevenue = 0;
-    (minutePacks ?? []).forEach((mp: any) => {
+    (minutePacks ?? []).forEach((mp: { amount: number | null }) => {
       totalMinutePackRevenue += mp.amount || 0;
     });
     result.minute_pack_revenue = totalMinutePackRevenue;
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
     const { data: workspaces } = await db.from("workspaces").select("id, billing_tier, billing_interval");
     if (workspaces && workspaces.length > 0) {
       let totalRevenue = 0;
-      workspaces.forEach((ws: any) => {
+      workspaces.forEach((ws: { billing_tier: string | null; billing_interval: string | null }) => {
         const tier = ws.billing_tier?.toLowerCase() || "solo";
         const price = TIER_PRICING[tier] || 0;
         if (ws.billing_interval === "annual") {
@@ -148,7 +148,7 @@ export async function GET(req: NextRequest) {
     const { data: workspaces } = await db.from("workspaces").select("id, billing_tier, created_at");
     if (workspaces && workspaces.length > 0) {
       let totalRevenue = 0;
-      workspaces.forEach((ws: any) => {
+      workspaces.forEach((ws: { billing_tier: string | null }) => {
         const tier = ws.billing_tier?.toLowerCase() || "solo";
         const price = TIER_PRICING[tier] || 0;
         totalRevenue += price;

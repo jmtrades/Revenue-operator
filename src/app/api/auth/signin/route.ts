@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
   }
 
   let workspaceId: string | undefined;
+  let workspaceCreated = true;
   try {
     const db = getDb();
     const { data: ws } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
@@ -92,10 +93,14 @@ export async function POST(req: NextRequest) {
           db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" }),
           db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" }),
         ]);
+      } else {
+        workspaceCreated = false;
+        log("error", "[signin] workspace creation failed", { userId, error: createErr?.message ?? "unknown error" });
       }
     }
-  } catch {
-    // DB unavailable; still return success with userId only
+  } catch (err) {
+    workspaceCreated = false;
+    log("error", "[signin] workspace creation exception", { userId, error: err instanceof Error ? err.message : String(err) });
   }
 
   const cookie = createSessionCookie({ userId, workspaceId });
@@ -105,7 +110,7 @@ export async function POST(req: NextRequest) {
     log("error", "[signin] SESSION_SECRET or ENCRYPTION_KEY is not configured");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
-  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: ROUTES.APP_HOME });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, workspace_created: workspaceCreated, redirectTo: ROUTES.APP_HOME });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

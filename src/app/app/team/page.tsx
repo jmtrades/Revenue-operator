@@ -92,6 +92,7 @@ function avatarStyle(id: string): { backgroundColor: string; color: string } {
 
 export default function TeamPage() {
   const t = useTranslations("team");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const { workspaceId } = useWorkspace();
   const roleLabels = useMemo(() => getRoleLabels(t), [t]);
   const permissionsMatrix = useMemo(() => getPermissionsMatrix(t), [t]);
@@ -299,7 +300,7 @@ export default function TeamPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
-        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Team" }]} />
+        <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("team") }]} />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>

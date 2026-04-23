@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import { enqueue } from "@/lib/queue";
 import { computeLeadIntelligence } from "./lead-brain";
 import { getLeadMemory } from "@/lib/lead-memory";
@@ -304,13 +305,13 @@ export async function runSmartReactivationSweep(
           }
         }
       } catch (err) {
-        // Error processing lead (error details omitted to protect PII)
+        log("error", "[intelligence/smart-reactivation] Failed to process lead for reactivation", { error: err instanceof Error ? err.message : String(err) });
       }
     }
 
     return { processed, reactivated };
   } catch (err) {
-    // Error in reactivation sweep (error details omitted to protect PII)
+    log("error", "[intelligence/smart-reactivation] Error in reactivation sweep", { error: err instanceof Error ? err.message : String(err) });
     return { processed, reactivated };
   }
 }

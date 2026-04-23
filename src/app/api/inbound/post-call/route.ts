@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { normalizePhone } from "@/lib/security/phone";
 import { enqueueAction } from "@/lib/action-queue";
 import type { ActionCommand } from "@/lib/action-queue/types";
 import { analyzeClosingCall } from "@/lib/zoom/analysis";
@@ -24,7 +25,7 @@ import { log } from "@/lib/logger";
 function verifyWebhookSecret(body: string, authHeader: string | null): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    const isProduction = process.env.NODE_ENV === "production";
     if (isProduction) {
       log("error", "inbound_post_call.secret_not_configured", { message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in production" });
       return false;
@@ -83,14 +84,16 @@ async function ensureLeadForCaller(input: {
   sessionId: string | null;
   callerPhone: string | null | undefined;
 }): Promise<string | null> {
-  const phone = input.callerPhone?.trim();
-  if (!phone) return null;
-  const normalized = phone.replace(/\D/g, "");
+  // Phase 78/Phase 3 (D7): webhook body is caller-controlled; the phone must
+  // be normalized to strict E.164 before PostgREST `.or(...)` interpolation.
+  const phoneE164 = normalizePhone(input.callerPhone);
+  if (!phoneE164) return null;
+  const phoneDigits = phoneE164.slice(1);
   const { data: existing } = await input.db
     .from("leads")
     .select("id")
     .eq("workspace_id", input.workspaceId)
-    .or(`phone.eq.${phone},phone.eq.${normalized}`)
+    .or(`phone.eq.${phoneE164},phone.eq.${phoneDigits}`)
     .limit(1)
     .maybeSingle();
   let leadId = (existing as { id: string } | null)?.id ?? null;
@@ -100,7 +103,7 @@ async function ensureLeadForCaller(input: {
       .from("leads")
       .insert({
         workspace_id: input.workspaceId,
-        phone,
+        phone: phoneE164,
         name: "Inbound caller",
         state: "NEW",
       })
@@ -192,6 +195,76 @@ export async function POST(req: NextRequest) {
       sessionId,
       callerPhone: body.caller_phone ?? null,
     });
+  }
+
+  // ─── Phase 11 safety & compliance detectors ─────────────────────────────────
+  // Run detectors BEFORE the outcome classifier so their verdicts override
+  // the heuristic business_outcome. Order matters:
+  //   1. Crisis — highest priority, halts everything else.
+  //   2. Consent revocation — legally binding, must persist.
+  //   3. Wrong number — stops further outreach to this lead.
+  // All three are idempotent — safe to re-run on retried webhooks.
+  let overrideOutcome: string | null = null;
+  if (transcript && transcript.length >= 5) {
+    try {
+      const { detectCrisis, recordCrisisDetection } = await import("@/lib/compliance/crisis-detection");
+      const crisis = detectCrisis(transcript);
+      if (crisis.category !== "none" && crisis.confidence >= 0.75) {
+        await recordCrisisDetection({
+          workspaceId: workspace_id,
+          leadId,
+          callSessionId: sessionId,
+          detection: crisis,
+        });
+        overrideOutcome = "crisis_escalated";
+      }
+    } catch (err) {
+      log("warn", "[post-call] crisis detection failed", { error: err instanceof Error ? err.message : String(err) });
+    }
+
+    if (!overrideOutcome) {
+      try {
+        const { detectConsentRevocation, recordConsentRevocation } = await import("@/lib/compliance/consent-revocation");
+        const rev = detectConsentRevocation(transcript);
+        if (rev.revoked && rev.confidence >= 0.85) {
+          const phoneForDnc = body.caller_phone?.trim() || "";
+          if (phoneForDnc) {
+            await recordConsentRevocation({
+              workspaceId: workspace_id,
+              leadId,
+              callSessionId: sessionId,
+              phoneNumber: phoneForDnc,
+              detection: rev,
+            });
+            overrideOutcome = "revoked";
+          }
+        }
+      } catch (err) {
+        log("warn", "[post-call] revocation detection failed", { error: err instanceof Error ? err.message : String(err) });
+      }
+    }
+
+    if (!overrideOutcome) {
+      try {
+        const { detectWrongNumber, recordWrongNumber } = await import("@/lib/compliance/wrong-number");
+        const wn = detectWrongNumber(transcript);
+        if (wn.isWrongNumber && wn.confidence >= 0.85) {
+          const phoneForWn = body.caller_phone?.trim() || "";
+          if (phoneForWn) {
+            await recordWrongNumber({
+              workspaceId: workspace_id,
+              leadId,
+              callSessionId: sessionId,
+              phoneNumber: phoneForWn,
+              detection: wn,
+            });
+            overrideOutcome = "wrong_number";
+          }
+        }
+      } catch (err) {
+        log("warn", "[post-call] wrong-number detection failed", { error: err instanceof Error ? err.message : String(err) });
+      }
+    }
   }
 
   if (sessionId && isEmergency) {
@@ -461,6 +534,54 @@ export async function POST(req: NextRequest) {
         });
       } catch (err) {
         log("error", "[post-call] slack/teams notification failed:", { error: err instanceof Error ? err.message : String(err) });
+      }
+    })();
+  }
+
+  // ─── Phase 11f: Call Quality Rubric ──────────────────────────────────────────
+  // Score the call against the 10-dimension rubric so managers can see WHY a
+  // call did or didn't succeed. Non-blocking — attaches to call_analysis as a
+  // secondary row with analysis_source='rubric_v1'. Skipped for very short
+  // transcripts (can't meaningfully score a 20-word call).
+  if (sessionId && transcript && String(transcript).trim().length >= 120) {
+    void (async () => {
+      try {
+        const { scoreCallAgainstRubric } = await import("@/lib/voice/call-quality-rubric");
+        // Minimal turn extraction — split on naive speaker prefixes if present,
+        // else treat the whole transcript as one agent turn (bounded for safety).
+        const rawTurns = String(transcript).split(/\n+/).filter((l) => l.trim().length > 0);
+        const turns = rawTurns.map((line) => {
+          const m = line.match(/^\s*(agent|caller|assistant|user|customer|bot)\s*:\s*(.+)$/i);
+          if (m) {
+            const speaker = /agent|assistant|bot/i.test(m[1]) ? "agent" : "caller";
+            return { speaker: speaker as "agent" | "caller", text: m[2] };
+          }
+          return { speaker: "agent" as const, text: line };
+        });
+
+        const rubric = scoreCallAgainstRubric({
+          transcript: String(transcript),
+          turns,
+          outcome: overrideOutcome ?? businessOutcome,
+          compliance: {
+            // These come from the session's known state — if unknown, pass undefined
+            // so the scorer gives benefit of the doubt rather than failing.
+            revocationRespected: overrideOutcome === "revoked" ? true : undefined,
+          },
+          durationSeconds: body.duration_seconds,
+        });
+
+        await db.from("call_analysis").insert({
+          workspace_id,
+          call_session_id: sessionId,
+          analysis_json: { rubric },
+          confidence: 0.85,
+          analysis_source: "rubric_v1",
+        });
+      } catch (err) {
+        log("warn", "[post-call] rubric scoring failed", {
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     })();
   }

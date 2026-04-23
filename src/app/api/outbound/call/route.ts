@@ -13,7 +13,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import type { CampaignType } from "@/lib/campaigns/prompt";
 import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import { parseBody } from "@/lib/api/validate";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { getDb } from "@/lib/db/queries";
 import { canMakeOutboundCall } from "@/lib/billing/plan-enforcement";
@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
 
-  const rl = await checkRateLimit(`outbound:${workspaceId}`, 60, 60_000);
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`outbound-call:${ip}`, 10, 60_000);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }

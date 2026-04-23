@@ -1,5 +1,5 @@
 /**
- * Daily Call Plan Generator — Vercel Cron Handler
+ * Daily Call Plan Generator — Cron Handler
  * Generates optimal daily call plans for qualified leads.
  * Maximizes answer rates based on available lead data.
  */

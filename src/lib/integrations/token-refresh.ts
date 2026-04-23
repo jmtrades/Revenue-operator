@@ -24,6 +24,19 @@ const TOKEN_URLS: Record<CrmProviderId, string> = {
   google_contacts: "https://oauth2.googleapis.com/token",
   microsoft_365: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
   airtable: "https://airtable.com/oauth2/v1/token",
+  // Phase 8 — the newly-added providers. Close, Follow Up Boss, and
+  // Freshsales use long-lived API keys (no refresh endpoint); we leave
+  // an empty string and the refresh code below short-circuits when the
+  // refresh_token is null anyway.
+  close: "",
+  follow_up_boss: "",
+  active_campaign: "",
+  copper: "https://app.copper.com/oauth/token",
+  monday_crm: "https://auth.monday.com/oauth2/token",
+  freshsales: "",
+  attio: "https://app.attio.com/oauth/token",
+  keap: "https://api.infusionsoft.com/token",
+  google_sheets: "https://oauth2.googleapis.com/token",
 };
 
 const ENV_PREFIX: Record<CrmProviderId, string> = {
@@ -35,6 +48,15 @@ const ENV_PREFIX: Record<CrmProviderId, string> = {
   google_contacts: "GOOGLE",
   microsoft_365: "MICROSOFT",
   airtable: "AIRTABLE",
+  close: "CLOSE",
+  follow_up_boss: "FUB",
+  active_campaign: "ACTIVECAMPAIGN",
+  copper: "COPPER",
+  monday_crm: "MONDAY",
+  freshsales: "FRESHSALES",
+  attio: "ATTIO",
+  keap: "KEAP",
+  google_sheets: "GOOGLE",
 };
 
 /**

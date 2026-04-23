@@ -260,12 +260,16 @@ export async function sendOutbound(
       } else {
         result = await sendViaTwilio(ch, to.phone, safeContent, workspaceId);
       }
-    } else if (ch === "email" && to.email) {
-      const { sendEmail } = await import("@/lib/integrations/email");
-      const sendResult = await sendEmail(workspaceId, to.email, emailSubject ?? "Message from Revenue Operator", safeContent);
-      result = sendResult.ok && sendResult.externalId ? { sid: sendResult.externalId } : { error: sendResult.error ?? "Send failed" };
+    } else if (ch === "email") {
+      if (!to.email) {
+        result = { error: "No email address provided" };
+      } else {
+        const { sendEmail } = await import("@/lib/integrations/email");
+        const sendResult = await sendEmail(workspaceId, to.email, emailSubject ?? "Message from Revenue Operator", safeContent);
+        result = sendResult.ok && sendResult.externalId ? { sid: sendResult.externalId } : { error: sendResult.error ?? "Send failed" };
+      }
     } else {
-      result = { error: "Email provider not implemented" };
+      result = { error: "Unsupported channel" };
     }
 
     if ("sid" in result) {

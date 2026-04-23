@@ -159,6 +159,7 @@ async function callClaudeApi(prompt: string): Promise<string> {
         },
       ],
     }),
+    signal: AbortSignal.timeout(30_000),
   });
 
   if (!response.ok) {

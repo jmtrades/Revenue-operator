@@ -13,6 +13,8 @@ import { getDb } from "@/lib/db/queries";
 import { getMinutePack, MINUTE_PACKS } from "@/lib/voice/billing";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 function localLog(event: string, data: Record<string, unknown>): void {
   if (data.reason || data.error) {
@@ -24,7 +26,7 @@ function localLog(event: string, data: Record<string, unknown>): void {
 function effectiveOrigin(req: NextRequest): string | null {
   const fromReq = new URL(req.url).origin;
   const isLocal = fromReq.includes("localhost") || fromReq.includes("127.0.0.1");
-  const isPreview = fromReq.includes("preview") || fromReq.includes("vercel.app");
+  const isPreview = fromReq.includes("preview") || fromReq.includes("onrender.com");
   if (isLocal || isPreview) return process.env.NEXT_PUBLIC_APP_URL ?? null;
   return fromReq || (process.env.NEXT_PUBLIC_APP_URL ?? null);
 }
@@ -118,8 +120,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(stripeSecretKey);
+    // Phase 78/Phase 6: shared factory with pinned apiVersion
+    const stripe = getStripe();
 
     // Get or create Stripe customer
     let customerId = wsData.stripe_customer_id ?? null;
@@ -134,6 +136,9 @@ export async function POST(req: NextRequest) {
       const customer = await stripe.customers.create({
         email: email || undefined,
         metadata: { workspace_id: workspaceId },
+      }, {
+        // Phase 78/Phase 6.2: never create two Stripe customers per workspace
+        idempotencyKey: stripeIdempotencyKey("customer-create", workspaceId),
       });
       customerId = customer.id;
 
@@ -176,6 +181,9 @@ export async function POST(req: NextRequest) {
       ],
       success_url: successUrl,
       cancel_url: cancelUrl,
+    }, {
+      // Phase 78/Phase 6.2: reuse checkout session for repeat clicks on "Buy <pack>"
+      idempotencyKey: stripeIdempotencyKey("minute-pack-checkout", workspaceId, packId),
     });
 
     localLog("buy_minutes_checkout_created", {

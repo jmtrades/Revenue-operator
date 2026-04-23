@@ -244,7 +244,7 @@ export default function QuickSetupPage() {
                     borderColor: "var(--border-default)",
                     color: "var(--text-primary)",
                     "--tw-ring-color": "var(--accent-primary)",
-                  } as any}
+                  } as React.CSSProperties}
                 />
                 <button
                   onClick={handleAnalyze}

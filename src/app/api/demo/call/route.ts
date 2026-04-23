@@ -58,6 +58,11 @@ function normalizeToE164(input: string): string | null {
     return `+${digits.slice(2)}`;
   }
 
+  // AU mobile: 10 digits starting with 04 — check BEFORE generic US assumption
+  if (digits.length === 10 && digits.startsWith("04")) {
+    return `+61${digits.slice(1)}`;
+  }
+
   // 10-digit bare number — assume US/Canada (+1)
   if (digits.length === 10) return `+1${digits}`;
 
@@ -72,11 +77,6 @@ function normalizeToE164(input: string): string | null {
   // UK landline pattern: 11 digits starting with 01 or 02
   if (digits.length === 11 && (digits.startsWith("01") || digits.startsWith("02"))) {
     return `+44${digits.slice(1)}`;
-  }
-
-  // AU mobile: 10 digits starting with 04
-  if (digits.length === 10 && digits.startsWith("04")) {
-    return `+61${digits.slice(1)}`;
   }
 
   // Numbers with domestic trunk prefix (leading 0) that don't match patterns above
@@ -274,7 +274,7 @@ export async function POST(req: NextRequest) {
   // Use WEBHOOK_BASE_URL if set, otherwise fall back to APP_URL.
   // Important: must be the canonical domain (www.recall-touch.com) because
   // non-www redirects via 307 and Telnyx won't follow POST redirects.
-  const appUrl = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+  const appUrl = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || null;
   if (!appUrl) {
     log("error", "demo_call.app_url_not_configured");
     return NextResponse.json(

@@ -30,7 +30,7 @@ function getRateLimit(ip: string): { allowed: boolean; remaining: number } {
     if (count >= MAX_REQUESTS_PER_WINDOW) {
       return { allowed: false, remaining: 0 };
     }
-    ipLastRequestMap.set(ip, count as any);
+    ipLastRequestMap.set(ip, count);
     return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - count };
   }
 
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
 
-  let body: any;
+  let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
       success: true,
       rate_limit_remaining: rateLimit.remaining,
     });
-  } catch (err: any) {
+  } catch (err) {
     log("error", "[admin/track catch]", { error: err });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

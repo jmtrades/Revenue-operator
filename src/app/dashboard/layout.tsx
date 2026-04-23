@@ -223,15 +223,19 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     router.replace(`/dashboard/start${q.toString() ? `?${q.toString()}` : ""}`);
   }, [pathname, allowed, isLiveOrValue, router]);
 
-  // Redirect to onboarding if not yet completed (client-only)
+  // Redirect to onboarding if not yet completed (client-only).
+  // Canonical onboarding is /app/onboarding as of Phase 69 — /dashboard/onboarding
+  // is a legacy alias that now 301s to /app/onboarding. Skip both paths so we
+  // don't ping-pong through the redirect.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   useEffect(() => {
-    if (!mounted || pathname === "/dashboard/onboarding" || loading || workspaces.length === 0) return;
+    if (!mounted || loading || workspaces.length === 0) return;
+    if (pathname === "/dashboard/onboarding" || pathname === "/app/onboarding") return;
     try {
       if (!localStorage.getItem("rt_onboarded")) {
         const q = new URLSearchParams(window.location.search);
-        router.replace(`/dashboard/onboarding${q.toString() ? `?${q.toString()}` : ""}`);
+        router.replace(`/app/onboarding${q.toString() ? `?${q.toString()}` : ""}`);
       }
     } catch {
       // ignore

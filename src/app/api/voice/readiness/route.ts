@@ -153,7 +153,7 @@ export async function GET(req: NextRequest) {
   });
 
   // 8. Webhook URL reachable
-  const webhookBase = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+  const webhookBase = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
   const webhookPath = provider === "twilio" ? "/api/webhooks/twilio/voice" : "/api/webhooks/telnyx/voice";
   const webhookUrl = webhookBase ? `${webhookBase}${webhookPath}` : "";
   checks.push({

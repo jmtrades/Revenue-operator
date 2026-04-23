@@ -54,6 +54,7 @@ const RecommendationsCard = lazy(() => import("@/components/dashboard/Recommenda
 const SetupHealthCard = lazy(() => import("@/components/dashboard/SetupHealthCard").then(m => ({ default: m.SetupHealthCard })));
 const SystemReadiness = lazy(() => import("@/components/dashboard/SystemReadiness").then(m => ({ default: m.SystemReadiness })));
 const RecoveryScoreCard = lazy(() => import("@/components/dashboard/RecoveryScoreCard").then(m => ({ default: m.RecoveryScoreCard })));
+const UsagePulse = lazy(() => import("@/components/dashboard/UsagePulse").then(m => ({ default: m.UsagePulse })));
 const AutonomousBriefing = lazy(() => import("@/components/dashboard/AutonomousBriefing").then(m => ({ default: m.AutonomousBriefing })));
 const AutonomousBrainCard = lazy(() => import("@/components/dashboard/AutonomousBrainCard").then(m => ({ default: m.AutonomousBrainCard })));
 const TodaysActivity = lazy(() => import("@/components/dashboard/TodaysActivity").then(m => ({ default: m.TodaysActivity })));
@@ -263,8 +264,8 @@ export function UnifiedDashboard() {
         }),
       );
     })();
-     
-  }, [workspaceId]);
+
+  }, [workspaceId, data]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -742,6 +743,9 @@ export function UnifiedDashboard() {
         >
           <motion.div variants={staggerItem}>
             <RecoveryScoreCard workspaceId={workspaceId} />
+          </motion.div>
+          <motion.div variants={staggerItem}>
+            <UsagePulse workspaceId={workspaceId} />
           </motion.div>
         </motion.div>
       </Suspense>

@@ -124,26 +124,54 @@ export async function transitionMomentumStates(): Promise<number> {
   const list = (rows ?? []) as { id: string; workspace_id: string; last_customer_message_at: string | null; momentum_state: string }[];
   const workspaceIds = [...new Set(list.map((r) => r.workspace_id))];
   const { getRecoveryProfile, getRecoveryTimings } = await import("@/lib/recovery-profile");
+
+  // Batch: fetch all recovery profiles in parallel
+  const profileEntries = await Promise.allSettled(
+    workspaceIds.map(async (wid) => {
+      const profile = await getRecoveryProfile(wid);
+      const t = getRecoveryTimings(profile);
+      return [wid, { stalledHours: t.stalledHours, lostHours: t.lostHours }] as const;
+    })
+  );
   const profileMap = new Map<string, { stalledHours: number; lostHours: number }>();
-  for (const wid of workspaceIds) {
-    const profile = await getRecoveryProfile(wid);
-    const t = getRecoveryTimings(profile);
-    profileMap.set(wid, { stalledHours: t.stalledHours, lostHours: t.lostHours });
+  for (const entry of profileEntries) {
+    if (entry.status === "fulfilled") {
+      profileMap.set(entry.value[0], entry.value[1]);
+    }
   }
-  let updated = 0;
+
+  // Compute which rows need updating
   const now = new Date().toISOString();
+  const pendingUpdates: Array<{ id: string; momentum_state: MomentumState }> = [];
   for (const row of list) {
     const timings = profileMap.get(row.workspace_id) ?? getRecoveryTimings("standard");
     const next = computeMomentumState(row.last_customer_message_at, timings.stalledHours, timings.lostHours);
     if (next === row.momentum_state) continue;
-    await runWithWriteContextAsync("delivery", async () => {
-      const db2 = getDb();
-      await db2
-        .from("opportunity_states")
-        .update({ momentum_state: next, updated_at: now })
-        .eq("id", row.id);
-    });
-    updated++;
+    pendingUpdates.push({ id: row.id, momentum_state: next });
+  }
+
+  if (pendingUpdates.length === 0) return 0;
+
+  // Batch update: process up to 10 concurrently using Promise.allSettled
+  let updated = 0;
+  const BATCH_SIZE = 10;
+  for (let i = 0; i < pendingUpdates.length; i += BATCH_SIZE) {
+    const batch = pendingUpdates.slice(i, i + BATCH_SIZE);
+    const results = await Promise.allSettled(
+      batch.map((upd) =>
+        runWithWriteContextAsync("delivery", async () => {
+          const db2 = getDb();
+          await db2
+            .from("opportunity_states")
+            .update({ momentum_state: upd.momentum_state, updated_at: now })
+            .eq("id", upd.id);
+        })
+      )
+    );
+    for (const r of results) {
+      if (r.status === "fulfilled") updated++;
+      else log("warn", "opportunity_recovery.batch_update_failed", { error: r.reason instanceof Error ? r.reason.message : String(r.reason) });
+    }
   }
   return updated;
 }

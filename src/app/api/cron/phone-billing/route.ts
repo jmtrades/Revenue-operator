@@ -8,22 +8,24 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import Stripe from "stripe";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { log } from "@/lib/logger";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
   if (authErr) return authErr;
 
-  if (!process.env.STRIPE_SECRET_KEY) {
+  // Phase 78/Phase 6: shared factory with pinned apiVersion. Factory throws
+  // if STRIPE_SECRET_KEY is missing; surface as 503 for cron semantics.
+  let stripe;
+  try {
+    stripe = getStripe();
+  } catch {
     return NextResponse.json({ error: "STRIPE_SECRET_KEY not configured" }, { status: 503 });
   }
-
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-12-18.acacia" as unknown as Stripe.StripeConfig["apiVersion"],
-  });
 
   const db = getDb();
   const now = new Date();
@@ -85,6 +87,7 @@ export async function GET(request: NextRequest) {
         : `${numberCount} phone numbers — monthly fee`;
 
       // Create invoice item on the customer's next invoice
+      // Phase 78/Phase 6.2: idempotency key prevents double-billing on cron retries
       await stripe.invoiceItems.create({
         customer: workspace.stripe_customer_id,
         amount: totalCents,
@@ -95,6 +98,13 @@ export async function GET(request: NextRequest) {
           phone_count: String(numberCount),
           type: "phone_number_monthly",
         },
+      }, {
+        idempotencyKey: stripeIdempotencyKey(
+          "phone-billing",
+          workspaceId,
+          String(numberCount),
+          String(totalCents),
+        ),
       });
 
       // Mark all numbers as billed

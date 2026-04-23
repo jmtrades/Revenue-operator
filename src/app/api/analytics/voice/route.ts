@@ -46,7 +46,9 @@ interface VoiceAnalytics {
   roi_metrics: {
     estimated_missed_calls_recovered: number;
     estimated_revenue_recovered: number;
+    revenue_estimated: boolean;
     cost_per_call: number;
+    cost_per_minute_estimated: boolean;
     roi_multiplier: number;
   };
   voice_performance: Array<{
@@ -213,12 +215,10 @@ export async function GET(req: NextRequest) {
     }
 
     // ROI metrics — use actual data where available, clearly flag estimates
-    const costPerMinute = 0.02; // Platform blended cost
+    const costPerMinute = 0.02; // Platform blended cost (hardcoded estimate)
     const totalMinutes = durations.reduce((a, b) => a + b, 0) / 60;
     const totalCost = totalMinutes * costPerMinute;
-    // Use actual completed/converted calls instead of fake 47% recovery rate
     const estimatedRecovered = completedCalls; // Calls actually handled by AI
-    // Revenue: use actual deal data if available, otherwise conservative $0 (no fake estimates)
     let estimatedRevenue = 0;
     try {
       const { data: dealData } = await db
@@ -230,7 +230,7 @@ export async function GET(req: NextRequest) {
       const dealValues = (dealData ?? []) as { value_cents?: number }[];
       estimatedRevenue = dealValues.reduce((sum, d) => sum + (d.value_cents ?? 0), 0) / 100;
     } catch {
-      // deals table may not exist — revenue stays 0 (honest, not fabricated)
+      // deals table may not exist — revenue stays 0
     }
 
     const analytics: VoiceAnalytics = {
@@ -243,15 +243,17 @@ export async function GET(req: NextRequest) {
       sentiment_distribution: sentiments,
       outcome_distribution: outcomes,
       calls_by_day: callsByDay,
-      top_industries: [], // Would need industry tracking in session metadata
+      top_industries: [],
       lead_score_distribution: leadScores,
       roi_metrics: {
         estimated_missed_calls_recovered: estimatedRecovered,
         estimated_revenue_recovered: estimatedRevenue,
+        revenue_estimated: true,
         cost_per_call: totalCalls > 0 ? Math.round((totalCost / totalCalls) * 100) / 100 : 0,
+        cost_per_minute_estimated: true,
         roi_multiplier: totalCost > 0 ? Math.round((estimatedRevenue / totalCost) * 10) / 10 : 0,
       },
-      voice_performance: [], // Would need voice_id tracking in session metadata
+      voice_performance: [],
     };
 
     return NextResponse.json(analytics);

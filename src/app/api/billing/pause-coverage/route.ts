@@ -11,6 +11,8 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -41,9 +43,12 @@ export async function POST(req: NextRequest) {
 
   if (subId && process.env.STRIPE_SECRET_KEY) {
     try {
-      const Stripe = (await import("stripe")).default;
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-      await stripe.subscriptions.update(subId, { cancel_at_period_end: true });
+      // Phase 78/Phase 6: shared factory with pinned apiVersion
+      const stripe = getStripe();
+      await stripe.subscriptions.update(subId, { cancel_at_period_end: true }, {
+        // Phase 78/Phase 6.2: idempotent pause (safe on retry)
+        idempotencyKey: stripeIdempotencyKey("sub-pause", workspaceId, subId),
+      });
     } catch (err) {
       log("error", "[pause-coverage] Stripe update failed:", { error: err instanceof Error ? err.message : err });
       return NextResponse.json(

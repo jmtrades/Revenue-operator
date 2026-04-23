@@ -16,6 +16,7 @@ import { getDb } from "@/lib/db/queries";
 import { handleInboundCall } from "@/lib/voice/call-flow";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
+import { normalizePhone } from "@/lib/security/phone";
 
 const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
 
@@ -62,15 +63,27 @@ export async function POST(req: NextRequest) {
   const to = form.To ?? form.Called;
   const callSid = form.CallSid;
 
+  // Phase 78/Phase 3 (D7): strictly normalize before any `.or(...)`
+  // interpolation. Twilio webhook body is attacker-controllable absent a
+  // verified signature, and the old multi-variant `.or(...)` above was the
+  // exact injection sink the audit flagged.
+  const toE164 = normalizePhone(to);
+  const fromE164 = normalizePhone(from);
+
   const db = getDb();
-  const { data: phoneConfig } = await db
-    .from("phone_configs")
-    .select("workspace_id, proxy_number")
-    .or(
-      `proxy_number.eq.${to?.replace(/[\s()-]/g, "")},proxy_number.eq.${to},proxy_number.eq.+${to?.replace(/\D/g, "")}`,
-    )
-    .eq("status", "active")
-    .maybeSingle();
+  let phoneConfig:
+    | { workspace_id?: string; proxy_number?: string }
+    | null = null;
+  if (toE164) {
+    const toDigits = toE164.slice(1);
+    const { data } = await db
+      .from("phone_configs")
+      .select("workspace_id, proxy_number")
+      .or(`proxy_number.eq.${toE164},proxy_number.eq.${toDigits}`)
+      .eq("status", "active")
+      .maybeSingle();
+    phoneConfig = (data as typeof phoneConfig) ?? null;
+  }
 
   const workspaceId = (phoneConfig as { workspace_id?: string } | null)?.workspace_id ?? null;
   let callSessionId: string | null = null;
@@ -87,13 +100,13 @@ export async function POST(req: NextRequest) {
       if (!existing) {
         let leadId: string | null = null;
 
-        const phone = (from ?? "").replace(/\D/g, "");
-        if (phone.length >= 10) {
+        if (fromE164) {
+          const fromDigits = fromE164.slice(1);
           const { data: lead } = await db
             .from("leads")
             .select("id")
             .eq("workspace_id", workspaceId)
-            .or(`phone.eq.${from},phone.eq.${phone}`)
+            .or(`phone.eq.${fromE164},phone.eq.${fromDigits}`)
             .limit(1)
             .maybeSingle();
 
@@ -102,7 +115,7 @@ export async function POST(req: NextRequest) {
           if (!leadId) {
             const { data: created } = await db
               .from("leads")
-              .insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, state: "NEW" })
+              .insert({ workspace_id: workspaceId, name: "Inbound caller", phone: fromE164, state: "NEW" })
               .select("id")
               .maybeSingle();
             leadId = (created as { id: string })?.id;

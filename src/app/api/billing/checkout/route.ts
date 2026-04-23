@@ -16,6 +16,8 @@ import { getPriceId } from "@/lib/stripe-prices";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 /** Map plan names (including legacy) to tier names, same as change-plan route */
 const PLAN_TO_TIER: Record<string, string> = {
@@ -33,7 +35,7 @@ const PLAN_TO_TIER: Record<string, string> = {
 function effectiveOrigin(req: NextRequest): string | null {
   const fromReq = new URL(req.url).origin;
   const isLocal = fromReq.includes("localhost") || fromReq.includes("127.0.0.1");
-  const isPreview = fromReq.includes("preview") || fromReq.includes("vercel.app");
+  const isPreview = fromReq.includes("preview") || fromReq.includes("onrender.com");
   if (isLocal || isPreview) return process.env.NEXT_PUBLIC_APP_URL ?? null;
   return fromReq || (process.env.NEXT_PUBLIC_APP_URL ?? null);
 }
@@ -210,8 +212,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, reason: "already_active", workspace_id: finalWorkspaceId }, { status: 200 });
     }
 
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(stripeSecretKey);
+    // Phase 78/Phase 6: shared factory with pinned apiVersion
+    const stripe = getStripe();
 
     // Get email if not provided
     if (!finalEmail) {
@@ -237,6 +239,9 @@ export async function POST(req: NextRequest) {
           email: finalEmail || undefined,
           metadata: { workspace_id: finalWorkspaceId },
           invoice_settings: { footer: RECEIPT_FOOTER },
+        }, {
+          // Phase 78/Phase 6.2: never create two Stripe customers per workspace
+          idempotencyKey: stripeIdempotencyKey("customer-create", finalWorkspaceId),
         });
         const createdId = customer.id;
 
@@ -283,6 +288,9 @@ export async function POST(req: NextRequest) {
         success_url: successUrl,
         cancel_url: cancelUrl,
         allow_promotion_codes: true,
+      }, {
+        // Phase 78/Phase 6.2: reuse checkout session for repeat clicks on "Activate"
+        idempotencyKey: stripeIdempotencyKey("subscription-checkout", finalWorkspaceId, tier, interval),
       });
 
       log("info", "billing.checkout_started", { workspace_id: finalWorkspaceId, session_id: session.id });

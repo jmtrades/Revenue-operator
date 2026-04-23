@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (expectedBuf.length !== providedBuf.length || !crypto.timingSafeEqual(expectedBuf, providedBuf)) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
-  } else if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+  } else if (process.env.NODE_ENV === "production") {
     log("error", "zoom_webhook.secret_not_configured", { message: "rejecting request — ZOOM_WEBHOOK_SECRET must be set in production" });
     return NextResponse.json({ error: "Webhook not configured" }, { status: 403 });
   }

@@ -3,24 +3,13 @@ import { getDb } from "@/lib/db/queries";
 import { recordDeliveryReceipt } from "@/lib/delivery/provider";
 import { markAttemptDelivered } from "@/lib/delivery-assurance/action-attempts";
 import { log } from "@/lib/logger";
-import crypto from "crypto";
+import {
+  verifyTwilioRequest,
+  buildTwilioCandidateUrls,
+  TwilioSignatureConfigError,
+} from "@/lib/security/twilio-signature";
 
 export const dynamic = "force-dynamic";
-
-function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  if (!token) return false;
-  const sorted = Object.keys(params)
-    .sort()
-    .reduce((acc, key) => acc + key + params[key], "");
-  const data = url + sorted;
-  const expected = crypto.createHmac("sha1", token).update(Buffer.from(data, "utf-8")).digest("base64");
-  try {
-    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
-  } catch {
-    return false;
-  }
-}
 
 export async function POST(request: NextRequest) {
 
@@ -29,15 +18,12 @@ export async function POST(request: NextRequest) {
   const bodyText = await request.text();
   const formParams = Object.fromEntries(new URLSearchParams(bodyText)) as Record<string, string>;
 
-  // Verify Twilio signature in production
+  // Phase 78/Phase 4 (P0-4): always-on Twilio signature verification — no
+  // NODE_ENV gate, fail-closed on missing TWILIO_AUTH_TOKEN.
   const sig = request.headers.get("x-twilio-signature");
-  const hasToken = Boolean(process.env.TWILIO_AUTH_TOKEN);
-  if (hasToken && process.env.NODE_ENV === "production") {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/status`;
-    if (!sig || !verifyTwilioSignature(url, formParams, sig)) {
-      console.warn("[twilio-status] Invalid signature — rejecting request");
-      return new NextResponse("Unauthorized", { status: 401, headers: { "Content-Type": "text/plain" } });
-    }
+  if (!verifyTwilioRequest(buildTwilioCandidateUrls(request), formParams, sig)) {
+    log("warn", "twilio_status.invalid_signature", {});
+    return new NextResponse("Forbidden", { status: 403, headers: { "Content-Type": "text/plain" } });
   }
 
   const messageSid = formParams.MessageSid ?? null;
@@ -128,6 +114,10 @@ export async function POST(request: NextRequest) {
 
   return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/plain" } });
   } catch (err) {
+    if (err instanceof TwilioSignatureConfigError) {
+      log("error", "twilio_status.signature_config_error", { message: err.message });
+      return new NextResponse("Server misconfigured", { status: 500, headers: { "Content-Type": "text/plain" } });
+    }
     log("error", "[twilio-status]", { error: err instanceof Error ? err.message : String(err) });
     return new NextResponse("Error", { status: 500, headers: { "Content-Type": "text/plain" } });
   }

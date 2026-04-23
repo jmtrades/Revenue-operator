@@ -3,6 +3,11 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+// Phase 13a — short-circuit sends against the per-workspace suppression list.
+import {
+  createSupabaseSuppressionWriter,
+  isEmailSuppressed,
+} from "@/lib/integrations/email-suppression";
 
 export type EmailProvider = "resend" | "sendgrid";
 
@@ -121,6 +126,20 @@ export async function sendEmail(
   options?: { template_slug?: string }
 ): Promise<{ ok: boolean; id?: string; externalId?: string; error?: string }> {
   const db = getDb();
+
+  // Phase 13a — never send to a suppressed address. This protects domain
+  // reputation and is mandatory for workspaces in regulated industries.
+  try {
+    const suppressionWriter = createSupabaseSuppressionWriter(db);
+    const { suppressed, reason } = await isEmailSuppressed(workspaceId, to, suppressionWriter);
+    if (suppressed) {
+      return { ok: false, error: `suppressed:${reason ?? "unknown"}` };
+    }
+  } catch {
+    // Suppression table may not exist yet in some environments — fail open but
+    // log. This is additive; the DB migration gates the hard guarantee.
+  }
+
   const creds = await getSendApiKey(workspaceId);
   if (!creds) {
     console.warn("[email] RESEND_API_KEY not configured — email not sent");

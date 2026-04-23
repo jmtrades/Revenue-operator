@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         });
         if (res.ok) ran.push(path);
       } catch (err) {
-        // Sub-cron failed; continue
+        log("error", "[cron/guarantees] Sub-cron step failed", { error: err instanceof Error ? err.message : String(err) });
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");

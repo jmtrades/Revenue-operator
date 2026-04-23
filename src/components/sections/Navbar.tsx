@@ -66,27 +66,63 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
   }, [initialAuthenticated]);
 
   useEffect(() => {
+    // Session state refresh — TTL-throttled + debounced to prevent
+    // per-focus / per-visibilitychange DDoS on /api/auth/session.
+    const TTL_MS = 30_000;       // don't refetch more often than once / 30s
+    const DEBOUNCE_MS = 250;     // collapse rapid-fire focus/visibility events
     let cancelled = false;
-    const refreshAuthState = () => {
-      fetch("/api/auth/session", {
-        credentials: "include",
-        cache: "no-store",
-        headers: { "Cache-Control": "no-store" },
-      })
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data: { session?: { userId?: string | null } | null } | null) => {
-          if (cancelled) return;
-          setAuthenticated(Boolean(data?.session?.userId));
-        })
-        .catch(() => { if (!cancelled) setAuthenticated(false); });
+    let lastFetchedAt = 0;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let inFlight = false;
+
+    const doFetch = async () => {
+      if (inFlight) return;
+      inFlight = true;
+      try {
+        const res = await fetch("/api/auth/session", {
+          credentials: "include",
+          cache: "no-store",
+          headers: { "Cache-Control": "no-store" },
+        });
+        const data = res.ok
+          ? ((await res.json()) as { session?: { userId?: string | null } | null } | null)
+          : null;
+        if (cancelled) return;
+        setAuthenticated(Boolean(data?.session?.userId));
+        lastFetchedAt = Date.now();
+      } catch {
+        if (!cancelled) setAuthenticated(false);
+      } finally {
+        inFlight = false;
+      }
     };
-    refreshAuthState();
-    window.addEventListener("focus", refreshAuthState);
-    document.addEventListener("visibilitychange", refreshAuthState);
+
+    const schedule = (force = false) => {
+      if (cancelled) return;
+      const now = Date.now();
+      if (!force && now - lastFetchedAt < TTL_MS) return;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => { void doFetch(); }, DEBOUNCE_MS);
+    };
+
+    // Only refetch on visibility change if the tab is actually visible.
+    const onVisibility = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        schedule();
+      }
+    };
+
+    const onFocus = () => schedule();
+
+    // Initial fetch bypasses TTL so the UI reflects current state on mount.
+    schedule(true);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelled = true;
-      window.removeEventListener("focus", refreshAuthState);
-      document.removeEventListener("visibilitychange", refreshAuthState);
+      if (debounceTimer) clearTimeout(debounceTimer);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [pathname]);
 
@@ -97,7 +133,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
     <header
       className="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center"
       style={{
-        background: scrolled ? "var(--bg-surface-glass, rgba(255, 255, 255, 0.82))" : "transparent",
+        background: scrolled ? "var(--bg-surface-glass)" : "transparent",
         backdropFilter: scrolled ? "saturate(180%) blur(20px)" : "none",
         WebkitBackdropFilter: scrolled ? "saturate(180%) blur(20px)" : "none",
         borderBottom: scrolled ? "1px solid var(--border-default)" : "1px solid transparent",

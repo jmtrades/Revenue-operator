@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car, Shield, Dumbbell, FileText, PawPrint, Sparkle, Camera, Zap, ShoppingCart, Bone, Trees, BookOpen, Truck, Heart, Baby, Bug, Waves, DollarSign, Lightbulb, Key, Droplet, Hammer } from "lucide-react";
+import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car, Shield, Dumbbell, FileText, PawPrint, Sparkle, Camera, Zap, ShoppingCart, Bone, Trees, BookOpen, Truck, Heart, Baby, Bug, Waves, DollarSign, Lightbulb, Key, Droplet } from "lucide-react";
 
 /* ─── Conversation Scripts ─── */
 const SCENARIOS = [

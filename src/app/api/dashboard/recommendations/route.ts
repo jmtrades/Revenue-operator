@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { NO_SHOW_APPOINTMENT_VALUE_CENTS } from "@/lib/constants";
 import { getDb } from "@/lib/db/queries";
 
 interface Recommendation {
@@ -205,7 +206,7 @@ export async function GET(req: NextRequest) {
 
     // No-shows recovery
     if (noShowsThisWeek > 2) {
-      const impactCents = noShowsThisWeek * 5000; // 20% rebook × $250 appointment value
+      const impactCents = noShowsThisWeek * NO_SHOW_APPOINTMENT_VALUE_CENTS;
       revenueAtRiskTotalCents += impactCents;
       recommendations.push({
         id: "no-shows-recovery",

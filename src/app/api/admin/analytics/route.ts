@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   }
 
   const db = getDb();
-  const result: Record<string, any> = {};
+  const result: Record<string, unknown> = {};
 
   // Signup funnel: homepage_visit → signup_start → signup_complete → onboarding_start → onboarding_complete → first_call → activated
   try {
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     const { data: features } = await db.from("feature_usage").select("feature_name, created_at").order("created_at", { ascending: false });
     // Group by feature_name and count
     const featureCounts: Record<string, number> = {};
-    (features ?? []).forEach((f: any) => {
+    (features ?? []).forEach((f: { feature_name: string }) => {
       featureCounts[f.feature_name] = (featureCounts[f.feature_name] || 0) + 1;
     });
     result.feature_adoption = Object.entries(featureCounts)
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
 
     if (users && users.length > 0) {
       // Group users by signup week
-      users.forEach((u: any) => {
+      users.forEach((u: { created_at: string }) => {
         const createdDate = new Date(u.created_at);
         const weekKey = `${createdDate.getFullYear()}-W${Math.ceil(createdDate.getDate() / 7)}`;
         if (!cohorts[weekKey]) {
@@ -100,7 +100,7 @@ export async function GET(req: NextRequest) {
     const { data: allFeatures } = await db.from("feature_usage").select("feature_name, created_at");
     // Group by feature_name and count
     const featureCounts: Record<string, number> = {};
-    (allFeatures ?? []).forEach((f: any) => {
+    (allFeatures ?? []).forEach((f: { feature_name: string }) => {
       featureCounts[f.feature_name] = (featureCounts[f.feature_name] || 0) + 1;
     });
     result.top_features = Object.entries(featureCounts)

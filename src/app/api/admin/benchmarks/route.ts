@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
         period: period || null,
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     log("error", "[admin/benchmarks catch]", { error: err });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

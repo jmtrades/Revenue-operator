@@ -7,12 +7,26 @@ import { getDb } from "@/lib/db/queries";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoicemailConfigForBehavior } from "@/lib/voice/voicemail-detection";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
-import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
+import { buildCampaignPrompt, type CampaignType, type LeadForPrompt, type LeadState } from "@/lib/campaigns/prompt";
 import { getVoiceProvider } from "@/lib/voice";
 import { resolveVoiceForCall } from "@/lib/voice/resolve-voice";
 import { DEFAULT_RECALL_VOICE_ID as DEFAULT_VOICE_ID } from "@/lib/constants/recall-voices";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { log } from "@/lib/logger";
+
+const LEAD_STATES: ReadonlySet<LeadState> = new Set<LeadState>([
+  "NEW",
+  "CONTACTED",
+  "QUALIFIED",
+  "CUSTOMER",
+  "OPTED_OUT",
+  "DO_NOT_CALL",
+]);
+
+function coerceLeadState(raw: unknown): LeadState | null {
+  if (typeof raw !== "string") return null;
+  return LEAD_STATES.has(raw as LeadState) ? (raw as LeadState) : null;
+}
 
 export async function executeLeadOutboundCall(
   workspaceId: string,
@@ -114,17 +128,45 @@ export async function executeLeadOutboundCall(
     return { ok: false, error: "Unable to verify DNC status — call blocked for compliance safety" };
   }
 
-  // COMPLIANCE: TCPA Quiet Hours enforcement — don't call outside 8am-9pm in recipient's timezone
+  // COMPLIANCE: Layered calling window enforcement — federal TCPA + state-specific
+  // rules (AL/FL/TX/LA/MS/etc.) + federal holidays + state-forbidden weekdays.
+  // Lead's state code is passed for jurisdiction-aware enforcement (state code
+  // overrides area-code-derived timezone for legal purposes).
   try {
-    const { isTCPACompliant } = await import("@/lib/compliance/tcpa-quiet-hours");
-    if (!isTCPACompliant(phone)) {
-      log("warn", "[outbound-compliance] TCPA quiet hours violation — call blocked");
-      return { ok: false, error: "blocked_tcpa_hours" };
+    const { checkCallingCompliance } = await import("@/lib/compliance/tcpa-quiet-hours");
+    const complianceResult = checkCallingCompliance(phone, leadRow.state ?? null);
+    if (!complianceResult.allowed) {
+      log("warn", "[outbound-compliance] Calling compliance violation — call blocked", {
+        reason: complianceResult.reason,
+        detail: complianceResult.detail,
+        timezone: complianceResult.timezone,
+      });
+      return { ok: false, error: `blocked_${complianceResult.reason}` };
     }
   } catch (tcpaErr) {
-    // If TCPA check fails, fail closed for compliance safety
-    log("error", "[outbound-compliance] TCPA compliance check failed — blocking call for safety", { error: tcpaErr instanceof Error ? tcpaErr.message : String(tcpaErr) });
-    return { ok: false, error: "TCPA compliance check failed — call blocked for safety" };
+    // If check fails, fail closed for compliance safety
+    log("error", "[outbound-compliance] Calling compliance check failed — blocking call for safety", { error: tcpaErr instanceof Error ? tcpaErr.message : String(tcpaErr) });
+    return { ok: false, error: "Calling compliance check failed — call blocked for safety" };
+  }
+
+  // COMPLIANCE: FCC call-abandonment rate gate (47 CFR § 64.1200(a)(6)). If
+  // the workspace has exceeded the 3% cap over the rolling 30-day window,
+  // block outbound until it recovers. Cheap query — uses existing indexes.
+  try {
+    const { isCampaignAbandonmentCompliant } = await import("@/lib/compliance/abandonment-monitor");
+    const gate = await isCampaignAbandonmentCompliant(workspaceId);
+    if (!gate.allowed) {
+      log("warn", "[outbound-compliance] Abandonment gate blocked outbound call", {
+        rate: gate.stats.rate,
+        reason: gate.reason,
+      });
+      return { ok: false, error: gate.reason ?? "Abandonment rate exceeded" };
+    }
+  } catch (abErr) {
+    // Non-fatal: the gate is a backstop, don't freeze outbound on a bug.
+    log("warn", "[outbound-compliance] Abandonment gate check errored (allowing call)", {
+      error: abErr instanceof Error ? abErr.message : String(abErr),
+    });
   }
 
   // COMPLIANCE: Business hours enforcement — don't call outside configured hours
@@ -252,7 +294,7 @@ export async function executeLeadOutboundCall(
     name: leadRow.name,
     phone: leadRow.phone,
     company: leadRow.company,
-    state: (leadRow.state as any) || null,
+    state: coerceLeadState(leadRow.state),
     score: leadRow.qualification_score ?? null,
     tags: leadRow.metadata?.tags ?? null,
     notes: notes || null,

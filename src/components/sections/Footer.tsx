@@ -46,6 +46,7 @@ export function Footer() {
               <Link href="/outbound" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("outbound")}</Link>
               <Link href="/enterprise" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("enterprise")}</Link>
               <Link href={ROUTES.DOCS} className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("docs")}</Link>
+              <Link href="/changelog" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>Changelog</Link>
             </nav>
           </div>
 

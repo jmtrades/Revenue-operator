@@ -11,6 +11,7 @@
      Everything else is grayscale hierarchy. */
   --bg-primary: #FFFFFF;
   --bg-surface: #FFFFFF;
+  --bg-surface-glass: rgba(255, 255, 255, 0.82);
   --bg-elevated: #FAFBFC;
   --bg-hover: #F4F5F7;
   --bg-inset: #F7F8FA;
@@ -36,10 +37,10 @@
   --accent-danger: #DC2626;
   --accent-danger-subtle: rgba(220, 38, 38, 0.06);
 
-  /* Text: high-contrast hierarchy */
-  --text-primary: #0A0A0B;
-  --text-secondary: #5E6270;
-  --text-tertiary: #71757E;
+  /* Text: high-contrast hierarchy (WCAG AAA 7:1 on white for secondary) */
+  --text-primary: #0A0A0B;        /* 20.3:1 on #FFFFFF — AAA */
+  --text-secondary: #4A4E58;      /* 8.0:1 on #FFFFFF — AAA */
+  --text-tertiary: #5E6270;       /* 6.1:1 on #FFFFFF — AA (normal) */
   --text-disabled: #C5C8D0;
   --text-inverse: #FFFFFF;
   --text-on-accent: #FFFFFF;
@@ -131,7 +132,7 @@
   --surface-elevated: #18181B;
   --border: rgba(0, 0, 0, 0.08);
   --border-subtle: rgba(0, 0, 0, 0.05);
-  --text-muted: #8B8F9A;
+  --text-muted: #6A6D76;         /* 5.2:1 on #FFFFFF — AA */
   --accent: #2563EB;
   --accent-hover: #1D4ED8;
   --danger: #DC2626;
@@ -189,6 +190,7 @@
 .dark {
   --bg-primary: #09090B;
   --bg-surface: #111113;
+  --bg-surface-glass: rgba(9, 9, 11, 0.78);
   --bg-elevated: #18181B;
   --bg-hover: #1F1F23;
   --bg-inset: #0C0C0E;
@@ -213,9 +215,9 @@
   --accent-danger: #EF4444;
   --accent-danger-subtle: rgba(239, 68, 68, 0.1);
 
-  --text-primary: #F4F4F5;
-  --text-secondary: #A1A1AA;
-  --text-tertiary: #71717A;
+  --text-primary: #F4F4F5;        /* 17.8:1 on #09090B — AAA */
+  --text-secondary: #A1A1AA;      /* 7.9:1 on #09090B — AAA */
+  --text-tertiary: #8B8B95;       /* 5.9:1 on #09090B — AA */
   --text-disabled: #3F3F46;
   --text-inverse: #09090B;
   --text-on-accent: #FFFFFF;

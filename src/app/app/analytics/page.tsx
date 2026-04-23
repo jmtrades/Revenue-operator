@@ -426,9 +426,12 @@ export default function AppAnalyticsPage() {
 
   // Compute average deal value from leads with value_cents, fallback to 0
   const avgDealValue = useMemo(() => {
-    const leadsWithValue = filteredLeads.filter((l) => (l as any).value_cents && (l as any).value_cents > 0);
+    const leadsWithValue = filteredLeads.filter((l) => {
+      const v = (l as { value_cents?: number | null }).value_cents;
+      return typeof v === "number" && v > 0;
+    });
     if (leadsWithValue.length === 0) return 0;
-    const sum = leadsWithValue.reduce((acc, l) => acc + ((l as any).value_cents ?? 0), 0);
+    const sum = leadsWithValue.reduce((acc, l) => acc + ((l as { value_cents?: number | null }).value_cents ?? 0), 0);
     return Math.round(sum / leadsWithValue.length);
   }, [filteredLeads]);
 
@@ -492,7 +495,7 @@ export default function AppAnalyticsPage() {
       appointments: pctChange(appointments, prevAppointments),
       estRevenue: pctChange(estRevenueImpact, prevRevenue),
     };
-  }, [calls, leads, filteredCalls, rangeStart, rangeEnd, totalCalls, avgHandleTime, leadConversionPct, appointments, estRevenueImpact]);
+  }, [calls, leads, rangeStart, rangeEnd, totalCalls, avgHandleTime, leadConversionPct, appointments, estRevenueImpact, avgDealValue]);
 
   const volumeData = useMemo(() => {
     if (filteredCalls.length === 0) return [];

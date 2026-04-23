@@ -21,6 +21,7 @@
 
 import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
+import { checkCallingCompliance } from "@/lib/compliance/tcpa-quiet-hours";
 
 /* ── Types ───────────────────────────────────────────────────────── */
 
@@ -279,10 +280,14 @@ export async function getNextLead(
   const db = getDb();
 
   try {
-    // Find queued leads for this campaign, ordered by priority
+    // Find queued leads for this campaign, ordered by priority.
+    // NOTE: `state` is selected for layered-TCPA jurisdiction checks — state
+    // code governs state-specific forbidden weekdays and narrower windows, and
+    // overrides area-code-derived timezone when the consumer has ported or
+    // moved. See `@/lib/compliance/tcpa-quiet-hours`.
     const { data: leads } = await db
       .from("leads")
-      .select("id, phone, name, metadata")
+      .select("id, phone, name, state, metadata")
       .eq("workspace_id", workspaceId)
       .order("created_at", { ascending: true })
       .limit(50);
@@ -291,6 +296,7 @@ export async function getNextLead(
       id: string;
       phone?: string;
       name?: string;
+      state?: string | null;
       metadata?: Record<string, unknown>;
     }>;
 
@@ -302,10 +308,37 @@ export async function getNextLead(
       if (queue?.campaign_id !== campaignId) continue;
       if (queue?.status !== "queued" && queue?.status !== "retry") continue;
 
-      // Check TCPA calling hours
-      if (!isWithinCallingHours()) {
-        log("info", "outbound_dialer.outside_hours", { campaignId });
-        return null;
+      // Layered TCPA gate — lead's LOCAL timezone, lead's state jurisdiction,
+      // federal holidays, state-forbidden weekdays. Fails closed on error.
+      // This is a PRE-CHECK; `initiateOutboundCall` → `execute-lead-call`
+      // re-runs the same check at actual-dial time in case the window has
+      // closed between queue-pop and dial.
+      if (lead.phone) {
+        const gate = checkCallingCompliance(lead.phone, lead.state ?? null);
+        if (!gate.allowed) {
+          log("info", "outbound_dialer.outside_hours", {
+            campaignId,
+            leadId: lead.id,
+            reason: gate.reason,
+            detail: gate.detail,
+            timezone: gate.timezone,
+            localMinutes: gate.localMinutes,
+            localWeekday: gate.localWeekday,
+          });
+          continue;
+        }
+      } else {
+        // Lead with no phone cannot be compliance-checked (no area-code → tz
+        // fallback); defer to server-local as a last-resort gate. The actual
+        // dial will fail with a missing-phone error anyway.
+        if (!isWithinCallingHoursServerLocal()) {
+          log("info", "outbound_dialer.outside_hours", {
+            campaignId,
+            leadId: lead.id,
+            reason: "no_phone_server_local_gate",
+          });
+          continue;
+        }
       }
 
       return {
@@ -535,9 +568,15 @@ export async function recordDisposition(
 /* ── Helpers ─────────────────────────────────────────────────────── */
 
 /**
- * Check if current time is within TCPA calling hours (9 AM - 8 PM local).
+ * Last-resort gate for leads with no phone number (cannot resolve timezone
+ * from area code). Real TCPA enforcement for leads WITH a phone goes through
+ * `checkCallingCompliance` in `@/lib/compliance/tcpa-quiet-hours` — which
+ * handles lead-local time, state jurisdiction, federal holidays, and
+ * state-forbidden weekdays. This helper is not a compliance boundary; it only
+ * keeps the server from dialing at 3 AM server-local when we genuinely have
+ * no way to compute the lead's local time.
  */
-function isWithinCallingHours(): boolean {
+function isWithinCallingHoursServerLocal(): boolean {
   const now = new Date();
   const hour = now.getHours();
   return hour >= 9 && hour < 20;

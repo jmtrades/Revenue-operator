@@ -90,7 +90,9 @@ const CORE_STEPS = [
   "/api/cron/no-reply",
   "/api/cron/pattern-aggregator",
   "/api/cron/usage-milestones",
-  "/api/cron/usage-overage",
+  // Phase 78/Task 6.4: /api/cron/usage-overage retired — duplicate of
+  // /api/billing/overage (different idempotency keys → double-bill).
+  // Do not re-add to this list. Single source: src/app/api/billing/overage/route.ts.
   // ── Time-Anchored ──
   "/api/cron/morning-state",
   "/api/cron/morning-certainty",

@@ -22,34 +22,68 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Shape returned by GET /api/health. Kept in lockstep with that route — if you
+ * change the handler's response, update this type AND the status-page tests.
+ */
+type CheckResult = { ok: boolean; latencyMs: number; note?: string };
+type HealthProbe = {
+  status: "healthy" | "degraded" | "down";
+  checks: Record<string, CheckResult>;
+  latencyMs?: number;
+  timestamp?: string;
+  version?: string;
+  region?: string | null;
+};
+
+const SUBSYSTEM_LABELS: Record<string, string> = {
+  database: "Database",
+  voice_server: "Voice server",
+  redis: "Rate-limit store",
+  telnyx: "Telephony (Telnyx)",
+  stripe: "Billing (Stripe)",
+};
+
+function formatCheck(result: CheckResult | undefined): string {
+  if (!result) return "Unavailable";
+  if (result.ok) return `Operational (${result.latencyMs}ms)`;
+  if (result.note === "not_configured") return "Not configured";
+  return result.note ? `Degraded — ${result.note}` : "Degraded";
+}
+
 export default async function StatusPage() {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? BASE;
-  type HealthProbe = {
-    ok?: boolean;
-    status?: string;
-    database?: string;
-    stripe?: string;
-    stripe_prices?: Record<string, boolean>;
-    has_stripe_secret?: boolean;
-    has_stripe_webhook_secret?: boolean;
-    last_cron_execution?: { commitment_recovery?: string | null; settlement_export?: string | null };
-  };
-
   let health: HealthProbe | null = null;
 
   try {
     const r = await fetch(`${baseUrl}/api/health`, { cache: "no-store" });
-    if (r.ok) health = (await r.json()) as HealthProbe;
+    // /api/health returns 503 on "down" but still has a JSON body, so we read
+    // the body regardless of status.
+    const json = (await r.json()) as HealthProbe;
+    if (json && typeof json.status === "string") health = json;
   } catch {
-    // If /api/health is unreachable, we still render the page.
+    // If /api/health is unreachable, we still render the page in a degraded
+    // visual state rather than 500-ing.
     health = null;
   }
 
   const status = health?.status ?? "degraded";
-  const badgeStyle =
-    status === "ok"
-      ? { borderColor: "rgb(34 197 94 / 0.35)", background: "rgb(34 197 94 / 0.10)" }
-      : { borderColor: "rgb(239 68 68 / 0.35)", background: "rgb(239 68 68 / 0.10)" };
+  const isOperational = status === "healthy";
+  const badgeStyle = isOperational
+    ? { borderColor: "rgb(34 197 94 / 0.35)", background: "rgb(34 197 94 / 0.10)" }
+    : { borderColor: "rgb(239 68 68 / 0.35)", background: "rgb(239 68 68 / 0.10)" };
+  const headline = isOperational
+    ? "Revenue Operator is operational"
+    : status === "down"
+      ? "Revenue Operator is down"
+      : "Revenue Operator is degraded";
+  const badgeText = isOperational ? "All systems normal" : "Attention required";
+  const checks = health?.checks ?? {};
+  const subsystemEntries = Object.keys(SUBSYSTEM_LABELS).map((key) => ({
+    key,
+    label: SUBSYSTEM_LABELS[key] ?? key,
+    result: checks[key],
+  }));
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
@@ -59,20 +93,20 @@ export default async function StatusPage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <SectionLabel>System Status</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">Revenue Operator is {status === "ok" ? "operational" : "degraded"}</h1>
+              <h1 className="font-bold text-4xl md:text-6xl leading-tight">{headline}</h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Live health checks for hosting, database, and billing webhooks.
+                Live subsystem probes for database, telephony, billing, rate-limit store, and the voice server.
               </p>
 
               <div className="mt-8 inline-flex items-center gap-3 rounded-2xl border px-5 py-3 text-sm font-semibold" style={{ ...badgeStyle, borderWidth: 1, borderStyle: "solid" }}>
                 <span
                   className="w-2.5 h-2.5 rounded-full"
                   style={{
-                    background: status === "ok" ? "rgb(34 197 94)" : "rgb(239 68 68)",
+                    background: isOperational ? "rgb(34 197 94)" : "rgb(239 68 68)",
                   }}
                   aria-hidden
                 />
-                <span>{status === "ok" ? "All systems normal" : "Attention required"}</span>
+                <span>{badgeText}</span>
               </div>
             </div>
           </Container>
@@ -81,42 +115,45 @@ export default async function StatusPage() {
         <section className="py-10 md:py-16">
           <Container>
             <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="rounded-2xl border bg-white/0" style={{ borderColor: "var(--border-default)", background: "var(--bg-inset)", padding: 20 }}>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Database</p>
-                <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  {health?.database ? `Probe result: ${health.database}` : "Unavailable"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-inset)", padding: 20 }}>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Billing</p>
-                <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  {health?.stripe ? `Probe result: ${health.stripe}` : "Unavailable"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-inset)", padding: 20 }}>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Cron heartbeats</p>
-                <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  Commitment recovery: {health?.last_cron_execution?.commitment_recovery ?? "—"}
-                  <br />
-                  Settlement export: {health?.last_cron_execution?.settlement_export ?? "—"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-inset)", padding: 20 }}>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Billing configuration</p>
-                <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  Secret key: {health?.has_stripe_secret ? "set" : "missing"}
-                  <br />
-                  Webhook secret: {health?.has_stripe_webhook_secret ? "set" : "missing"}
-                </p>
-              </div>
+              {subsystemEntries.map(({ key, label, result }) => {
+                const ok = result?.ok === true;
+                const notConfigured = result?.note === "not_configured";
+                return (
+                  <div
+                    key={key}
+                    className="rounded-2xl border"
+                    style={{ borderColor: "var(--border-default)", background: "var(--bg-inset)", padding: 20 }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{label}</p>
+                      <span
+                        className="inline-block w-2 h-2 rounded-full"
+                        aria-hidden
+                        style={{
+                          background: ok
+                            ? "rgb(34 197 94)"
+                            : notConfigured
+                              ? "rgb(148 163 184)"
+                              : "rgb(239 68 68)",
+                        }}
+                      />
+                    </div>
+                    <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                      {formatCheck(result)}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
 
             <div className="mt-10 pt-8 border-t" style={{ borderColor: "var(--border-default)" }}>
               <p className="text-sm" style={{ color: "var(--text-tertiary)", lineHeight: 1.7 }}>
-                This page is informational. For billing questions or outages, contact support via{" "}
+                Last probed: {health?.timestamp ?? "—"}
+                {health?.version ? <> · Build {health.version}</> : null}
+                {health?.region ? <> · Region {health.region}</> : null}
+              </p>
+              <p className="mt-3 text-sm" style={{ color: "var(--text-tertiary)", lineHeight: 1.7 }}>
+                This page is informational. For billing questions or outages, reach us via{" "}
                 <a href="/contact" style={{ color: "var(--accent-primary)", textDecoration: "underline" }}>
                   contact
                 </a>

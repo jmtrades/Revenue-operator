@@ -64,6 +64,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/terms`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${BASE}/terms/voice-cloning`, lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.6 },
+    { url: `${BASE}/changelog`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.45 },
+    { url: `${BASE}/docs`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
   ];
   for (const slug of BLOG_SLUGS) {
     entries.push({ url: `${BASE}/blog/${slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 });

@@ -645,6 +645,7 @@ const TAB_IDS: { id: TabId; labelKey: string; icon: typeof Key }[] = [
 
 export default function DeveloperPage() {
   const t = useTranslations("developer");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const [tab, setTab] = useState<TabId>("keys");
   const tabs = TAB_IDS.map((tabDef) => ({ ...tabDef, label: t(tabDef.labelKey) }));
   const [keys, setKeys] = useState<ApiKeyRow[]>([]);
@@ -709,7 +710,7 @@ export default function DeveloperPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
-        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Developer" }]} />
+        <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("developer") }]} />
         <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("heading")}</h1>
         <p className="text-sm text-[var(--text-secondary)] mb-6">
           {t("pageSubtitle")}{" "}

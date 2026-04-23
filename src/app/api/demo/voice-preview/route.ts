@@ -24,11 +24,9 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { log } from "@/lib/logger";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 /* ─── In-memory caches ─── */
-
-// Rate limiting: IP -> { count, resetAt }
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 // Audio cache: "voiceId:textHash" -> { buffer, contentType, cachedAt }
 const audioCache = new Map<
@@ -37,28 +35,6 @@ const audioCache = new Map<
 >();
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const MAX_CACHE_ENTRIES = 200;
-
-function checkRateLimit(
-  ip: string,
-  maxRequests: number = 20,
-  windowMs: number = 60000
-): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-  if (!record || record.resetAt < now) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs });
-    return true;
-  }
-  if (record.count >= maxRequests) {
-    log("warn", "voice_preview.rate_limit_exceeded", {
-      ip,
-      count: record.count,
-    });
-    return false;
-  }
-  record.count++;
-  return true;
-}
 
 /** Simple hash for cache keys — not cryptographic, just dedup */
 function simpleHash(str: string): string {
@@ -375,12 +351,14 @@ async function handleVoiceServerTTS(
 
 export async function GET(req: NextRequest) {
   try {
-    const ip =
-      (req.headers.get("x-forwarded-for") ?? "").split(",")[0]?.trim() ||
-      req.headers.get("x-real-ip") ||
-      "unknown";
+    const ip = getClientIp(req);
 
-    if (!checkRateLimit(ip, 20, 60000)) {
+    const rateLimitResult = await checkRateLimit(ip, 10, 60_000);
+    if (!rateLimitResult.allowed) {
+      log("warn", "voice_preview.rate_limit_exceeded", {
+        ip,
+        remaining: rateLimitResult.remaining,
+      });
       return NextResponse.json(
         { error: "Rate limit exceeded. Please wait before trying again." },
         { status: 429 }

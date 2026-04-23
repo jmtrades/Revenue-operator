@@ -10,8 +10,6 @@ import "./globals.css";
 // runtime-only env vars (STRIPE_SECRET_KEY etc.) are not yet available, which
 // causes the production build to crash.
 import { Toaster } from "sonner";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/next";
 import { SwCleanup } from "@/components/SwCleanup";
 import { StaleBuildBanner } from "@/components/StaleBuildBanner";
 import TrackPageView from "@/components/TrackPageView";
@@ -102,6 +100,11 @@ const organizationJsonLd = {
   ],
 };
 
+// SoftwareApplication JSON-LD.
+// Pricing mirrors the live /pricing page (Starter $147 → Agency $997 USD).
+// NOTE: we deliberately omit `aggregateRating` until we have a verifiable
+// public review source to back it — self-referential ratings violate
+// Google's structured data guidelines and will be ignored (or penalized).
 const softwareApplicationJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -116,13 +119,6 @@ const softwareApplicationJsonLd = {
     highPrice: "997",
     priceCurrency: "USD",
     offerCount: "4",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.9",
-    ratingCount: "127",
-    bestRating: "5",
-    worstRating: "1",
   },
   operatingSystem: "Web",
 };
@@ -185,8 +181,6 @@ export default async function RootLayout({
             }}
           />
           <TrackPageView />
-          <SpeedInsights />
-          <Analytics />
           <CookieConsent />
         </NextIntlClientProvider>
       </body>

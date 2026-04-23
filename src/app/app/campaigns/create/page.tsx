@@ -44,7 +44,7 @@ type SequenceStep = {
   template: string;
 };
 
-const getCampaignTypes = (t: any): Array<{
+const getCampaignTypes = (t: (key: string, opts?: { defaultValue?: string }) => string): Array<{
   id: CampaignType;
   icon: React.ComponentType<{ className?: string }>;
   label: string;

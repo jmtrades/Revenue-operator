@@ -84,13 +84,14 @@ export async function GET(req: NextRequest) {
   const pendingTier = row.pending_billing_tier ? normalizeTier(row.pending_billing_tier) : null;
   const pendingEffectiveAt = row.pending_billing_effective_at ?? null;
   let downgradeWarning: string | null = null;
-  let activeAgentsCount = 0;
+  // Always fetch the active-agents count so the UsagePulse card has a cost-per-agent
+  // figure without a second round-trip. Cheap head-count query.
+  const { count: agentCount } = await db
+    .from("agents")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", workspaceId);
+  const activeAgentsCount = agentCount ?? 0;
   if (pendingTier) {
-    const { count } = await db
-      .from("agents")
-      .select("id", { count: "exact", head: true })
-      .eq("workspace_id", workspaceId);
-    activeAgentsCount = count ?? 0;
     const nextPlanMaxAgents = BILLING_PLANS[pendingTier]?.maxAgents ?? -1;
     if (nextPlanMaxAgents > -1 && activeAgentsCount > nextPlanMaxAgents) {
       downgradeWarning = `You have ${activeAgentsCount} active agents. ${BILLING_PLANS[pendingTier]?.label ?? pendingTier} allows ${nextPlanMaxAgents}. Please deactivate ${activeAgentsCount - nextPlanMaxAgents} agent(s) before ${pendingEffectiveAt ? new Date(pendingEffectiveAt).toLocaleDateString() : "the plan change date"}.`;
@@ -134,6 +135,30 @@ export async function GET(req: NextRequest) {
 
   const usageAlert = evaluateUsageAlert(usageMetrics, tier);
 
+  // Phase 7 — Usage & billing visibility extras.
+  // Daily burn-rate + projected exhaustion let the dashboard render a burn-down
+  // line without re-querying call_sessions. Trial countdown reuses trial_ends_at.
+  const now = new Date();
+  const daysElapsedInPeriod = Math.max(
+    1,
+    Math.floor((now.getTime() - startOfMonth.getTime()) / (24 * 60 * 60 * 1000)) + 1,
+  );
+  const burnRatePerDay = minutesUsed > 0 ? minutesUsed / daysElapsedInPeriod : 0;
+  const minutesRemaining = Math.max(0, effectiveMinutesLimit - minutesUsed);
+  const daysUntilExhausted = burnRatePerDay > 0
+    ? Math.max(0, Math.floor(minutesRemaining / burnRatePerDay))
+    : null;
+  const projectedExhaustionAt = daysUntilExhausted !== null
+    ? new Date(now.getTime() + daysUntilExhausted * 24 * 60 * 60 * 1000).toISOString()
+    : null;
+  const trialDaysRemaining = trialEnd
+    ? Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)))
+    : null;
+  const monthlyPriceCents = BILLING_PLANS[tier]?.monthlyPrice ?? 0;
+  const costPerAgentCents = activeAgentsCount > 0
+    ? Math.round(monthlyPriceCents / activeAgentsCount)
+    : monthlyPriceCents;
+
   return NextResponse.json({
     billing_status: row.billing_status ?? "trial",
     renewal_at: row.protection_renewal_at ?? row.trial_ends_at ?? trialEndIso ?? null,
@@ -149,6 +174,14 @@ export async function GET(req: NextRequest) {
     pending_billing_effective_at: pendingEffectiveAt,
     downgrade_warning: downgradeWarning,
     active_agents_count: activeAgentsCount,
+    // Phase 7 additions — purely informational, non-breaking for existing clients.
+    trial_ends_at: trialEndIso,
+    trial_days_remaining: trialDaysRemaining,
+    burn_rate_per_day: Math.round(burnRatePerDay * 10) / 10,
+    days_until_exhausted: daysUntilExhausted,
+    projected_exhaustion_at: projectedExhaustionAt,
+    cost_per_agent_cents: costPerAgentCents,
+    monthly_price_cents: monthlyPriceCents,
     usage_alert: {
       level: usageAlert.level,
       pct_used: usageAlert.pctUsed,

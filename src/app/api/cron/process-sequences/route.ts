@@ -13,6 +13,7 @@ import { getDb } from "@/lib/db/queries";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { processWorkspaceDueEnrollments } from "@/lib/sequences/follow-up-engine";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
             }
           }
         } catch (err) {
-          // Error (details omitted to protect PII)
+          log("error", "[cron/process-sequences] Failed to process scheduled callback", { error: err instanceof Error ? err.message : String(err) });
         }
       }
       results.callbacks_processed = callbacksProcessed;

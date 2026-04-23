@@ -10,10 +10,13 @@
  *
  * Conversation state is stored in the call_sessions.metadata.demo_history array.
  *
- * Security: Validated via either:
- *   - Twilio HMAC-SHA1 signature (x-twilio-signature header)
- *   - Valid call session UUID in query param (shared secret between server + Twilio)
- *   - Valid CallSid matching an existing call_session record
+ * Security (Phase 78/Phase 4 — P0-1, P0-2):
+ *   Authentication is Twilio HMAC-SHA1 signature, always-on, fail-closed.
+ *   Previous implementation accepted UUID-in-query-param or CallSid-in-form-body
+ *   as "authentication" — both are enumerable by any attacker and neither is a
+ *   secret. Those bypasses have been removed. The session UUID query param is
+ *   still honored as a *hint* for conversation-state lookup, but is no longer
+ *   sufficient to bypass signature verification.
  */
 
 export const dynamic = "force-dynamic";
@@ -29,7 +32,11 @@ import {
 import { summarizeAndStoreCall } from "@/lib/voice/context-carryover";
 import { executePostCallAutomation } from "@/lib/voice/post-call-automation";
 import { log } from "@/lib/logger";
-import crypto from "crypto";
+import {
+  verifyTwilioRequest,
+  buildTwilioCandidateUrls,
+  TwilioSignatureConfigError,
+} from "@/lib/security/twilio-signature";
 
 /* ── Constants ─────────────────────────────────────────────────────────── */
 
@@ -47,33 +54,6 @@ const MIN_CONFIDENCE = 0.55;
 
 /** UUID pattern for validating session IDs */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-/* ── Twilio signature verification ──────────────────────────────────────── */
-
-function verifyTwilioSignature(
-  url: string,
-  params: Record<string, string>,
-  signature: string,
-): boolean {
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  if (!token) return false;
-  const sorted = Object.keys(params)
-    .sort()
-    .reduce((acc, key) => acc + key + params[key], "");
-  const data = url + sorted;
-  const expected = crypto
-    .createHmac("sha1", token)
-    .update(Buffer.from(data, "utf-8"))
-    .digest("base64");
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(expected),
-      Buffer.from(signature),
-    );
-  } catch {
-    return false;
-  }
-}
 
 /* ── TwiML helpers ──────────────────────────────────────────────────────── */
 
@@ -200,37 +180,24 @@ export async function POST(request: NextRequest) {
       new URLSearchParams(bodyText),
     ) as Record<string, string>;
 
-    /* ── Security verification ── */
+    /* ── Security verification (Phase 78/Phase 4 — P0-1, P0-2) ──
+     *
+     * ONE auth path: valid Twilio HMAC-SHA1 signature. UUID-in-query-param and
+     * CallSid-in-body are NOT secrets and no longer grant access. The UUID is
+     * still used below for state lookup, but only after the request has been
+     * proven to come from Twilio.
+     */
     const sig = request.headers.get("x-twilio-signature");
-    const hasToken = Boolean(process.env.TWILIO_AUTH_TOKEN);
+    if (!verifyTwilioRequest(buildTwilioCandidateUrls(request), formParams, sig)) {
+      log("warn", "demo_turn.auth_failed", {
+        callSid: formParams.CallSid ?? "unknown",
+        hasSig: !!sig,
+      });
+      return new NextResponse("Forbidden", { status: 403, headers: { "Content-Type": "text/plain" } });
+    }
+
     const sessionParam = request.nextUrl.searchParams.get("session");
     const callSid = formParams.CallSid ?? "unknown";
-
-    // Three-tier verification: valid session UUID → CallSid match → Twilio signature
-    const hasValidSessionId = sessionParam ? UUID_RE.test(sessionParam) : false;
-
-    if (hasToken && process.env.NODE_ENV === "production" && !hasValidSessionId) {
-      // No valid UUID session — check Twilio signature as fallback
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
-      const urls = [
-        `${appUrl}/api/webhooks/twilio/voice/demo-turn`,
-        `${appUrl}/api/webhooks/twilio/voice/demo-turn/`,
-      ];
-      const sigValid = sig && urls.some((u) => verifyTwilioSignature(u, formParams, sig));
-      if (!sigValid) {
-        // Last resort: check if CallSid matches an existing session
-        const db = getDb();
-        const { data: callSidSession } = await db
-          .from("call_sessions")
-          .select("id")
-          .eq("external_meeting_id", callSid)
-          .maybeSingle();
-        if (!callSidSession) {
-          log("warn", "demo_turn.auth_failed", { callSid, hasSession: !!sessionParam });
-          return new NextResponse("Unauthorized", { status: 401, headers: { "Content-Type": "text/plain" } });
-        }
-      }
-    }
 
     /* ── Extract Twilio params ── */
     const speechResult = formParams.SpeechResult ?? null;
@@ -484,6 +451,10 @@ export async function POST(request: NextRequest) {
       buildConversationTwiml(aiResponse, callbackUrl, callSessionId ?? "unknown"),
     );
   } catch (err) {
+    if (err instanceof TwilioSignatureConfigError) {
+      log("error", "demo_turn.signature_config_error", { message: err.message });
+      return new NextResponse("Server misconfigured", { status: 500, headers: { "Content-Type": "text/plain" } });
+    }
     log("error", "demo_turn.handler_error", {
       error: err instanceof Error ? err.message : String(err),
       latencyMs: Date.now() - startMs,

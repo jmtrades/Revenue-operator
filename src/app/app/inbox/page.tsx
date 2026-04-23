@@ -567,7 +567,7 @@ export default function InboxPage() {
       .catch((_err) => {
         toast.error(t("inbox.loadFailed"));
       });
-  }, [workspaceId]);
+  }, [workspaceId, t]);
 
   useEffect(() => {
     if (!workspaceId || threads.length === 0) return;
@@ -598,7 +598,7 @@ export default function InboxPage() {
     }, 30000); // Poll every 30 seconds
 
     return () => clearInterval(interval);
-  }, [workspaceId, input]);
+  }, [workspaceId, input, t]);
 
   const activeThread = useMemo(
     () => threads.find((t) => t.id === selectedId) ?? threads[0] ?? null,
@@ -711,7 +711,7 @@ export default function InboxPage() {
         }
       `}</style>
       <div className="p-4 md:p-6 lg:p-8 h-full">
-        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Inbox" }]} />
+        <Breadcrumbs items={[{ label: t("breadcrumbs.dashboard"), href: "/app" }, { label: t("breadcrumbs.inbox") }]} />
         <div className="flex items-center justify-between mb-2">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("inbox.title")}</h1>

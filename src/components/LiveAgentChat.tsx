@@ -110,8 +110,8 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
     setMessages([{ role: "assistant", content: greeting ?? cfg.greeting }]);
     setInput("");
     setLoading(false);
-     
-  }, [agent, greeting]);
+
+  }, [agent, greeting, cfg.greeting]);
 
   useEffect(() => {
     // Auto-scroll to bottom.

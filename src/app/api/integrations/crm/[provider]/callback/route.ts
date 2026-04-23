@@ -174,7 +174,60 @@ export async function GET(
       );
     }
 
-    return NextResponse.redirect(`${returnUrl}?crm=connected&provider=${provider}`);
+    // Auto-backfill: kick off a contacts pull in the background so the
+    // operator sees their existing CRM data as soon as the redirect lands.
+    // Non-blocking — a failure here doesn't break connect; the user can
+    // always tap "Pull more" on the integrations page.
+    void (async () => {
+      try {
+        const { pullContactsFromCrm } = await import("@/lib/integrations/crm-pull");
+        const { ingestPulledBatch } = await import("@/lib/integrations/crm-ingest");
+        const { getValidTokens } = await import("@/lib/integrations/token-refresh");
+        type ProviderKey = Parameters<typeof pullContactsFromCrm>[0];
+        const validTokens = await getValidTokens(workspaceId, provider as ProviderKey);
+        if (!validTokens?.access_token) return;
+
+        let cursor: string | null = null;
+        const startedAt = Date.now();
+        // Bounded — up to 3 pages (~300 contacts) or 20s wall-clock, whichever
+        // hits first. Balances "immediate value" against serverless timeouts.
+        for (let page = 0; page < 3; page++) {
+          const pull = await pullContactsFromCrm(provider as ProviderKey, validTokens, {
+            cursor,
+            limit: 100,
+          });
+          if (pull.records.length > 0) {
+            await ingestPulledBatch(workspaceId, provider as ProviderKey, pull.records);
+          }
+          cursor = pull.nextCursor;
+          if (!cursor || Date.now() - startedAt > 20_000) break;
+        }
+
+        const db2 = getDb();
+        await db2
+          .from("workspace_crm_connections")
+          .update({
+            metadata: { pull_cursor: cursor, last_pull_at: new Date().toISOString() },
+            last_sync_at: new Date().toISOString(),
+          })
+          .eq("workspace_id", workspaceId)
+          .eq("provider", provider);
+
+        log("info", "crm_callback.auto_backfill_done", {
+          provider,
+          workspaceId,
+          hasMore: !!cursor,
+        });
+      } catch (err) {
+        log("warn", "crm_callback.auto_backfill_failed", {
+          provider,
+          workspaceId,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    })();
+
+    return NextResponse.redirect(`${returnUrl}?crm=connected&provider=${provider}&backfill=started`);
   } catch (err) {
     log("error", `[CRM Callback] Unexpected error for ${provider}:`, { error: err });
     return NextResponse.redirect(

@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db/queries";
 import { BILLING_PLANS, type PlanSlug, normalizeTier } from "@/lib/billing-plans";
 import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 /** Plan minute and SMS limits by tier (source of truth: BILLING_PLANS) */
 export const PLAN_LIMITS: Record<PlanSlug, {
@@ -416,6 +417,14 @@ export async function reportUsageOverage(
       overage_voice_minutes: String(overageVoiceMinutes),
       overage_sms: String(overageSms),
     },
+  }, {
+    // Phase 78/Phase 6.2: scope idempotency by (workspace, subscription, period bucket)
+    idempotencyKey: stripeIdempotencyKey(
+      "overage-invoice-item",
+      workspaceId,
+      subscriptionId,
+      String(overageAmountCents),
+    ),
   });
 }
 

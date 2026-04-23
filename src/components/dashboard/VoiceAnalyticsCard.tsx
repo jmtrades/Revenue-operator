@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
+const AreaChart = dynamic(() => import("recharts").then(m => m.AreaChart), { ssr: false });
+const Area = dynamic(() => import("recharts").then(m => m.Area), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
 import {
   Phone,
   TrendingUp,

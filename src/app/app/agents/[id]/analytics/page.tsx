@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const AreaChart = dynamic(() => import("recharts").then(m => m.AreaChart), { ssr: false });
+const Area = dynamic(() => import("recharts").then(m => m.Area), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
+const BarChart = dynamic(() => import("recharts").then(m => m.BarChart), { ssr: false });
+const Bar = dynamic(() => import("recharts").then(m => m.Bar), { ssr: false });
 import {
   Phone,
   Clock,

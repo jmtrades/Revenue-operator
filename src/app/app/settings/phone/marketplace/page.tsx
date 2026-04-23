@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -60,7 +60,7 @@ export default function PhoneMarketplacePage() {
   const [hasSearched, setHasSearched] = useState(false);
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const search = async () => {
+  const search = useCallback(async () => {
     setLoading(true);
     setError(null);
     setProvisionSuccess(false);
@@ -89,7 +89,7 @@ export default function PhoneMarketplacePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [country, type, areaCode, state, tSettings, tPhone, tToast]);
 
   useEffect(() => {
     if (searchDebounceRef.current) {
@@ -98,14 +98,14 @@ export default function PhoneMarketplacePage() {
     searchDebounceRef.current = setTimeout(() => {
       search();
     }, 300);
-     
-  }, [country, type]);
+
+  }, [country, type, search]);
 
   // Auto-search on page load with default filters
   useEffect(() => {
     search();
-     
-  }, []);
+
+  }, [search]);
 
   const handleProvisionConfirmed = async (num: AvailableNumber) => {
     setProvisioning(num.phone_number);

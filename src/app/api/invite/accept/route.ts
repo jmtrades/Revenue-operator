@@ -31,31 +31,56 @@ export async function POST(req: NextRequest) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const db = getDb();
-  const { data: invite } = await db
+
+  // ATOMIC CLAIM — Phase 78 Task 8.2.
+  // Two clicks on the same invite link must not both succeed. We claim
+  // the invite with an UPDATE gated on (accepted_at IS NULL AND expires_at
+  // > now() AND status = 'pending'), returning the row only if the
+  // claim actually landed. The second concurrent click sees no returned
+  // row and is refused. No TOCTOU window between read and write.
+  const nowIso = new Date().toISOString();
+  const { data: claimed } = await db
     .from("workspace_invites")
-    .select("id, workspace_id, email, role, status, expires_at")
+    .update({
+      accepted_at: nowIso,
+      accepted_by: userId,
+      status: "accepted",
+    })
     .eq("invite_token", token)
+    .is("accepted_at", null)
+    .eq("status", "pending")
+    .gt("expires_at", nowIso)
+    .select("id, workspace_id, email, role")
     .maybeSingle();
 
-  if (!invite) return NextResponse.json({ error: "invalid" }, { status: 400 });
-  const inv = invite as { id: string; workspace_id: string; email: string | null; role: string | null; status: string | null; expires_at: string | null };
-  if (inv.status !== "pending") return NextResponse.json({ error: "invalid" }, { status: 400 });
-  if (inv.expires_at && new Date(inv.expires_at) <= new Date()) return NextResponse.json({ error: "expired" }, { status: 400 });
+  if (!claimed) {
+    // Figure out whether the token never existed, was already used, or
+    // expired — so the client can surface a clear error.
+    const { data: probe } = await db
+      .from("workspace_invites")
+      .select("id, status, expires_at, accepted_at")
+      .eq("invite_token", token)
+      .maybeSingle();
+    const p = probe as { status?: string | null; expires_at?: string | null; accepted_at?: string | null } | null;
+    if (!p) return NextResponse.json({ error: "invalid" }, { status: 400 });
+    if (p.accepted_at || p.status === "accepted") return NextResponse.json({ error: "already_accepted" }, { status: 400 });
+    if (p.expires_at && new Date(p.expires_at) <= new Date()) return NextResponse.json({ error: "expired" }, { status: 400 });
+    return NextResponse.json({ error: "invalid" }, { status: 400 });
+  }
 
+  const inv = claimed as { id: string; workspace_id: string; email: string | null; role: string | null };
   const workspaceId = inv.workspace_id;
-  const role = (inv.role ?? "agent").toLowerCase();
-  const teamRole = role === "admin" ? "admin" : role === "manager" ? "operator" : "operator";
+  const role = (inv.role ?? "operator").toLowerCase();
+  const teamRole = role === "admin" ? "admin"
+    : role === "closer" ? "closer"
+    : role === "compliance" ? "compliance"
+    : role === "auditor" ? "auditor"
+    : "operator";
 
   const { data: ws } = await db.from("workspaces").select("name").eq("id", workspaceId).maybeSingle();
   const workspaceName = (ws as { name?: string } | null)?.name?.trim() ?? "your workspace";
 
   try {
-    await db.from("workspace_invites").update({
-      accepted_at: new Date().toISOString(),
-      accepted_by: userId,
-      status: "accepted",
-    }).eq("id", inv.id);
-
     const { data: user } = await db.from("users").select("email").eq("id", userId).maybeSingle();
     const email = (user as { email?: string } | null)?.email ?? inv.email ?? "";
     const localPart = email.split("@")[0];

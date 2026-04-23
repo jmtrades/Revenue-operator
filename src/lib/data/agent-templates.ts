@@ -3,6 +3,8 @@
  * Used in onboarding Step 2 and dashboard agent creation.
  */
 
+import type { Persona } from "@/lib/workspace/personalization";
+
 export type AgentTemplateCategory =
   | "inbound"
   | "outbound"
@@ -39,6 +41,11 @@ export interface AgentTemplate {
   voiceId?: string;
   /** Capabilities for Vapi tools: capture_lead, book_appointment, send_sms, etc. */
   capabilities?: TemplateCapability[];
+  /**
+   * Personas for whom this template is "recommended". Empty/undefined = shown to everyone.
+   * If not set, use `getTemplatePersonas(template)` to derive defaults from category/id.
+   */
+  personas?: readonly Persona[];
 }
 
 export const AGENT_TEMPLATE_CATEGORIES: { id: AgentTemplateCategory; label: string }[] = [
@@ -532,4 +539,95 @@ export function getTemplateCapabilities(templateId: string | null | undefined): 
 export function getTemplateVoiceId(templateId: string | null | undefined): string | undefined {
   if (!templateId) return undefined;
   return getAgentTemplateById(templateId)?.voiceId;
+}
+
+/**
+ * Returns which personas this template is recommended for.
+ *
+ * Precedence:
+ *   1. Explicit `template.personas` if set
+ *   2. Heuristic based on category + id keywords
+ *   3. Empty array (= shown to everyone) as a safe default
+ */
+export function getTemplatePersonas(template: AgentTemplate): readonly Persona[] {
+  if (template.personas && template.personas.length > 0) return template.personas;
+
+  const id = template.id.toLowerCase();
+  const cat = template.category;
+
+  // Outbound / pipeline work → SDR + sales manager first, plus solo/agency.
+  if (cat === "outbound") {
+    if (id.includes("payment") || id.includes("debt") || id.includes("collect")) {
+      return ["office_manager", "owner", "agency_operator"] as const;
+    }
+    if (id.includes("survey") || id.includes("satisfaction") || id.includes("review")) {
+      return ["sales_manager", "owner", "office_manager", "agency_operator"] as const;
+    }
+    return ["sdr", "sales_manager", "solo_operator", "agency_operator"] as const;
+  }
+
+  // Specialized templates vary widely — inspect id for intent.
+  if (cat === "specialized") {
+    if (
+      id.includes("emergency") ||
+      id.includes("dispatcher") ||
+      id.includes("screener") ||
+      id.includes("concierge")
+    ) {
+      return ["office_manager", "owner", "solo_operator", "agency_operator"] as const;
+    }
+    if (id.includes("estimate") || id.includes("quot") || id.includes("price") || id.includes("payment")) {
+      return ["owner", "solo_operator", "office_manager", "agency_operator"] as const;
+    }
+    if (id.includes("healthcare") || id.includes("medical") || id.includes("real_estate") || id.includes("insurance")) {
+      return ["office_manager", "solo_operator", "owner"] as const;
+    }
+    // Default specialized → owner + office manager.
+    return ["owner", "office_manager", "solo_operator", "agency_operator"] as const;
+  }
+
+  // Multi-channel = versatile; pitch to owners, office managers, and solos.
+  if (cat === "multi-channel") {
+    if (id.includes("lead") || id.includes("qualif")) {
+      return ["sdr", "sales_manager", "owner", "agency_operator"] as const;
+    }
+    if (id.includes("recruit")) {
+      return ["sales_manager", "owner", "agency_operator"] as const;
+    }
+    return ["owner", "office_manager", "solo_operator", "agency_operator"] as const;
+  }
+
+  // Inbound = front-desk / office coverage by default.
+  if (cat === "inbound") {
+    if (id.includes("night") || id.includes("after")) {
+      return ["office_manager", "owner", "solo_operator"] as const;
+    }
+    return ["office_manager", "owner", "solo_operator", "agency_operator"] as const;
+  }
+
+  return [];
+}
+
+/**
+ * Filter + sort templates so persona-recommended ones come first.
+ *
+ * Unlike `filterTemplatesForPersona` (which works off the `personas` field),
+ * this version uses the heuristic in `getTemplatePersonas`.
+ */
+export function sortTemplatesForPersona(
+  templates: readonly AgentTemplate[],
+  persona: Persona | null | undefined,
+): AgentTemplate[] {
+  if (!persona) return [...templates];
+  const matches: AgentTemplate[] = [];
+  const rest: AgentTemplate[] = [];
+  for (const t of templates) {
+    const p = getTemplatePersonas(t);
+    if (p.length === 0 || p.includes(persona)) {
+      matches.push(t);
+    } else {
+      rest.push(t);
+    }
+  }
+  return [...matches, ...rest];
 }

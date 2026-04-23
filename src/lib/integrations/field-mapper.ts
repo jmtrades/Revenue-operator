@@ -1,17 +1,17 @@
 /**
  * Contact/lead field mapping engine for CRM integrations (Task 18).
- * Revenue Operator fields â CRM fields; default mappings; transformation rules; test with sample data.
+ * Revenue Operator fields -> CRM fields; default mappings; transformation rules; test with sample data.
+ *
+ * Phase 78 Task 9.3: CrmProviderId is now defined in @/lib/crm/providers
+ * (single source of truth). This file re-exports it so existing importers
+ * of @/lib/integrations/field-mapper keep working.
  */
 
-export type CrmProviderId =
-  | "salesforce"
-  | "hubspot"
-  | "zoho_crm"
-  | "pipedrive"
-  | "gohighlevel"
-  | "google_contacts"
-  | "microsoft_365"
-  | "airtable";
+
+import { SUPPORTED_CRM_PROVIDERS, isSupportedCrmProvider, type CrmProviderId } from "@/lib/crm/providers";
+
+// Re-export for the many existing callers that pull CrmProviderId out of field-mapper.
+export { SUPPORTED_CRM_PROVIDERS, isSupportedCrmProvider, type CrmProviderId };
 
 export interface FieldDef {
   key: string;
@@ -94,6 +94,71 @@ export const CRM_FIELDS_BY_PROVIDER: Record<CrmProviderId, FieldDef[]> = {
     { key: "Company", label: "Company", type: "string" },
     { key: "Status", label: "Status", type: "picklist" },
   ],
+  close: [
+    { key: "name", label: "Name", type: "string" },
+    { key: "contacts.emails.email", label: "Email", type: "email" },
+    { key: "contacts.phones.phone", label: "Phone", type: "phone" },
+    { key: "url", label: "Website", type: "string" },
+    { key: "status_id", label: "Status", type: "picklist" },
+  ],
+  follow_up_boss: [
+    { key: "firstName", label: "First Name", type: "string" },
+    { key: "lastName", label: "Last Name", type: "string" },
+    { key: "emails.value", label: "Email", type: "email" },
+    { key: "phones.value", label: "Phone", type: "phone" },
+    { key: "source", label: "Source", type: "string" },
+    { key: "stage", label: "Stage", type: "picklist" },
+  ],
+  active_campaign: [
+    { key: "firstName", label: "First Name", type: "string" },
+    { key: "lastName", label: "Last Name", type: "string" },
+    { key: "email", label: "Email", type: "email" },
+    { key: "phone", label: "Phone", type: "phone" },
+    { key: "fieldValues", label: "Custom fields", type: "string" },
+  ],
+  copper: [
+    { key: "name", label: "Name", type: "string" },
+    { key: "emails.email", label: "Email", type: "email" },
+    { key: "phone_numbers.number", label: "Phone", type: "phone" },
+    { key: "company_name", label: "Company", type: "string" },
+    { key: "status", label: "Status", type: "picklist" },
+  ],
+  monday_crm: [
+    { key: "name", label: "Name", type: "string" },
+    { key: "email", label: "Email", type: "email" },
+    { key: "phone", label: "Phone", type: "phone" },
+    { key: "company", label: "Company", type: "string" },
+    { key: "status", label: "Status", type: "picklist" },
+  ],
+  freshsales: [
+    { key: "first_name", label: "First Name", type: "string" },
+    { key: "last_name", label: "Last Name", type: "string" },
+    { key: "email", label: "Email", type: "email" },
+    { key: "mobile_number", label: "Mobile", type: "phone" },
+    { key: "company", label: "Company", type: "string" },
+    { key: "lead_stage_id", label: "Stage", type: "picklist" },
+  ],
+  attio: [
+    { key: "name", label: "Name", type: "string" },
+    { key: "email_addresses", label: "Email", type: "email" },
+    { key: "phone_numbers", label: "Phone", type: "phone" },
+    { key: "company", label: "Company", type: "string" },
+  ],
+  keap: [
+    { key: "given_name", label: "First Name", type: "string" },
+    { key: "family_name", label: "Last Name", type: "string" },
+    { key: "email_addresses.email", label: "Email", type: "email" },
+    { key: "phone_numbers.number", label: "Phone", type: "phone" },
+    { key: "company.company_name", label: "Company", type: "string" },
+  ],
+  google_sheets: [
+    { key: "Name", label: "Name", type: "string" },
+    { key: "Email", label: "Email", type: "email" },
+    { key: "Phone", label: "Phone", type: "phone" },
+    { key: "Company", label: "Company", type: "string" },
+    { key: "Status", label: "Status", type: "picklist" },
+    { key: "Notes", label: "Notes", type: "string" },
+  ],
 };
 
 export type TransformationType = "format_phone" | "map_status" | "concatenate" | "none";
@@ -166,6 +231,59 @@ export function getDefaultMappings(provider: CrmProviderId): MapEntry[] {
       { rtField: "company", crmField: "companyName", transformation: "none" },
     ],
     airtable: [
+      { rtField: "name", crmField: "Name", transformation: "none" },
+      { rtField: "email", crmField: "Email", transformation: "none" },
+      { rtField: "phone", crmField: "Phone", transformation: "format_phone" },
+      { rtField: "company", crmField: "Company", transformation: "none" },
+      { rtField: "state", crmField: "Status", transformation: "map_status", statusMap: { NEW: "New", CONTACTED: "Contacted", QUALIFIED: "Qualified", WON: "Won", LOST: "Lost" } },
+    ],
+    close: [
+      { rtField: "name", crmField: "name", transformation: "none" },
+      { rtField: "email", crmField: "contacts.emails.email", transformation: "none" },
+      { rtField: "phone", crmField: "contacts.phones.phone", transformation: "format_phone" },
+      { rtField: "company", crmField: "name", transformation: "none" },
+    ],
+    follow_up_boss: [
+      { rtField: "name", crmField: "firstName", transformation: "none" },
+      { rtField: "email", crmField: "emails.value", transformation: "none" },
+      { rtField: "phone", crmField: "phones.value", transformation: "format_phone" },
+    ],
+    active_campaign: [
+      { rtField: "name", crmField: "firstName", transformation: "none" },
+      { rtField: "email", crmField: "email", transformation: "none" },
+      { rtField: "phone", crmField: "phone", transformation: "format_phone" },
+    ],
+    copper: [
+      { rtField: "name", crmField: "name", transformation: "none" },
+      { rtField: "email", crmField: "emails.email", transformation: "none" },
+      { rtField: "phone", crmField: "phone_numbers.number", transformation: "format_phone" },
+      { rtField: "company", crmField: "company_name", transformation: "none" },
+    ],
+    monday_crm: [
+      { rtField: "name", crmField: "name", transformation: "none" },
+      { rtField: "email", crmField: "email", transformation: "none" },
+      { rtField: "phone", crmField: "phone", transformation: "format_phone" },
+      { rtField: "company", crmField: "company", transformation: "none" },
+    ],
+    freshsales: [
+      { rtField: "name", crmField: "first_name", transformation: "none" },
+      { rtField: "email", crmField: "email", transformation: "none" },
+      { rtField: "phone", crmField: "mobile_number", transformation: "format_phone" },
+      { rtField: "company", crmField: "company", transformation: "none" },
+    ],
+    attio: [
+      { rtField: "name", crmField: "name", transformation: "none" },
+      { rtField: "email", crmField: "email_addresses", transformation: "none" },
+      { rtField: "phone", crmField: "phone_numbers", transformation: "format_phone" },
+      { rtField: "company", crmField: "company", transformation: "none" },
+    ],
+    keap: [
+      { rtField: "name", crmField: "given_name", transformation: "none" },
+      { rtField: "email", crmField: "email_addresses.email", transformation: "none" },
+      { rtField: "phone", crmField: "phone_numbers.number", transformation: "format_phone" },
+      { rtField: "company", crmField: "company.company_name", transformation: "none" },
+    ],
+    google_sheets: [
       { rtField: "name", crmField: "Name", transformation: "none" },
       { rtField: "email", crmField: "Email", transformation: "none" },
       { rtField: "phone", crmField: "Phone", transformation: "format_phone" },

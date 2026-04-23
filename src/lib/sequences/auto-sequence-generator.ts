@@ -128,7 +128,7 @@ const INDUSTRY_TEMPLATES: Record<string, Record<ChannelType, string>> = {
   }
 };
 
-const DEFAULT_TEMPLATES: Record<ChannelType, string> = {
+const _DEFAULT_TEMPLATES: Record<ChannelType, string> = {
   email: 'Hi {firstName},\n\nI work with companies in {industry} like {company}.\n\nWould you be open to a brief conversation?\n\nBest,\n[Your Name]',
   call: 'Hi {firstName}, this is [Your Name]. I work with {industry} professionals. Do you have 15 minutes?',
   sms: '{firstName}, we help {industry} companies grow. Worth a quick chat?'
@@ -140,7 +140,7 @@ const DEFAULT_TEMPLATES: Record<ChannelType, string> = {
  * Generates an optimal multi-step outreach sequence based on lead data
  */
 export function generateOptimalSequence(params: SequenceGenerationParams): AutoSequence {
-  const { urgency, leadProfile, workspaceGoal, channelPreferences } = params;
+  const { urgency, leadProfile, workspaceGoal, channelPreferences: _channelPreferences } = params;
   const industry = params.industry ?? leadProfile.industry;
 
   let steps: SequenceStep[] = [];
@@ -274,7 +274,7 @@ export function generateConditionalBranches(step: SequenceStep): ConditionalBran
 // ============ HELPER FUNCTIONS ============
 
 function generateHotSequence(params: SequenceGenerationParams): SequenceStep[] {
-  const { channelPreferences, leadProfile } = params;
+  const { channelPreferences: _channelPreferences, leadProfile: _leadProfile } = params;
 
   return [
     {

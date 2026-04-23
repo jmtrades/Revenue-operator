@@ -98,6 +98,7 @@ function persistCampaignsSnapshot(workspaceId: string, campaigns: CampaignRow[])
 
 export default function CampaignsPage() {
   const t = useTranslations("campaigns");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const { workspaceId, loading: workspaceLoading } = useResolvedWorkspaceId();
   const snapshotWorkspaceId = workspaceId || "default";
   const initialCampaigns = readCampaignsSnapshot(snapshotWorkspaceId);
@@ -503,7 +504,7 @@ export default function CampaignsPage() {
         }
       `}</style>
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
-        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Campaigns" }]} />
+        <Breadcrumbs items={[{ label: tBreadcrumbs("dashboard"), href: "/app" }, { label: tBreadcrumbs("campaigns") }]} />
 
         {/* Fetch error banner */}
         {fetchError && (

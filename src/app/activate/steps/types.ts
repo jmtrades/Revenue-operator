@@ -1,4 +1,12 @@
-export type StepId = 1 | 2 | 3 | 4;
+import type { Persona } from "@/lib/workspace/personalization";
+
+/**
+ * Phase 78 Task 10.1: expanded from 1-4 to 1-6 so the "Go Live" phase (which
+ * used to render PackBusinessStep + CustomizeStep + ActivateStep stacked under
+ * a single `step === 4` branch) is split into three distinct steps. The wizard
+ * now renders exactly ONE step component at a time.
+ */
+export type StepId = 1 | 2 | 3 | 4 | 5 | 6;
 
 export type AgentTemplateId = string;
 
@@ -41,6 +49,12 @@ export interface ActivationState {
   preferredLanguage: string;
   voiceId: string;
   goals: string[];
+  /**
+   * Phase 1 personalization — user-facing persona captured in GoalStep.
+   * Drives template filtering and default dashboard layout.
+   * Persisted to workspace_members.persona on workspace/create.
+   */
+  persona: Persona | null;
 }
 
 export const ORG_TYPES: { id: OrgTypeId; label: string }[] = [
@@ -72,9 +86,11 @@ export const GOAL_OPTIONS = [
 
 export const STEPS: { id: StepId; label: string }[] = [
   { id: 1, label: "Choose your plan" },
-  { id: 2, label: "Your Business" },
+  { id: 2, label: "Your Goals" },
   { id: 3, label: "Connect Phone" },
-  { id: 4, label: "Go Live" },
+  { id: 4, label: "Your Business" },
+  { id: 5, label: "Customize Agent" },
+  { id: 6, label: "Go Live" },
 ];
 
 export const DAYS: DayId[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

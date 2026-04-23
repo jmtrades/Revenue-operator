@@ -101,13 +101,16 @@ vi.mock("@/lib/auth/session-edge", () => ({
 describe("Billing Integration Tests", () => {
   const originalEnv = process.env;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     process.env = { ...originalEnv };
     vi.clearAllMocks();
     // Reset mock workspace state
     mockWorkspace.billing_status = null;
     mockWorkspace.stripe_subscription_id = null;
     mockWorkspace.stripe_customer_id = null;
+    // Phase 78/Phase 6: reset cached Stripe singleton so mock closure is fresh per test
+    const { __resetStripeForTests } = await import("@/lib/billing/stripe-client");
+    __resetStripeForTests();
   });
 
   describe("POST /api/billing/checkout", () => {

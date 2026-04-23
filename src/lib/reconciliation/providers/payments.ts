@@ -2,6 +2,8 @@
  * Payments provider read API for reconciliation. Gated by env (STRIPE_SECRET_KEY).
  */
 
+import { getStripe } from "@/lib/billing/stripe-client";
+
 export interface ChargeRow {
   payment_id: string;
   amount_cents: number;
@@ -35,8 +37,8 @@ export function createStripePaymentsProvider(): PaymentsReadProvider {
     async listRecentCharges({ workspaceId: _workspaceId, since, limit }) {
       if (!isPaymentsConfigured()) return [];
       try {
-        const Stripe = (await import("stripe")).default;
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? process.env.STRIPE_API_KEY ?? "");
+        // Phase 78/Phase 6: shared factory with pinned apiVersion
+        const stripe = getStripe();
         const created = { gte: Math.floor(new Date(since).getTime() / 1000) };
         const charges = await Promise.race([
           stripe.charges.list({ created, limit: Math.min(limit, 100) }),
@@ -60,8 +62,8 @@ export function createStripePaymentsProvider(): PaymentsReadProvider {
     async listRecentRefunds({ since, limit }) {
       if (!isPaymentsConfigured()) return [];
       try {
-        const Stripe = (await import("stripe")).default;
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? process.env.STRIPE_API_KEY ?? "");
+        // Phase 78/Phase 6: shared factory with pinned apiVersion
+        const stripe = getStripe();
         const created = { gte: Math.floor(new Date(since).getTime() / 1000) };
         const refs = await Promise.race([
           stripe.refunds.list({ created, limit: Math.min(limit, 100) }),

@@ -11,8 +11,9 @@ import { getDb } from "@/lib/db/queries";
 import { getPriceId } from "@/lib/stripe-prices";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import type { BillingTier } from "@/lib/feature-gate/types";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 
@@ -63,8 +64,9 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspace_id);
   if (authErr) return authErr;
 
-  // Rate limiting: 5 requests per minute per workspace
-  const rl = await checkRateLimit(`billing:change-plan:${workspace_id}`, 5, 60_000);
+  // Rate limiting: 5 requests per minute per IP
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`billing:change-plan:${ip}`, 5, 60_000);
   if (!rl.allowed) {
     return NextResponse.json({ ok: false, error: "Too many requests" }, { status: 429 });
   }
@@ -127,6 +129,9 @@ export async function POST(req: NextRequest) {
           email: email || undefined,
           metadata: { workspace_id },
           invoice_settings: { footer: RECEIPT_FOOTER },
+        }, {
+          // Phase 78/Phase 6.2: never create two Stripe customers per workspace
+          idempotencyKey: stripeIdempotencyKey("customer-create", workspace_id),
         });
         const createdId = customer.id;
 
@@ -174,6 +179,9 @@ export async function POST(req: NextRequest) {
         success_url: `${origin}/app/settings/billing?plan_changed=1`,
         cancel_url: `${origin}/app/settings/billing`,
         allow_promotion_codes: true,
+      }, {
+        // Phase 78/Phase 6.2: reuse checkout session for repeat "Change plan" clicks
+        idempotencyKey: stripeIdempotencyKey("change-plan-checkout", workspace_id, tier, interval),
       });
       return NextResponse.json({
         ok: true,
@@ -211,6 +219,9 @@ export async function POST(req: NextRequest) {
       items: [{ id: itemId, price: priceResult.price_id }],
       proration_behavior: isDowngrade ? "none" : "create_prorations",
       billing_cycle_anchor: "unchanged",
+    }, {
+      // Phase 78/Phase 6.2: safe retries on plan-change update
+      idempotencyKey: stripeIdempotencyKey("sub-update", workspace_id, row.stripe_subscription_id, priceResult.price_id),
     });
 
     if (isDowngrade) {

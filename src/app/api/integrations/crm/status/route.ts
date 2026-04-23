@@ -7,21 +7,18 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
+import { SUPPORTED_CRM_PROVIDERS, type CrmProviderId } from "@/lib/crm/providers";
 
 export const dynamic = "force-dynamic";
 
-const CRM_PROVIDERS = [
-  "salesforce",
-  "hubspot",
-  "zoho_crm",
-  "pipedrive",
-  "gohighlevel",
-  "google_contacts",
-  "microsoft_365",
-  "airtable",
-] as const;
+/**
+ * Phase 78 Task 9.3: `CrmProviderId` is re-exported from the single source
+ * of truth. Older UI code imports the type from this route, so we continue
+ * to re-export it here to avoid a churn across every client component.
+ */
+export type { CrmProviderId };
 
-export type CrmProviderId = (typeof CRM_PROVIDERS)[number];
+const CRM_PROVIDERS = SUPPORTED_CRM_PROVIDERS;
 
 export interface CrmIntegrationStatus {
   connected: boolean;

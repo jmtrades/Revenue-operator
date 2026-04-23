@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
   }
 
    
-  let rows: any[] | null = null;
+  let rows: Record<string, unknown>[] | null = null;
   try {
     const result = await query;
     if (result.error) {

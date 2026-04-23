@@ -84,6 +84,7 @@ const DEFAULT_VOICE_B_ID = BUILT_IN_VOICES[1]?.id ?? "us-female-confident-closer
 export default function VoicesSettingsPage() {
   const { workspaceId } = useWorkspace();
   const t = useTranslations("voices");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const [voices, setVoices] = useState<Voice[]>(BUILT_IN_VOICES);
   // Voice server can override built-in voices with live data
   const [, setHasRealData] = useState(true);
@@ -357,7 +358,7 @@ export default function VoicesSettingsPage() {
     } finally {
       setIsCloning(false);
     }
-  }, [cloneFile, cloneName, cloneDescription, workspaceId, getAudioDurationSec]);
+  }, [cloneFile, cloneName, cloneDescription, workspaceId, getAudioDurationSec, t]);
 
   const handleDeleteClone = useCallback((voiceId: string) => {
     setVoices((prev) => prev.filter((v) => v.id !== voiceId));
@@ -435,9 +436,9 @@ export default function VoicesSettingsPage() {
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
       <Breadcrumbs items={[
-        { label: "Home", href: "/app" },
-        { label: "Settings", href: "/app/settings" },
-        { label: "Voices" }
+        { label: tBreadcrumbs("home"), href: "/app" },
+        { label: tBreadcrumbs("settings"), href: "/app/settings" },
+        { label: tBreadcrumbs("voices") }
       ]} />
       <PageHeader
         title={t("pageTitle")}

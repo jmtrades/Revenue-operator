@@ -3,15 +3,15 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Brain, ChevronDown, Flag, Music2 } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const LineChart = dynamic(() => import("recharts").then(m => m.LineChart), { ssr: false });
+const Line = dynamic(() => import("recharts").then(m => m.Line), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
+const CartesianGrid = dynamic(() => import("recharts").then(m => m.CartesianGrid), { ssr: false });
 import Link from "next/link";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
@@ -107,6 +107,7 @@ export default function CallIntelligencePage() {
   const [qualityTrendDays, setQualityTrendDays] = useState<7 | 30 | 90>(30);
   const [callNotes, setCallNotes] = useState<Record<string, string>>({});
   const t = useTranslations("callIntelligence");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tCommon = useTranslations("common");
   const callTypeLabels = useMemo(() => getCallTypeLabels(t), [t]);
 
@@ -153,8 +154,8 @@ export default function CallIntelligencePage() {
       if (v) notes[c.id] = v;
     });
     setCallNotes((prev) => ({ ...notes, ...prev }));
-     
-  }, [callExamples.length]);
+
+  }, [callExamples]);
 
   const handleAnalyze = async () => {
     const transcript = pasteText.trim();
@@ -352,7 +353,7 @@ export default function CallIntelligencePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 p-6">
-      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Call intelligence" }]} />
+      <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("callIntelligence") }]} />
       <div>
         <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
         <p className="text-sm text-[var(--text-tertiary)] mt-1">

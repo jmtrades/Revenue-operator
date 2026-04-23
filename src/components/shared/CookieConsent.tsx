@@ -8,7 +8,7 @@ const CONSENT_KEY = "rt_cookie_consent";
 
 /**
  * Minimal GDPR cookie consent banner.
- * - Blocks PostHog/Vercel Analytics initialization until user accepts (via window.__RT_CONSENT__)
+ * - Blocks PostHog/analytics initialization until user accepts (via window.__RT_CONSENT__)
  * - Stores preference in localStorage
  * - Shows on first visit only; dismissible
  */

@@ -18,6 +18,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { LeadsList } from "./components/LeadsList";
 import { LeadsKanban } from "./components/LeadsKanban";
 import { LeadDetail } from "./components/LeadDetail";
+import { parseCsv as parseCsvRfc4180 } from "@/lib/csv/parser";
 
 interface ApiLead {
   id: string;
@@ -647,7 +648,7 @@ export default function LeadsPage() {
   return (
     <div>
       <div className="p-6 md:p-8 max-w-6xl mx-auto">
-        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Leads" }]} />
+        <Breadcrumbs items={[{ label: t("breadcrumbs.dashboard"), href: "/app" }, { label: t("breadcrumbs.leads") }]} />
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">
@@ -1155,24 +1156,25 @@ export default function LeadsPage() {
                     const reader = new FileReader();
                     reader.onload = () => {
                       const text = String(reader.result ?? "");
-                      const lines = text.split(/\r?\n/).filter((l) => l.trim());
-                      const header = (lines[0] ?? "").toLowerCase();
-                      const parts = header.split(",").map((p) => p.trim());
+                      // Phase 78 Task 10.4: use the shared RFC-4180 parser so
+                      // quoted fields with embedded commas / newlines survive.
+                      const allRows = parseCsvRfc4180(text);
+                      const parts = (allRows[0] ?? []).map((p) => p.toLowerCase().trim());
                       const nameIdx = parts.findIndex((p) => p === "name" || p === "full name") >= 0 ? parts.findIndex((p) => p === "name" || p === "full name") : 0;
                       const phoneIdx = parts.findIndex((p) => p === "phone" || p === "phone number") >= 0 ? parts.findIndex((p) => p === "phone" || p === "phone number") : 1;
                       const emailIdx = parts.findIndex((p) => p === "email");
                       const notesIdx = parts.findIndex((p) => p === "notes" || p === "service" || p === "service_requested");
-                      const toObj = (line: string) => {
-                        const cells = line.split(",").map((c) => c.trim().replace(/^["']|["']$/g, ""));
+                      const toObj = (cells: string[]) => {
+                        const trimmed = cells.map((c) => c.trim());
                         return {
-                          name: cells[nameIdx] ?? "",
-                          phone: (cells[phoneIdx] ?? "").replace(/\D/g, "").length >= 10 ? cells[phoneIdx] ?? "" : "",
-                          email: emailIdx >= 0 ? cells[emailIdx] ?? "" : "",
-                          service_requested: notesIdx >= 0 ? cells[notesIdx] ?? "" : "",
-                          notes: notesIdx >= 0 ? cells[notesIdx] ?? "" : "",
+                          name: trimmed[nameIdx] ?? "",
+                          phone: (trimmed[phoneIdx] ?? "").replace(/\D/g, "").length >= 10 ? trimmed[phoneIdx] ?? "" : "",
+                          email: emailIdx >= 0 ? trimmed[emailIdx] ?? "" : "",
+                          service_requested: notesIdx >= 0 ? trimmed[notesIdx] ?? "" : "",
+                          notes: notesIdx >= 0 ? trimmed[notesIdx] ?? "" : "",
                         };
                       };
-                      const parsed = lines.slice(1).map(toObj).filter((r) => r.name && r.phone);
+                      const parsed = allRows.slice(1).map(toObj).filter((r) => r.name && r.phone);
                         if (parsed.length === 0) {
                           toast.error(t("leads.errors.csvNoValidRows"));
                           return;

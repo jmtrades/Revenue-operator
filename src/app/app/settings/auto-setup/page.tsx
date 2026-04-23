@@ -52,6 +52,7 @@ const INDUSTRIES = [
 
 export default function AutoSetupPage() {
   const t = useTranslations("autoSetup");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const [url, setUrl] = useState("");
   const [industry, setIndustry] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
@@ -244,9 +245,9 @@ export default function AutoSetupPage() {
         {/* Header */}
         <div className="mb-8 animate-fade-in-up">
           <Breadcrumbs items={[
-            { label: "Home", href: "/app" },
-            { label: "Settings", href: "/app/settings" },
-            { label: "Auto setup" }
+            { label: tBreadcrumbs("home"), href: "/app" },
+            { label: tBreadcrumbs("settings"), href: "/app/settings" },
+            { label: tBreadcrumbs("autoSetup") }
           ]} />
           <h1 className="text-3xl font-bold mb-2 mt-6" style={{ color: "var(--text-primary)" }}>
             Re-analyze Your Website
@@ -342,7 +343,7 @@ export default function AutoSetupPage() {
                 borderColor: "var(--border-default)",
                 color: "var(--text-primary)",
                 "--tw-ring-color": "var(--accent-primary)",
-              } as any}
+              } as React.CSSProperties}
             />
             <button
               onClick={handleReanalyze}

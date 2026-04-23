@@ -4,6 +4,14 @@
  * Not on a schedule — immediately when the event occurs.
  */
 
+// Phase 12f — richer inbound reply classification (OOO, wrong-person,
+// job-change, referral, unsubscribe, etc.) now routes email_reply events.
+import {
+  classifyReply,
+  suggestedNextAction,
+  type ReplyClassification,
+} from "@/lib/inbound/reply-classifier";
+
 /**
  * Core event types that trigger reactions
  */
@@ -359,69 +367,195 @@ function processEmailReply(
   leadContext: LeadContext,
   reaction: EventReaction
 ): EventReaction {
-  const reply = event.data.text as string | undefined;
-  const isNegative = reply?.toLowerCase().includes("not interested") ?? false;
+  const reply = (event.data.text as string | undefined) ?? "";
 
-  if (isNegative) {
-    // "Not interested" reply: Don't argue. Acknowledge. Ask ONE soft question.
-    reaction.immediateActions.push({
-      type: "email",
-      priority: "normal",
-      message:
-        `Thanks for getting back to me, ${leadContext.name}. I appreciate the honesty. ` +
-        `Out of curiosity, is there anything that would make this relevant for you down the road?`,
-      delay: 1000 * 60 * 5, // 5 minutes
-    });
+  // Phase 12f — use the Phase 12c.8 classifier instead of the old keyword check.
+  // The classifier handles out-of-office, wrong-person, job-change, referral,
+  // unsubscribe, meeting-request, questions — each of which should drive a
+  // different reaction than the single legacy "not interested / other" branch.
+  const classification: ReplyClassification = classifyReply(reply, new Date(event.timestamp));
+  const next = suggestedNextAction(classification);
 
-    reaction.delayedActions.push({
-      type: "email",
-      delay: 1000 * 60 * 60 * 24 * 30, // 30 days
-      templateKey: "soft_reengagement_30d",
-      priority: "low",
-    });
+  reaction.internalNotes.push({
+    content:
+      `Reply classified as "${classification.primary}"` +
+      (classification.secondary.length > 0
+        ? ` (also: ${classification.secondary.join(", ")})`
+        : "") +
+      ` — confidence ${classification.confidence.toFixed(2)}. ` +
+      `Next action: ${next.action}. ${next.note}`,
+    visibility: "team",
+  });
 
-    reaction.scoreDelta = {
-      delta: -10,
-      reason: "Lead expressed disinterest",
-    };
+  switch (classification.primary) {
+    case "unsubscribe":
+      // Legal: honor opt-out immediately, no more contact.
+      reaction.scoreDelta = { delta: -100, reason: "Lead requested unsubscribe" };
+      reaction.stageUpdate = { newStage: "LOST", reason: "Explicit opt-out" };
+      reaction.notifyRep = {
+        notify: true,
+        message: `${leadContext.name} unsubscribed. All outreach suppressed.`,
+        priority: "high",
+        actionItems: ["Suppress from all sequences", "Mark do-not-contact in CRM"],
+      };
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Unsubscribe: suppress immediately; no further contact.";
+      return reaction;
 
-    reaction.internalNotes.push({
-      content: "Lead said not interested. Soft follow-up sent. Back off for 30 days minimum.",
-      visibility: "team",
-    });
+    case "out_of_office":
+      // Pause outreach until OOO return date (or 3 days if unknown).
+      {
+        const returnMs = classification.oooReturnDate
+          ? Math.max(0, new Date(classification.oooReturnDate).getTime() - Date.now())
+          : 1000 * 60 * 60 * 24 * 3;
+        reaction.delayedActions.push({
+          type: "email",
+          delay: returnMs,
+          templateKey: "post_ooo_resume",
+          priority: "normal",
+        });
+      }
+      reaction.internalNotes.push({
+        content: `Out of office${classification.oooReturnDate ? ` until ${classification.oooReturnDate}` : ""}. Resume after return.`,
+        visibility: "team",
+      });
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Out-of-office auto-reply: pause sequence until return.";
+      return reaction;
 
-    reaction.confidence = 0.85;
-    reaction.reasoning = "Negative reply: acknowledge, ask ONE question, respect decision";
-  } else {
-    // Positive/neutral reply: Lead engaged
-    reaction.scoreDelta = {
-      delta: +20,
-      reason: "Lead replied to email",
-    };
+    case "wrong_person":
+      // Don't burn this contact; enrich and try the correct contact in the account.
+      reaction.notifyRep = {
+        notify: true,
+        message: `Wrong person at ${leadContext.companyName ?? "this account"}. Enrich for the right contact.`,
+        priority: "normal",
+        actionItems: ["Find correct contact", "Update CRM owner"],
+      };
+      reaction.internalNotes.push({
+        content: "Contact not the right person. Enrich and retry with the correct owner.",
+        visibility: "team",
+      });
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Wrong person: enrich account for the correct decision-maker.";
+      return reaction;
 
-    reaction.immediateActions.push({
-      type: "email",
-      priority: "high",
-      delay: 1000 * 60 * 5, // 5 minutes
-      message: `Thanks for your reply! Happy to chat more. When would be a good time for a quick call?`,
-    });
+    case "job_change":
+      // Mark stale; trigger enrichment to find them at their new company.
+      reaction.stageUpdate = { newStage: "LOST", reason: "Contact left the company" };
+      reaction.notifyRep = {
+        notify: true,
+        message: `${leadContext.name} left ${leadContext.companyName ?? "the company"}. Enrich for current role.`,
+        priority: "normal",
+        actionItems: ["Enrich new employer", "Create follow-up lead at new company"],
+      };
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Job change: mark stale, enrich for new role.";
+      return reaction;
 
-    reaction.notifyRep = {
-      notify: true,
-      message: `${leadContext.name} replied to your email. Follow up promptly.`,
-      priority: "high",
-      actionItems: ["Send next step email", "Be ready to book call"],
-    };
+    case "referral":
+      // Create referral lead; notify rep to reach out warm.
+      reaction.notifyRep = {
+        notify: true,
+        message:
+          `${leadContext.name} referred you to ${classification.referredTo ?? "someone else"}. ` +
+          `Create a new lead and reach out warm.`,
+        priority: "high",
+        actionItems: [
+          `Create lead for ${classification.referredTo ?? "referred contact"}`,
+          "Mention the referrer in the first touch",
+        ],
+      };
+      reaction.internalNotes.push({
+        content: `Referral from ${leadContext.name} to ${classification.referredTo ?? "unknown"}`,
+        visibility: "team",
+      });
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Referral: warm-lead creation on the referred contact.";
+      return reaction;
 
-    reaction.stageUpdate = {
-      newStage: "QUALIFIED",
-      reason: "Lead engaged in email conversation",
-    };
+    case "meeting_request":
+      reaction.scoreDelta = { delta: +35, reason: "Lead requested a meeting" };
+      reaction.stageUpdate = { newStage: "BOOKED", reason: "Meeting requested" };
+      reaction.immediateActions.push({
+        type: "email",
+        priority: "critical",
+        delay: 1000 * 60, // 1 min
+        message:
+          `Thanks, ${leadContext.name} — sending calendar options now. ` +
+          `Does morning or afternoon work better for you?`,
+      });
+      reaction.notifyRep = {
+        notify: true,
+        message: `${leadContext.name} wants to book a meeting. Send calendar link immediately.`,
+        priority: "urgent",
+        actionItems: ["Send scheduling link", "Block out hold time"],
+      };
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Meeting request: route to scheduling ASAP.";
+      return reaction;
 
-    reaction.confidence = 0.9;
+    case "not_interested":
+      reaction.immediateActions.push({
+        type: "email",
+        priority: "normal",
+        message:
+          `Thanks for getting back to me, ${leadContext.name}. I appreciate the honesty. ` +
+          `Out of curiosity, is there anything that would make this relevant for you down the road?`,
+        delay: 1000 * 60 * 5,
+      });
+      reaction.delayedActions.push({
+        type: "email",
+        delay: 1000 * 60 * 60 * 24 * 30, // 30 days
+        templateKey: "soft_reengagement_30d",
+        priority: "low",
+      });
+      reaction.scoreDelta = { delta: -10, reason: "Lead expressed disinterest" };
+      reaction.internalNotes.push({
+        content: "Lead said not interested. Soft follow-up sent. Back off for 30 days minimum.",
+        visibility: "team",
+      });
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Not interested: acknowledge, ask ONE question, respect decision.";
+      return reaction;
+
+    case "question":
+      reaction.scoreDelta = { delta: +15, reason: "Lead asked a question" };
+      reaction.notifyRep = {
+        notify: true,
+        message: `${leadContext.name} asked a question. Needs a real human answer, not a templated reply.`,
+        priority: "high",
+        actionItems: ["Answer question directly", "Avoid auto-sequencing next step"],
+      };
+      reaction.confidence = classification.confidence;
+      reaction.reasoning = "Question: human-written reply, suppress templated next step.";
+      return reaction;
+
+    case "interested":
+    case "information":
+    case "unknown":
+    default:
+      // Positive/neutral reply → lead engaged.
+      reaction.scoreDelta = { delta: +20, reason: "Lead replied to email" };
+      reaction.immediateActions.push({
+        type: "email",
+        priority: "high",
+        delay: 1000 * 60 * 5,
+        message: `Thanks for your reply! Happy to chat more. When would be a good time for a quick call?`,
+      });
+      reaction.notifyRep = {
+        notify: true,
+        message: `${leadContext.name} replied to your email. Follow up promptly.`,
+        priority: "high",
+        actionItems: ["Send next step email", "Be ready to book call"],
+      };
+      reaction.stageUpdate = {
+        newStage: "QUALIFIED",
+        reason: "Lead engaged in email conversation",
+      };
+      reaction.confidence = Math.max(0.85, classification.confidence);
+      reaction.reasoning = "Positive/neutral reply: progress, offer call.";
+      return reaction;
   }
-
-  return reaction;
 }
 
 /**
@@ -579,7 +713,7 @@ function processSmsReply(
   leadContext: LeadContext,
   reaction: EventReaction
 ): EventReaction {
-  const message = event.data.message as string | undefined;
+  const _message = event.data.message as string | undefined;
 
   reaction.scoreDelta = {
     delta: +15,
@@ -645,7 +779,7 @@ function processScoreChanged(
 ): EventReaction {
   const oldScore = event.data.oldScore as number;
   const newScore = event.data.newScore as number;
-  const delta = newScore - oldScore;
+  const _delta = newScore - oldScore;
 
   reaction.scoreDelta = {
     delta: 0,
@@ -1052,7 +1186,7 @@ export function detectReactivationSignals(
  */
 export function calculateEventImpact(
   event: LeadEvent,
-  leadContext: LeadContext
+  _leadContext: LeadContext
 ): EventImpact {
   let scoreDelta = 0;
   let stageChange: string | null = null;

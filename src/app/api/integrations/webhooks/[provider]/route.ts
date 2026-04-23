@@ -7,10 +7,17 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { enqueueSync } from "@/lib/integrations/sync-engine";
-import type { CrmProviderId } from "@/lib/integrations/field-mapper";
+import { SUPPORTED_CRM_PROVIDERS, type CrmProviderId } from "@/lib/crm/providers";
 import crypto from "crypto";
 
-const ALLOWED: CrmProviderId[] = [
+/**
+ * Phase 78 Task 9.3: providers that can push inbound webhooks. This is a
+ * semantic *subset* of `SUPPORTED_CRM_PROVIDERS` — it deliberately excludes
+ * providers that don't ship a webhook channel (airtable, google_sheets, etc.)
+ * The subset is validated at load time against the base set so a typo here
+ * can't drift past tsc.
+ */
+const WEBHOOK_CAPABLE_PROVIDERS = [
   "salesforce",
   "hubspot",
   "zoho_crm",
@@ -18,12 +25,24 @@ const ALLOWED: CrmProviderId[] = [
   "gohighlevel",
   "google_contacts",
   "microsoft_365",
-];
+] as const satisfies readonly CrmProviderId[];
+
+// Runtime self-check: every webhook-capable provider MUST be in the canonical
+// supported list. Catches drift if a provider id is removed upstream.
+for (const p of WEBHOOK_CAPABLE_PROVIDERS) {
+  if (!(SUPPORTED_CRM_PROVIDERS as readonly string[]).includes(p)) {
+    throw new Error(
+      `[crm/providers] webhooks route declares '${p}' but it is not in SUPPORTED_CRM_PROVIDERS`
+    );
+  }
+}
+
+const ALLOWED: readonly CrmProviderId[] = WEBHOOK_CAPABLE_PROVIDERS;
 
 export const dynamic = "force-dynamic";
 
 function isAllowed(s: string): s is CrmProviderId {
-  return ALLOWED.includes(s as CrmProviderId);
+  return (ALLOWED as readonly string[]).includes(s);
 }
 
 /* ---------- Provider-Specific Signature Verification ---------- */

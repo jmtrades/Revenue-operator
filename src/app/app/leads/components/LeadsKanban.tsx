@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useDraggable, useDroppable, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import type { LeadView } from "../page";
@@ -163,10 +163,13 @@ export function LeadsKanban({ groupedByStatus, onMoveLead, onOpenLead }: LeadsKa
   const fetchedRef = useRef<string>("");
 
   // Collect all lead IDs from all columns
-  const allLeadIds: string[] = [];
-  for (const leads of groupedByStatus.values()) {
-    for (const lead of leads) allLeadIds.push(lead.id);
-  }
+  const allLeadIds: string[] = useMemo(() => {
+    const ids: string[] = [];
+    for (const leads of groupedByStatus.values()) {
+      for (const lead of leads) ids.push(lead.id);
+    }
+    return ids;
+  }, [groupedByStatus]);
 
   useEffect(() => {
     const key = allLeadIds.slice().sort().join(",");
@@ -192,8 +195,8 @@ export function LeadsKanban({ groupedByStatus, onMoveLead, onOpenLead }: LeadsKa
         }
       })
       .catch((e: unknown) => { console.warn("[LeadsKanban] failed:", e instanceof Error ? e.message : String(e)); });
-   
-  }, [allLeadIds.length]);
+
+  }, [allLeadIds]);
 
   return (
     <div className="hidden md:block mt-6">

@@ -52,10 +52,9 @@ export async function createMagicLink(email: string): Promise<{ token: string } 
 
   // In production, an email provider should deliver this URL to the staff user.
   // For now we surface it directly for dev and operational debugging flows.
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-    ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
   if (!baseUrl) {
-    log("error", "[ops/auth] Cannot determine base URL — set NEXT_PUBLIC_APP_URL or VERCEL_URL");
+    log("error", "[ops/auth] Cannot determine base URL — set NEXT_PUBLIC_APP_URL");
     return { token: "" };
   }
   const verifyUrl = `${baseUrl}/api/ops/auth/verify?token=${token}`;

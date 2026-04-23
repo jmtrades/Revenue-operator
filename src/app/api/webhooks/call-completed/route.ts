@@ -7,12 +7,12 @@ import { log } from "@/lib/logger";
 function verifyWebhookSignature(body: string, signature: string): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    // Fail closed in ANY deployed environment — only skip locally (no VERCEL_ENV at all).
-    const isDeployed = Boolean(process.env.VERCEL_ENV) || process.env.NODE_ENV === "production";
+    // Fail closed in ANY deployed environment — only skip locally.
+    const isDeployed = process.env.NODE_ENV === "production";
     if (isDeployed) {
       log("error", "call_completed_webhook.secret_not_configured", {
         message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in all deployed environments",
-        vercel_env: process.env.VERCEL_ENV ?? "unset",
+        node_env: process.env.NODE_ENV,
       });
       return false;
     }

@@ -1,5 +1,5 @@
 /**
- * Process scheduled follow-up calls — runs every 15 minutes via Vercel cron.
+ * Process scheduled follow-up calls — runs every 15 minutes via cron scheduler.
  * Queries leads with scheduled_follow_up metadata where scheduled_at is past.
  * Initiates outbound calls and marks follow-ups as processed.
  */

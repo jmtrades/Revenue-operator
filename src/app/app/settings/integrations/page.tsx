@@ -107,8 +107,9 @@ export default function AppSettingsIntegrationsPage() {
 
   // Cleanup polling intervals on unmount
   useEffect(() => {
+    const intervals = syncPollingRef.current;
     return () => {
-      Object.values(syncPollingRef.current).forEach((interval) => {
+      Object.values(intervals).forEach((interval) => {
         if (interval) clearInterval(interval);
       });
     };
@@ -356,7 +357,7 @@ export default function AppSettingsIntegrationsPage() {
     };
 
     // Start polling every 3 seconds
-    syncPollingRef.current[provider] = setInterval(poll, 3000) as any as NodeJS.Timeout;
+    syncPollingRef.current[provider] = setInterval(poll, 3000) as unknown as NodeJS.Timeout;
   };
 
   const handleSyncNow = async (provider: CrmProviderId) => {

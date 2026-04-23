@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Mic, Play, Pause, Download, ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
@@ -189,6 +190,7 @@ function RecordingCard({
 }
 
 export default function RecordingsPage() {
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const workspace = useWorkspaceSafe();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
   const [total, setTotal] = useState(0);
@@ -296,7 +298,7 @@ export default function RecordingsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <div className="p-4 md:p-8 max-w-[1200px] mx-auto">
-        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Recordings" }]} />
+        <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("recordings") }]} />
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">

@@ -22,7 +22,7 @@ import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
 import Stripe from "stripe";
 import { sendDunningEmail } from "@/lib/email/dunning";
 import { getTelephonyService } from "@/lib/telephony";
-import { creditMinutePack, MINUTE_PACKS } from "@/lib/voice/billing";
+import { creditMinutePack, MINUTE_PACKS, reverseMinutePackCredit } from "@/lib/voice/billing";
 import { buildMinutePackEmail } from "@/lib/email/templates";
 import { getStripe } from "@/lib/billing/stripe-client";
 
@@ -38,14 +38,18 @@ function logWebhookEvent(type: string, workspaceId: string | null, status: "succ
     };
     if (details) logData.details = details;
     if (status === "error") {
-      // Stripe webhook error logged
+      log("error", `[billing/webhook] ${type}`, logData);
     } else {
-      // Stripe webhook warning
+      log("info", `[billing/webhook] ${type}`, logData);
     }
   }
 }
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+if (!webhookSecret) {
+  log("error", "[billing/webhook] STRIPE_WEBHOOK_SECRET not configured — all webhook events will be rejected");
+}
 
 async function appendSettlementWebhookEvent(
   workspaceId: string,
@@ -82,15 +86,12 @@ export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature");
   if (!sig) return NextResponse.json({ error: "No signature" }, { status: 400 });
 
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
-  if (!stripeKey) {
-    logWebhookEvent("webhook_no_stripe_key", null, "error");
-    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
-  }
-
+  // Phase 78/Phase 6: use the shared factory. The factory throws if
+  // STRIPE_SECRET_KEY is missing; we catch it and surface as a 500 so the
+  // webhook semantics (never silently drop) are preserved.
   let event: Stripe.Event;
   try {
-    const stripe = new Stripe(stripeKey);
+    const stripe = getStripe();
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (e) {
     logWebhookFailure("stripe", e);
@@ -101,43 +102,62 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const eventId = event.id;
 
-  // Idempotency: SELECT before INSERT (no catch-based 23505 handling).
-  const { data: existingEvent } = await db
+  // Phase 78/Task 6.3: atomic claim replaces the SELECT-then-INSERT TOCTOU pattern.
+  // Previously two concurrent Stripe deliveries for the same event_id could both
+  // see processed=false and both enter the handler. Now we:
+  //   1. Upsert the row (no-op on conflict — atomic create without catch-based 23505).
+  //   2. Conditionally UPDATE claimed_at; the row is claimed iff the WHERE matches
+  //      AND claimed_at is null or stale (> 5 minutes, handler presumed dead).
+  //   3. If no row comes back, either another handler owns the claim OR the event
+  //      is already processed. We check and return 200 in both cases so Stripe
+  //      stops retrying while the in-flight handler finishes.
+  const STALE_CLAIM_MS = 5 * 60 * 1000;
+  const staleThreshold = new Date(Date.now() - STALE_CLAIM_MS).toISOString();
+
+  // Step 1: atomic create-if-not-exists. `ignoreDuplicates: true` makes this a
+  // true no-op on unique-violation for event_id (no 23505 exception to swallow).
+  const { error: upsertError } = await db
     .from("webhook_events")
-    .select("id, processed")
-    .eq("event_id", eventId)
-    .maybeSingle();
-
-  if (existingEvent?.processed) {
-    return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
-  }
-
-  // Only create the record if it doesn't exist. If a race occurs and we fail to insert,
-  // we re-check processed state to avoid double-processing.
-  if (!existingEvent) {
-    const { error: insertError } = await db
-      .from("webhook_events")
-      .insert({
+    .upsert(
+      {
         event_id: eventId,
         event_type: event.type,
         payload: event.data.object,
         processed: false,
-      })
-      .select("id")
-      .maybeSingle();
+      },
+      { onConflict: "event_id", ignoreDuplicates: true },
+    );
 
-    if (insertError) {
-      const { data: existingAfter } = await db
-        .from("webhook_events")
-        .select("processed")
-        .eq("event_id", eventId)
-        .maybeSingle();
-      if (existingAfter?.processed) {
-        return NextResponse.json({ received: true, skipped: "already_processed" }, { status: 200 });
-      }
-      log("error", "billing_webhook.event_insert_failed", { error: String(insertError) });
-      return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  if (upsertError) {
+    log("error", "billing_webhook.event_upsert_failed", { event_id: eventId, error: String(upsertError) });
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+
+  // Step 2: conditional UPDATE on claimed_at — the atomic lock acquisition.
+  // The claim succeeds iff: event is unprocessed AND (never claimed OR stale claim).
+  // PostgreSQL guarantees UPDATE WHERE is atomic with row-lock, so no race.
+  const { data: claimed } = await db
+    .from("webhook_events")
+    .update({ claimed_at: new Date().toISOString() })
+    .eq("event_id", eventId)
+    .eq("processed", false)
+    .or(`claimed_at.is.null,claimed_at.lt.${staleThreshold}`)
+    .select("id")
+    .maybeSingle();
+
+  if (!claimed) {
+    // Either already processed or another handler has a live claim. Disambiguate
+    // for logging + response shape but return 200 in both cases so Stripe stops
+    // retrying — retries while a handler is in-flight only amplify the TOCTOU.
+    const { data: state } = await db
+      .from("webhook_events")
+      .select("processed")
+      .eq("event_id", eventId)
+      .maybeSingle();
+    if ((state as { processed?: boolean } | null)?.processed) {
+      return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
     }
+    return NextResponse.json({ received: true, in_flight: true }, { status: 200 });
   }
 
   try {
@@ -151,7 +171,7 @@ export async function POST(req: NextRequest) {
         event_id: eventId,
         error: errMsg,
       });
-    } catch (trackErr) { console.warn("[billing-webhook] Failure tracking insert failed:", trackErr instanceof Error ? trackErr.message : trackErr); }
+    } catch (trackErr) { log("warn", "[billing/webhook] Failure tracking insert failed", { error: trackErr instanceof Error ? trackErr.message : String(trackErr) }); }
     // Return 500 so Stripe retries the webhook
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
@@ -167,12 +187,58 @@ async function handleStripeWebhookEvent(
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      const rawWorkspaceId = session.client_reference_id ?? session.metadata?.workspace_id;
-      // Validate workspace_id is a strict UUID v4 before using in DB queries
+
+      // Phase 78/Task 6.3: resolve workspace_id from trusted > untrusted sources.
+      // `session.metadata.workspace_id` is set server-side by our own checkout
+      // creation endpoints and is the authoritative identifier. `client_reference_id`
+      // is settable by anyone with the checkout URL — previously we preferred it
+      // over metadata, which was a vector for cross-workspace privilege escalation.
+      // Now: metadata wins. If client_reference_id disagrees, log and reject.
+      const metadataWsId = session.metadata?.workspace_id;
+      const clientRefWsId = session.client_reference_id ?? undefined;
+      const rawWorkspaceId = metadataWsId ?? clientRefWsId;
       const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      const workspaceId = rawWorkspaceId && UUID_RE.test(rawWorkspaceId) ? rawWorkspaceId : undefined;
+      let workspaceId = rawWorkspaceId && UUID_RE.test(rawWorkspaceId) ? rawWorkspaceId : undefined;
       if (rawWorkspaceId && !workspaceId) {
         log("error", "billing_webhook.invalid_workspace_id", { raw: rawWorkspaceId, event_id: eventId });
+      }
+      if (workspaceId && metadataWsId && clientRefWsId && metadataWsId !== clientRefWsId) {
+        log("error", "billing_webhook.client_reference_id_mismatch", {
+          event_id: eventId,
+          metadata_ws: metadataWsId,
+          client_ref_ws: clientRefWsId,
+          customer: typeof session.customer === "string" ? session.customer : session.customer?.id ?? null,
+        });
+        // Trust metadata, discard the mismatching client_reference_id.
+        workspaceId = metadataWsId && UUID_RE.test(metadataWsId) ? metadataWsId : undefined;
+      }
+
+      // Ownership validation: if the workspace already has a stripe_customer_id
+      // on file, require it matches session.customer. This defeats an attacker
+      // who knows a victim's workspace UUID and completes a checkout session
+      // with a malicious client_reference_id pointing at the victim — without
+      // this check they could upgrade a stranger's billing status.
+      if (workspaceId) {
+        const sessionCustomerId =
+          typeof session.customer === "string"
+            ? session.customer
+            : (session.customer as { id?: string } | null)?.id ?? null;
+        const { data: wsRow } = await db
+          .from("workspaces")
+          .select("stripe_customer_id")
+          .eq("id", workspaceId)
+          .maybeSingle();
+        const existingCustomerId = (wsRow as { stripe_customer_id?: string | null } | null)?.stripe_customer_id ?? null;
+        if (existingCustomerId && sessionCustomerId && existingCustomerId !== sessionCustomerId) {
+          log("error", "billing_webhook.workspace_customer_mismatch", {
+            event_id: eventId,
+            workspace_id: workspaceId,
+            expected_customer: existingCustomerId,
+            session_customer: sessionCustomerId,
+          });
+          // Reject by blanking workspaceId — downstream handlers will skip mutations.
+          workspaceId = undefined;
+        }
       }
 
       // ── Handle one-time minute pack purchases ──
@@ -561,7 +627,7 @@ async function handleStripeWebhookEvent(
                   const sub = await stripe.subscriptions.retrieve(subscriptionId);
                   return sub.status === "active" || sub.status === "trialing";
                 } catch (subErr) {
-                  console.warn("[billing-webhook] Subscription retrieval failed:", subErr instanceof Error ? subErr.message : subErr);
+                  log("warn", "[billing/webhook] Subscription retrieval failed", { error: subErr instanceof Error ? subErr.message : String(subErr) });
                   return false;
                 }
               })()
@@ -757,6 +823,10 @@ async function handleStripeWebhookEvent(
     case "charge.refunded": {
       const charge = event.data.object as Stripe.Charge & { metadata?: Record<string, string> };
       const workspaceId = charge.metadata?.workspace_id;
+      const paymentIntentId =
+        typeof charge.payment_intent === "string"
+          ? charge.payment_intent
+          : (charge.payment_intent as { id?: string } | null)?.id ?? null;
       if (workspaceId) {
         const refundedAmountCents = charge.amount_refunded ?? 0;
         log("info", "billing_webhook.charge_refunded", {
@@ -775,6 +845,34 @@ async function handleStripeWebhookEvent(
             refunded_at: new Date().toISOString(),
           },
         });
+
+        // Phase 78/Task 6.3: if the refunded charge paid for a minute pack,
+        // decrement the bonus_minutes balance we credited at purchase time.
+        // Idempotent by stripe_event_id — safe on re-delivery.
+        if (paymentIntentId) {
+          try {
+            const { reversed, minutes } = await reverseMinutePackCredit(
+              workspaceId,
+              paymentIntentId,
+              eventId,
+              charge.id ?? null,
+              "refund",
+            );
+            if (reversed) {
+              logWebhookEvent("minute_pack_reversed", workspaceId, "success", {
+                payment_intent: paymentIntentId,
+                charge_id: charge.id,
+                minutes,
+                reason: "refund",
+              });
+            }
+          } catch (reverseErr) {
+            logWebhookEvent("minute_pack_reverse_failed", workspaceId, "error", {
+              payment_intent: paymentIntentId,
+              error: reverseErr instanceof Error ? reverseErr.message : String(reverseErr),
+            });
+          }
+        }
       }
       break;
     }
@@ -813,7 +911,7 @@ async function handleStripeWebhookEvent(
           const stripe = getStripe();
           const ch = await stripe.charges.retrieve(chargeId);
           resolvedWorkspaceId = ch.metadata?.workspace_id ?? null;
-        } catch (lookupErr) { console.warn("[billing-webhook] Dispute charge lookup failed:", lookupErr instanceof Error ? lookupErr.message : lookupErr); }
+        } catch (lookupErr) { log("warn", "[billing/webhook] Dispute charge lookup failed", { error: lookupErr instanceof Error ? lookupErr.message : String(lookupErr) }); }
       }
       log("error", "billing_webhook.dispute_created", {
         workspace_id: resolvedWorkspaceId,
@@ -842,6 +940,48 @@ async function handleStripeWebhookEvent(
           has_active_dispute: true,
           updated_at: new Date().toISOString(),
         }).eq("id", resolvedWorkspaceId);
+
+        // Phase 78/Task 6.3: when a dispute is opened, reverse any minute pack
+        // credit tied to the disputed charge. The issuing bank has already
+        // debited Stripe for the disputed amount, so the funds are effectively
+        // withdrawn. We reverse the credit immediately rather than waiting for
+        // `charge.dispute.closed` so the customer can't consume free minutes
+        // while the dispute is open. If we later win the dispute, the credit
+        // is recreated via a manual admin adjustment.
+        if (chargeId) {
+          try {
+            const stripe = getStripe();
+            const ch = await stripe.charges.retrieve(chargeId);
+            const paymentIntentId =
+              typeof ch.payment_intent === "string"
+                ? ch.payment_intent
+                : (ch.payment_intent as { id?: string } | null)?.id ?? null;
+            if (paymentIntentId) {
+              const { reversed, minutes } = await reverseMinutePackCredit(
+                resolvedWorkspaceId,
+                paymentIntentId,
+                eventId,
+                chargeId,
+                "dispute",
+              );
+              if (reversed) {
+                logWebhookEvent("minute_pack_reversed", resolvedWorkspaceId, "success", {
+                  payment_intent: paymentIntentId,
+                  charge_id: chargeId,
+                  dispute_id: dispute.id,
+                  minutes,
+                  reason: "dispute",
+                });
+              }
+            }
+          } catch (reverseErr) {
+            logWebhookEvent("minute_pack_reverse_failed", resolvedWorkspaceId, "error", {
+              dispute_id: dispute.id,
+              charge_id: chargeId,
+              error: reverseErr instanceof Error ? reverseErr.message : String(reverseErr),
+            });
+          }
+        }
       }
       break;
     }

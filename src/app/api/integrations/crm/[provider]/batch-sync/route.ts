@@ -9,25 +9,13 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { enqueueBatchOutbound } from "@/lib/integrations/sync-engine";
 import { checkRateLimit } from "@/lib/rate-limit";
-import type { CrmProviderId } from "@/lib/integrations/field-mapper";
 import { assertSameOrigin } from "@/lib/http/csrf";
-
-const ALLOWED: CrmProviderId[] = [
-  "salesforce",
-  "hubspot",
-  "zoho_crm",
-  "pipedrive",
-  "gohighlevel",
-  "google_contacts",
-  "microsoft_365",
-  "airtable",
-];
+import { isSupportedCrmProvider } from "@/lib/crm/providers";
 
 export const dynamic = "force-dynamic";
 
-function isAllowed(s: string): s is CrmProviderId {
-  return ALLOWED.includes(s as CrmProviderId);
-}
+// Phase 78 Task 9.3: batch sync is supported for every provider we ship.
+const isAllowed = isSupportedCrmProvider;
 
 export async function POST(
   req: NextRequest,

@@ -1,7 +1,21 @@
 /**
- * POST /api/integrations/crm/[provider]/import — Pull contacts FROM a CRM into Revenue Operator.
- * Fetches contacts from the CRM API and enqueues inbound sync jobs to create/update leads.
- * Rate-limited to prevent abuse.
+ * POST /api/integrations/crm/[provider]/import
+ *
+ * Pull contacts FROM the connected CRM INTO Recall-Touch. This is the
+ * "one-click backfill" that makes a freshly-connected integration useful:
+ * the operator's existing pipeline shows up here immediately.
+ *
+ * Request body (optional):
+ *   { mode?: "backfill" | "incremental", pageLimit?: number, maxPages?: number }
+ *
+ * - backfill: start from the beginning (ignore any stored cursor)
+ * - incremental: resume from the stored cursor in connection metadata
+ *
+ * Supports all 17 CRM targets via src/lib/integrations/crm-pull.ts.
+ * Cursor-resumable: persists `pull_cursor` per connection so a crash mid-import
+ * can restart without re-ingesting every record.
+ *
+ * Rate-limited. CSRF-guarded. Workspace-scoped.
  */
 
 export const dynamic = "force-dynamic";
@@ -11,139 +25,30 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getValidTokens } from "@/lib/integrations/token-refresh";
-import { enqueueSync } from "@/lib/integrations/sync-engine";
+import { pullContactsFromCrm } from "@/lib/integrations/crm-pull";
+import { ingestPulledBatch } from "@/lib/integrations/crm-ingest";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { log } from "@/lib/logger";
-import type { CrmProviderId } from "@/lib/integrations/field-mapper";
 import { assertSameOrigin } from "@/lib/http/csrf";
+// Phase 78 Task 9.3: import is supported for every CRM we ship. Source of
+// truth: `SUPPORTED_CRM_PROVIDERS` from `@/lib/crm/providers`.
+import { isSupportedCrmProvider } from "@/lib/crm/providers";
 
-const ALLOWED: CrmProviderId[] = [
-  "hubspot",
-  "salesforce",
-  "zoho_crm",
-  "pipedrive",
-  "gohighlevel",
-  "google_contacts",
-  "microsoft_365",
-  "airtable",
-];
+const isAllowed = isSupportedCrmProvider;
 
-function isAllowed(s: string): s is CrmProviderId {
-  return ALLOWED.includes(s as CrmProviderId);
+type Mode = "backfill" | "incremental";
+
+interface ImportBody {
+  mode?: Mode;
+  pageLimit?: number;
+  maxPages?: number;
 }
 
-/** Fetch contacts from a CRM provider API. Returns an array of raw contact objects. */
-async function fetchCrmContacts(
-  provider: CrmProviderId,
-  tokens: { access_token: string; instance_url: string | null },
-  limit: number,
-  workspaceId: string
-): Promise<Record<string, unknown>[]> {
-  const headers = { Authorization: `Bearer ${tokens.access_token}`, "Content-Type": "application/json" };
-  const signal = AbortSignal.timeout(30_000);
-
-  switch (provider) {
-    case "hubspot": {
-      const res = await fetch(
-        `https://api.hubapi.com/crm/v3/objects/contacts?limit=${Math.min(limit, 100)}&properties=email,phone,firstname,lastname,company,lifecyclestage,lead_status`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`HubSpot API error: ${res.status}`);
-      const data = await res.json();
-      return (data.results ?? []).map((r: { properties: Record<string, unknown> }) => ({
-        ...r.properties,
-        _hubspot_id: (r as Record<string, unknown>).id,
-      }));
-    }
-
-    case "salesforce": {
-      const base = tokens.instance_url ?? "https://login.salesforce.com";
-      const res = await fetch(
-        `${base}/services/data/v59.0/query?q=${encodeURIComponent(`SELECT Id,FirstName,LastName,Email,Phone,Company,Status FROM Lead ORDER BY CreatedDate DESC LIMIT ${limit}`)}`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`Salesforce API error: ${res.status}`);
-      const data = await res.json();
-      return data.records ?? [];
-    }
-
-    case "zoho_crm": {
-      const res = await fetch(
-        `https://www.zohoapis.com/crm/v2/Leads?per_page=${Math.min(limit, 200)}&sort_by=Created_Time&sort_order=desc`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`Zoho API error: ${res.status}`);
-      const data = await res.json();
-      return data.data ?? [];
-    }
-
-    case "pipedrive": {
-      const res = await fetch(
-        `https://api.pipedrive.com/v1/persons?limit=${Math.min(limit, 100)}&sort=add_time DESC`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`Pipedrive API error: ${res.status}`);
-      const data = await res.json();
-      return data.data ?? [];
-    }
-
-    case "gohighlevel": {
-      const res = await fetch(
-        `https://services.leadconnectorhq.com/contacts/?limit=${Math.min(limit, 100)}&sortBy=dateAdded&sortOrder=desc`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`GoHighLevel API error: ${res.status}`);
-      const data = await res.json();
-      return data.contacts ?? [];
-    }
-
-    case "google_contacts": {
-      const res = await fetch(
-        `https://people.googleapis.com/v1/people/me/connections?pageSize=${Math.min(limit, 100)}&personFields=names,emailAddresses,phoneNumbers,organizations&sortOrder=LAST_MODIFIED_DESCENDING`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`Google Contacts API error: ${res.status}`);
-      const data = await res.json();
-      return data.connections ?? [];
-    }
-
-    case "microsoft_365": {
-      const res = await fetch(
-        `https://graph.microsoft.com/v1.0/me/contacts?$top=${Math.min(limit, 100)}&$orderby=lastModifiedDateTime desc&$select=givenName,surname,emailAddresses,mobilePhone,companyName`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`Microsoft 365 API error: ${res.status}`);
-      const data = await res.json();
-      return data.value ?? [];
-    }
-
-    case "airtable": {
-      // Airtable needs base ID and table name from workspace connection metadata
-      const db = getDb();
-      const { data: cfg } = await db
-        .from("workspace_crm_connections")
-        .select("metadata, instance_url")
-        .eq("workspace_id", workspaceId)
-        .eq("provider", "airtable")
-        .maybeSingle();
-      const meta = (cfg as { metadata?: { base_id?: string; table_name?: string } | null; instance_url?: string | null } | null);
-      const baseId = meta?.metadata?.base_id ?? meta?.instance_url;
-      const tableName = meta?.metadata?.table_name ?? "Contacts";
-      if (!baseId) throw new Error("Airtable base ID not configured. Please set your base ID in integration settings.");
-
-      const res = await fetch(
-        `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?maxRecords=${Math.min(limit, 100)}&sort%5B0%5D%5Bfield%5D=Created&sort%5B0%5D%5Bdirection%5D=desc`,
-        { headers, signal }
-      );
-      if (!res.ok) throw new Error(`Airtable API error: ${res.status}`);
-      const data = await res.json();
-      return (data.records ?? []).map((r: { fields: Record<string, unknown> }) => r.fields);
-    }
-
-    default:
-      return [];
-  }
-}
+const DEFAULT_PAGE_LIMIT = 100;
+// Hard ceiling so a single request can't monopolize the serverless runtime.
+// A backfill of millions of contacts spans many POSTs, each capped here.
+const DEFAULT_MAX_PAGES = 10;
+const MAX_PAGES_CEILING = 50;
 
 export async function POST(
   req: NextRequest,
@@ -156,7 +61,8 @@ export async function POST(
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  const workspaceId = session.workspaceId;
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
   const { provider } = await ctx.params;
@@ -164,91 +70,140 @@ export async function POST(
     return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
   }
 
-  // Rate limit: 3 imports per hour per workspace
-  const rl = await checkRateLimit(`crm-import:${session.workspaceId}`, 3, 3600_000);
+  // Rate limit: 6 imports per hour per workspace. Higher than the old 3/hour
+  // because pagination makes each call smaller; users expect to keep tapping
+  // "Pull more" until done.
+  const rl = await checkRateLimit(`crm-import:${workspaceId}:${provider}`, 6, 3_600_000);
   if (!rl.allowed) {
+    const retryAfter = Math.max(1, Math.ceil((rl.resetAt - Date.now()) / 1000));
     return NextResponse.json(
-      { error: "Import rate limit reached. Try again in an hour." },
-      { status: 429 }
+      { error: "Import rate limit reached. Try again later." },
+      { status: 429, headers: { "Retry-After": String(retryAfter) } },
     );
   }
 
-  // Get OAuth tokens
+  // Parse optional body — be tolerant of empty POSTs for "just pull more".
+  let body: ImportBody = {};
+  try {
+    const raw = await req.text();
+    if (raw) body = JSON.parse(raw) as ImportBody;
+  } catch {
+    body = {};
+  }
+  const mode: Mode = body.mode === "backfill" ? "backfill" : "incremental";
+  const pageLimit = Math.min(Math.max(body.pageLimit ?? DEFAULT_PAGE_LIMIT, 1), 500);
+  const maxPages = Math.min(Math.max(body.maxPages ?? DEFAULT_MAX_PAGES, 1), MAX_PAGES_CEILING);
+
+  // Get valid (possibly refreshed) OAuth tokens.
   let tokens;
   try {
-    tokens = await getValidTokens(session.workspaceId, provider);
-  } catch (err) {
+    tokens = await getValidTokens(workspaceId, provider);
+  } catch {
     return NextResponse.json(
       { error: `Not connected to ${provider}. Please connect first.` },
-      { status: 400 }
+      { status: 400 },
     );
   }
   if (!tokens?.access_token) {
     return NextResponse.json(
       { error: `Not connected to ${provider}. Please connect first.` },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
-  const limit = Math.min(
-    parseInt(req.nextUrl.searchParams.get("limit") ?? "100", 10) || 100,
-    500
-  );
+  // Determine starting cursor. On "backfill" we start fresh; on "incremental"
+  // we resume from the last stored cursor.
+  const db = getDb();
+  let cursor: string | null = null;
+  if (mode === "incremental") {
+    const { data } = await db
+      .from("workspace_crm_connections")
+      .select("metadata")
+      .eq("workspace_id", workspaceId)
+      .eq("provider", provider)
+      .maybeSingle();
+    const meta = (data as { metadata?: Record<string, unknown> | null } | null)?.metadata ?? {};
+    const stored = typeof meta.pull_cursor === "string" ? meta.pull_cursor : null;
+    cursor = stored;
+  }
+
+  const startedAt = Date.now();
+  const agg = { imported: 0, updated: 0, skipped: 0, errors: 0, pages: 0 };
+  let done = false;
 
   try {
-    const contacts = await fetchCrmContacts(provider, tokens, limit, session.workspaceId);
+    for (let page = 0; page < maxPages; page++) {
+      const pull = await pullContactsFromCrm(provider, tokens, { cursor, limit: pageLimit });
+      agg.pages++;
 
-    if (contacts.length === 0) {
-      return NextResponse.json({ imported: 0, message: "No contacts found in CRM." });
-    }
-
-    // Enqueue inbound sync jobs for each contact
-    let enqueued = 0;
-    for (const contact of contacts) {
-      try {
-        await enqueueSync({
-          workspaceId: session.workspaceId,
-          provider,
-          direction: "inbound",
-          entityType: "contact",
-          entityId: undefined,
-          payload: contact,
-        });
-        enqueued++;
-      } catch {
-        // Skip individual failures
+      if (pull.records.length > 0) {
+        const result = await ingestPulledBatch(workspaceId, provider, pull.records);
+        agg.imported += result.imported;
+        agg.updated += result.updated;
+        agg.skipped += result.skipped;
+        agg.errors += result.errors;
       }
+
+      cursor = pull.nextCursor;
+      if (!cursor) {
+        done = true;
+        break;
+      }
+
+      // Soft wall-clock guard — Vercel serverless functions default to 10s
+      // max duration on Hobby, 60s on Pro. Stop early so we always respond.
+      if (Date.now() - startedAt > 25_000) break;
     }
 
-    log("info", "crm_import.completed", {
-      provider,
-      workspaceId: session.workspaceId,
-      fetched: contacts.length,
-      enqueued,
-    });
-
-    // Update connection stats
-    const db = getDb();
+    // Persist updated cursor (and clear when done so incremental restarts fresh).
+    const { data: existing } = await db
+      .from("workspace_crm_connections")
+      .select("metadata")
+      .eq("workspace_id", workspaceId)
+      .eq("provider", provider)
+      .maybeSingle();
+    const prevMeta = (existing as { metadata?: Record<string, unknown> | null } | null)?.metadata ?? {};
+    const nextMeta = {
+      ...prevMeta,
+      pull_cursor: done ? null : cursor,
+      last_pull_at: new Date().toISOString(),
+      last_pull_summary: { ...agg, done },
+    };
     await db
       .from("workspace_crm_connections")
       .update({
+        metadata: nextMeta,
         last_sync_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq("workspace_id", session.workspaceId)
+      .eq("workspace_id", workspaceId)
       .eq("provider", provider);
 
+    log("info", "crm_import.completed", {
+      provider,
+      workspaceId,
+      mode,
+      done,
+      ...agg,
+      durationMs: Date.now() - startedAt,
+    });
+
     return NextResponse.json({
-      imported: enqueued,
-      total_found: contacts.length,
-      message: `${enqueued} contacts queued for import from ${provider}.`,
+      ok: true,
+      done,
+      mode,
+      ...agg,
+      nextCursor: done ? null : cursor,
+      message: done
+        ? `Import complete — ${agg.imported} new, ${agg.updated} updated from ${provider}.`
+        : `Imported ${agg.imported + agg.updated} so far; more to pull. Tap import again to continue.`,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    log("error", "crm_import.failed", { provider, error: msg });
+    log("error", "crm_import.failed", { provider, workspaceId, error: msg });
     return NextResponse.json(
-      { error: `Failed to import from ${provider}. Please check your connection and try again.` },
-      { status: 500 }
+      { error: `Failed to import from ${provider}: ${msg.slice(0, 140)}` },
+      { status: 502 },
     );
   }
 }

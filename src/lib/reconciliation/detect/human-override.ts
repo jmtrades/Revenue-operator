@@ -5,7 +5,11 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { normalizePhone } from "@/lib/security/phone";
 import { getMessagingProvider } from "../providers/messaging";
+
+/** See inbound-gaps.ts — strict PostgREST-safe email regex. */
+const SAFE_EMAIL = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 const LOOKBACK_HOURS = 2;
 
@@ -63,14 +67,33 @@ export async function detectHumanOverride(workspaceId: string): Promise<HumanRep
 }
 
 async function resolveLeadFromConversationKey(workspaceId: string, conversationKey: string): Promise<string | null> {
+  // Phase 78/Phase 3 (D7): conversationKey comes from provider-provided thread
+  // identifiers and is treated as adversarial. Strict-validate before
+  // PostgREST interpolation.
+  const phoneE164 = normalizePhone(conversationKey);
+  const emailSafe = !phoneE164 && SAFE_EMAIL.test(conversationKey) ? conversationKey : null;
+
   const db = getDb();
-  const phone = conversationKey.replace(/[^0-9+]/g, "");
-  const { data: lead } = await db
-    .from("leads")
-    .select("id")
-    .eq("workspace_id", workspaceId)
-    .or(`phone.eq.${phone},email.eq.${conversationKey}`)
-    .limit(1)
-    .maybeSingle();
-  return (lead as { id: string } | null)?.id ?? null;
+  if (phoneE164) {
+    const phoneDigits = phoneE164.slice(1);
+    const { data: lead } = await db
+      .from("leads")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .or(`phone.eq.${phoneE164},phone.eq.${phoneDigits}`)
+      .limit(1)
+      .maybeSingle();
+    return (lead as { id: string } | null)?.id ?? null;
+  }
+  if (emailSafe) {
+    const { data: lead } = await db
+      .from("leads")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("email", emailSafe)
+      .limit(1)
+      .maybeSingle();
+    return (lead as { id: string } | null)?.id ?? null;
+  }
+  return null;
 }

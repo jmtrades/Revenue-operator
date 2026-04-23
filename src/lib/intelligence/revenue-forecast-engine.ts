@@ -165,9 +165,9 @@ export function forecastRevenue(
   historicalData: HistoricalMetrics
 ): RevenueForecast {
   const now = new Date();
-  const days30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-  const days60 = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
-  const days90 = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  const _days30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const _days60 = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+  const _days90 = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
 
   // Calculate seasonality adjustment
   const currentMonth = now.getMonth() + 1;
@@ -267,10 +267,10 @@ export function analyzePipelineHealth(
   pipeline: PipelineSnapshot
 ): PipelineHealthReport {
   const deals = pipeline.deals;
-  const totalDealCount = deals.length;
+  const _totalDealCount = deals.length;
   const openDealCount = deals.filter((d) => d.status === "open").length;
-  const wonDealCount = deals.filter((d) => d.status === "won").length;
-  const lostDealCount = deals.filter((d) => d.status === "lost").length;
+  const _wonDealCount = deals.filter((d) => d.status === "won").length;
+  const _lostDealCount = deals.filter((d) => d.status === "lost").length;
 
   // Stage conversion rates
   const stageConversionRates: Record<string, number> = {};
@@ -652,7 +652,7 @@ export function generateRevenueInsights(
 
 function generateAtRiskRecommendation(
   riskScore: number,
-  riskFactors: string[]
+  _riskFactors: string[]
 ): string {
   if (riskScore >= 70) {
     return "Escalate immediately or disqualify. Contact required within 24 hours.";

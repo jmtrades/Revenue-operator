@@ -27,7 +27,31 @@ export type JobPayload =
   | { type: "post_call_unknown_checkin"; leadId: string; workspaceId: string; callSessionId: string }
   | { type: "closure_reconciliation"; workspaceId: string }
   | { type: "handoff_notify"; escalationId: string; workspaceId: string; leadId: string; decisionNeeded: string }
-  | { type: "handoff_notify_batch"; escalationIds: string[]; workspaceId: string };
+  | { type: "handoff_notify_batch"; escalationIds: string[]; workspaceId: string }
+  // Phase 13b — inbound email reply routing via reactive-event-processor.
+  | {
+      type: "process_email_reply";
+      workspaceId: string;
+      leadId: string;
+      receivedAt: string;
+      text: string;
+      subject: string;
+      fromEmail: string;
+      messageId: string | null;
+    }
+  // Phase 14 — inbound SMS reply routing via reactive-event-processor.
+  | {
+      type: "process_sms_reply";
+      workspaceId: string;
+      leadId: string;
+      receivedAt: string;
+      text: string;
+      fromNumber: string;
+      toNumber: string;
+      provider: "twilio" | "bandwidth" | "telnyx" | "generic";
+      messageId: string | null;
+      mediaUrls: string[];
+    };
 
 const _DLQ_NAME = "ro:dlq";
 

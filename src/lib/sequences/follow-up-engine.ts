@@ -308,7 +308,7 @@ export async function enrollContact(
     .eq("workspace_id", workspaceId)
     .eq("status", "active");
   if ((activeCount ?? 0) >= MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT) {
-    console.warn(`[sequence-safety] Lead ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
+    log("warn", "[sequence-safety] Max concurrent enrollments reached — skipping", { lead_id: contactId, active_count: activeCount });
     return null;
   }
 
@@ -321,7 +321,7 @@ export async function enrollContact(
     .eq("status", "active")
     .maybeSingle();
   if (existing) {
-    console.warn(`[sequence-safety] Lead ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
+    log("warn", "[sequence-safety] Lead already enrolled in sequence — skipping duplicate", { lead_id: contactId, sequence_id: sequenceId });
     return null;
   }
 
@@ -361,7 +361,7 @@ export async function enrollContact(
     // Handle unique constraint violation gracefully (23505 = unique_violation)
     const pgCode = (error as { code?: string }).code;
     if (pgCode === "23505") {
-      console.warn(`[sequence-safety] Concurrent enrollment race caught for lead ${contactId} in sequence ${sequenceId}`);
+      log("warn", "[sequence-safety] Concurrent enrollment race caught", { lead_id: contactId, sequence_id: sequenceId });
       return null;
     }
     log("error", `[sequence-safety] Enrollment insert failed`, { error: error.message });
@@ -416,7 +416,7 @@ export async function advanceEnrollment(
 
   // Safety: Hard cap on step count to prevent runaway sequences
   if (e.current_step >= MAX_SEQUENCE_STEPS) {
-    console.warn(`[sequence-safety] Enrollment ${enrollmentId} reached MAX_SEQUENCE_STEPS (${MAX_SEQUENCE_STEPS}) — auto-completing`);
+    log("warn", "[sequence-safety] Enrollment reached MAX_SEQUENCE_STEPS — auto-completing", { enrollment_id: enrollmentId, max_steps: MAX_SEQUENCE_STEPS });
     await db
       .from("sequence_enrollments")
       .update({ status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
@@ -475,7 +475,7 @@ export async function advanceEnrollment(
       .gte("created_at", twentyFourHoursAgo.toISOString());
     const totalTouches = (recentTouches ?? 0) + (recentMessages ?? 0);
     if (totalTouches >= MAX_TOUCHES_PER_LEAD_24H) {
-      console.warn(`[sequence-safety] Lead ${e.lead_id} already has ${totalTouches} touches in 24h — skipping step, rescheduling`);
+      log("warn", "[sequence-safety] Lead 24h touch limit reached — skipping step, rescheduling", { lead_id: e.lead_id, total_touches: totalTouches, max: MAX_TOUCHES_PER_LEAD_24H });
       // Reschedule this step for 6 hours later instead of executing now
       const laterDue = new Date();
       laterDue.setHours(laterDue.getHours() + 6);
@@ -496,7 +496,7 @@ export async function advanceEnrollment(
       .eq("enrollment_id", enrollmentId)
       .eq("step_order", stepToExecute.step_order);
     if ((alreadyExecuted ?? 0) > 0) {
-      console.warn(`[sequence-dedup] Step ${stepToExecute.step_order} already executed for enrollment ${enrollmentId} — skipping`);
+      log("warn", "[sequence-dedup] Step already executed for enrollment — skipping", { step_order: stepToExecute.step_order, enrollment_id: enrollmentId });
       return null;
     }
   } catch {
@@ -512,7 +512,7 @@ export async function advanceEnrollment(
       // SAFETY: Check opt-out before sending any SMS
       const { isOptedOut } = await import("@/lib/lead-opt-out");
       if (await isOptedOut(e.workspace_id, `lead:${e.lead_id}`)) {
-        console.warn(`[sequence-sms] Lead ${e.lead_id} is opted out — skipping SMS step for enrollment ${enrollmentId}`);
+        log("warn", "[sequence-sms] Lead is opted out — skipping SMS step", { lead_id: e.lead_id, enrollment_id: enrollmentId });
         actionSucceeded = true; // Respect opt-out, advance enrollment past this step
       } else {
       const { data: leadRow } = await db
@@ -524,10 +524,10 @@ export async function advanceEnrollment(
       const lead = leadRow as { phone?: string; name?: string; metadata?: Record<string, unknown> | null } | null;
       // Also check metadata.sms_consent === false
       if (lead?.metadata && (lead.metadata as Record<string, unknown>).sms_consent === false) {
-        console.warn(`[sequence-sms] Lead ${e.lead_id} has sms_consent=false — skipping SMS step for enrollment ${enrollmentId}`);
+        log("warn", "[sequence-sms] Lead has sms_consent=false — skipping SMS step", { lead_id: e.lead_id, enrollment_id: enrollmentId });
         actionSucceeded = true;
       } else if (!lead?.phone) {
-        console.warn(`[sequence-sms] Lead ${e.lead_id} has no phone number — skipping SMS step for enrollment ${enrollmentId}`);
+        log("warn", "[sequence-sms] Lead has no phone number — skipping SMS step", { lead_id: e.lead_id, enrollment_id: enrollmentId });
         actionSucceeded = true; // Skip gracefully so enrollment advances
       } else if (lead?.phone) {
         const { data: phoneConfig } = await db
@@ -548,7 +548,7 @@ export async function advanceEnrollment(
           await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
           actionSucceeded = true;
         } else {
-          console.warn(`[sequence-sms] No active phone config for workspace ${e.workspace_id} — skipping SMS step for enrollment ${enrollmentId}`);
+          log("warn", "[sequence-sms] No active phone config for workspace — skipping SMS step", { workspace_id: e.workspace_id, enrollment_id: enrollmentId });
           actionSucceeded = true;
         }
       }
@@ -557,7 +557,7 @@ export async function advanceEnrollment(
       // SAFETY: Check opt-out before placing outbound call
       const { isOptedOut: isOptedOutCall } = await import("@/lib/lead-opt-out");
       if (await isOptedOutCall(e.workspace_id, `lead:${e.lead_id}`)) {
-        console.warn(`[sequence-call] Lead ${e.lead_id} is opted out — skipping call step for enrollment ${enrollmentId}`);
+        log("warn", "[sequence-call] Lead is opted out — skipping call step", { lead_id: e.lead_id, enrollment_id: enrollmentId });
         actionSucceeded = true;
       } else {
         const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
@@ -568,7 +568,7 @@ export async function advanceEnrollment(
       // SAFETY: Check opt-out before sending any email
       const { isOptedOut: isOptedOutEmail } = await import("@/lib/lead-opt-out");
       if (await isOptedOutEmail(e.workspace_id, `lead:${e.lead_id}`)) {
-        console.warn(`[sequence-email] Lead ${e.lead_id} is opted out — skipping email step for enrollment ${enrollmentId}`);
+        log("warn", "[sequence-email] Lead is opted out — skipping email step", { lead_id: e.lead_id, enrollment_id: enrollmentId });
         actionSucceeded = true; // Respect opt-out, advance enrollment past this step
       } else {
       // Email delivery through workspace email config (if configured)
@@ -581,11 +581,11 @@ export async function advanceEnrollment(
       const lead = leadRow as { email?: string; name?: string; metadata?: Record<string, unknown> | null } | null;
       // Check metadata.email_consent === false
       if (lead?.metadata && (lead.metadata as Record<string, unknown>).email_consent === false) {
-        console.warn(`[sequence-email] Lead ${e.lead_id} has email_consent=false — skipping email step for enrollment ${enrollmentId}`);
+        log("warn", "[sequence-email] Lead has email_consent=false — skipping email step", { lead_id: e.lead_id, enrollment_id: enrollmentId });
         actionSucceeded = true;
       } else if (!lead?.email) {
         // Lead has no email — skip this step gracefully instead of failing forever
-        console.warn(`[sequence-email] Lead ${e.lead_id} has no email address — skipping email step for enrollment ${enrollmentId}`);
+        log("warn", "[sequence-email] Lead has no email address — skipping email step", { lead_id: e.lead_id, enrollment_id: enrollmentId });
         actionSucceeded = true; // Treat as "delivered" so enrollment advances
       } else if (lead?.email) {
         const { data: wsCtx } = await db
@@ -604,7 +604,7 @@ export async function advanceEnrollment(
         const resendKey = process.env.RESEND_API_KEY;
         const fromEmail = process.env.RESEND_FROM_EMAIL ?? `noreply@recall-touch.com`;
         if (!resendKey) {
-          console.warn(`[sequence-email] RESEND_API_KEY not configured — email step skipped for enrollment ${enrollmentId}. Set RESEND_API_KEY to enable email delivery.`);
+          log("warn", "[sequence-email] RESEND_API_KEY not configured — email step skipped", { enrollment_id: enrollmentId });
           actionSucceeded = true; // Skip gracefully — don't loop forever waiting for config
         }
         if (resendKey) {
@@ -641,7 +641,7 @@ export async function advanceEnrollment(
               }
               // Retryable: 429 or 5xx — log so we can diagnose
               const retryErrText = await emailRes.text().catch(() => "unknown");
-              console.warn(`[sequence-email] Resend API ${emailRes.status} (attempt ${emailAttempt + 1}/${maxEmailRetries}): ${retryErrText}`);
+              log("warn", "[sequence-email] Resend API retryable error", { status: emailRes.status, attempt: emailAttempt + 1, max_retries: maxEmailRetries, error: retryErrText });
               if (emailAttempt < maxEmailRetries - 1) {
                 await new Promise(r => setTimeout(r, (emailAttempt + 1) * 2000));
               }
@@ -658,8 +658,7 @@ export async function advanceEnrollment(
     }
   } catch (execErr) {
     // Log but don't block enrollment advancement — step delivery failure shouldn't stall the sequence
-    const { log } = await import("@/lib/logger");
-    log("error", "sequence_step_execution_error", {
+    log("error", "[follow-up-engine] sequence_step_execution_error", {
       enrollment_id: enrollmentId,
       step_order: stepToExecute.step_order,
       type: stepToExecute.type,
@@ -683,7 +682,7 @@ export async function advanceEnrollment(
           updated_at: new Date().toISOString(),
         })
         .eq("id", enrollmentId);
-      console.warn(`[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed for enrollment ${enrollmentId} — retry ${retryCount + 1}/3 scheduled`);
+      log("warn", "[sequence] Step failed — retry scheduled", { step_order: nextStep.step_order, type: stepToExecute.type, enrollment_id: enrollmentId, retry: retryCount + 1 });
     } else {
       // Max retries exceeded: skip this step and advance
       log("error", `[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed 3 times for enrollment ${enrollmentId} — skipping step`);
@@ -760,12 +759,12 @@ export async function advanceEnrollment(
             .update({ status: newStatus, updated_at: new Date().toISOString() })
             .eq("id", e.lead_id)
             .eq("workspace_id", e.workspace_id);
-          console.log(`[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);
+          log("info", "[sequence-advance] Lead status transition", { lead_id: e.lead_id, from: currentStatus, to: newStatus, step: stepType });
         }
       }
     }
   } catch (advErr) {
-    console.warn(`[sequence-advance] Non-fatal error advancing lead ${e.lead_id}:`, advErr instanceof Error ? advErr.message : advErr);
+    log("warn", "[sequence-advance] Non-fatal error advancing lead", { lead_id: e.lead_id, error: advErr instanceof Error ? advErr.message : String(advErr) });
   }
 
   return { step: stepToExecute, enrollment: updated as SequenceEnrollment };

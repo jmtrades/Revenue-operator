@@ -16,6 +16,7 @@ interface TeamMember {
 
 export default function AppSettingsTeamPage() {
   const t = useTranslations("settings");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const { workspaceId } = useWorkspace();
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("viewer");
@@ -133,9 +134,9 @@ export default function AppSettingsTeamPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[
-        { label: "Home", href: "/app" },
-        { label: "Settings", href: "/app/settings" },
-        { label: "Team" }
+        { label: tBreadcrumbs("home"), href: "/app" },
+        { label: tBreadcrumbs("settings"), href: "/app/settings" },
+        { label: tBreadcrumbs("team") }
       ]} />
       <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("team.pageTitle")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{t("team.subtitle")}</p>
@@ -158,22 +159,24 @@ export default function AppSettingsTeamPage() {
                 <select
                   value={m.role}
                   onChange={(e) => handleRoleChange(m.email, e.target.value)}
-                  className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)] border-none focus:outline-none cursor-pointer"
+                  aria-label={t("team.changeMemberRole") || "Change member role"}
+                  className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)] border-none focus:outline-none cursor-pointer"
                 >
                   <option value="admin">{t("team.roleAdmin")}</option>
                   <option value="manager">{t("team.roleManager")}</option>
                   <option value="viewer">{t("team.roleViewer")}</option>
                 </select>
               ) : (
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)]">{t("team.roleAdmin")}</span>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)]">{t("team.roleAdmin")}</span>
               )}
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-primary)" }}>{t(`team.status${(m.status as string).charAt(0).toUpperCase()}${(m.status as string).slice(1)}`)}</span>
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-primary)" }}>{t(`team.status${(m.status as string).charAt(0).toUpperCase()}${(m.status as string).slice(1)}`)}</span>
               {m.email && (
                 <button
                   type="button"
                   onClick={() => handleRemoveMember(m.email)}
-                  className="text-[10px] px-1.5 py-0.5 rounded-full hover:bg-[var(--accent-danger)]/15 transition-colors"
+                  className="text-xs px-1.5 py-0.5 rounded-full hover:bg-[var(--accent-danger)]/15 transition-colors"
                   style={{ color: "var(--text-tertiary)" }}
+                  aria-label={t("team.removeMember") || "Remove team member"}
                   title={t("team.removeMember")}
                 >
                   ×
@@ -195,7 +198,7 @@ export default function AppSettingsTeamPage() {
             className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             onKeyDown={(e) => e.key === "Enter" && handleInvite()}
           />
-          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-secondary)] focus:outline-none">
+          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} aria-label={t("team.selectInviteRole") || "Select invite role"} className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-secondary)] focus:outline-none">
             <option value="admin">{t("team.roleAdmin")}</option>
             <option value="manager">{t("team.roleManager")}</option>
             <option value="viewer">{t("team.roleViewer")}</option>

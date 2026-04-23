@@ -29,6 +29,57 @@ import { log } from "@/lib/logger";
 import { analyzeConversation, buildStrategyContext } from "./call-intelligence-engine";
 import { analyzeForCoaching, buildCoachingContext } from "./real-time-coaching";
 import { assessEscalation, buildEscalationContext } from "./sentiment-escalation";
+import { guardLiveUtterance } from "./live-guardrail";
+import type { WorkspaceFacts } from "./hallucination-guard";
+
+/**
+ * Phase 12f — Allow-list of facts the demo agent is permitted to assert.
+ *
+ * The demo agent runs as the Revenue Operator marketing-site demo, so it can
+ * legitimately quote our own pricing, our own guarantee, and features we've
+ * actually shipped. Anything outside this list will be blocked pre-TTS by the
+ * live guardrail. Updates here must be kept in sync with the pricing copy in
+ * DEMO_SYSTEM_PROMPT above and the public pricing page.
+ */
+const DEMO_AGENT_FACTS: WorkspaceFacts = {
+  allowedPrices: [
+    /\$\s?147\b/i,
+    /\$\s?297\b/i,
+    /\$\s?597\b/i,
+    /\$\s?997\b/i,
+    "one forty-seven",
+    "two ninety-seven",
+    "five ninety-seven",
+    "nine ninety-seven",
+  ],
+  allowedFeatures: [
+    "AI voice agent",
+    "call answering",
+    "appointment booking",
+    "lead qualification",
+    "missed call follow-up",
+    "CRM integration",
+    "call recording",
+    "analytics dashboard",
+    "A/B agent testing",
+    "API access",
+    "white-label",
+    "SSO",
+  ],
+  allowedGuarantees: [
+    "30-day money-back guarantee",
+    "money-back guarantee",
+  ],
+  allowedPolicies: [
+    "HIPAA compliance", // on Enterprise plan
+  ],
+  allowedTimelines: [
+    "same-day",
+    "24 hours",
+    "within a day",
+    "within an hour",
+  ],
+};
 
 /* ────────────────────────────────────────────────────────────────────────────
  * System Prompt — The "brain" of the demo voice agent.
@@ -611,8 +662,13 @@ export async function generateDemoResponse(
     );
     if (text) {
       const latencyMs = Date.now() - startMs;
-      log("info", "demo_agent.haiku_response", { turns: history.length, latencyMs });
-      return text;
+      const guarded = applyLiveGuardrail(text, "haiku");
+      log("info", "demo_agent.haiku_response", {
+        turns: history.length,
+        latencyMs,
+        guardrailMutated: guarded.mutated,
+      });
+      return guarded.text;
     }
   } catch (err) {
     log("warn", "demo_agent.haiku_failed", {
@@ -631,8 +687,13 @@ export async function generateDemoResponse(
     );
     if (text) {
       const latencyMs = Date.now() - startMs;
-      log("info", "demo_agent.sonnet_fallback_response", { turns: history.length, latencyMs });
-      return text;
+      const guarded = applyLiveGuardrail(text, "sonnet");
+      log("info", "demo_agent.sonnet_fallback_response", {
+        turns: history.length,
+        latencyMs,
+        guardrailMutated: guarded.mutated,
+      });
+      return guarded.text;
     }
   } catch (err) {
     log("warn", "demo_agent.sonnet_failed", {
@@ -644,6 +705,33 @@ export async function generateDemoResponse(
   // 3. Ultimate fallback — static keyword-matched responses
   log("warn", "demo_agent.using_static_fallback", { turns: history.length });
   return getStaticFallbackResponse(history);
+}
+
+/**
+ * Phase 12f — apply the hallucination / commitment / competitor guardrail to a
+ * raw LLM output before it reaches TTS. Logs the scan so we can audit later.
+ */
+function applyLiveGuardrail(text: string, model: "haiku" | "sonnet"): { text: string; mutated: boolean } {
+  const result = guardLiveUtterance(text, { workspaceFacts: DEMO_AGENT_FACTS });
+  if (result.mutated) {
+    log("warn", "demo_agent.guardrail_mutated", {
+      model,
+      severity: result.scan.severity,
+      findings: result.scan.findings.map((f) => ({
+        category: f.category,
+        reason: f.reason,
+        matchedPhrase: f.matchedPhrase,
+      })),
+    });
+  }
+  if (result.commitments.length > 0) {
+    log("info", "demo_agent.commitments_detected", {
+      model,
+      count: result.commitments.length,
+      types: result.commitments.map((c) => c.type),
+    });
+  }
+  return { text: result.text, mutated: result.mutated };
 }
 
 /**

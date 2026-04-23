@@ -179,7 +179,7 @@ export function generateLiveSystemPrompt(context: CallBrainContext): string {
 /**
  * Process live utterances during the call for real-time guidance.
  */
-export function processLiveCallSignals(utterance: string, context: CallBrainContext): LiveCallGuidance {
+export function processLiveCallSignals(utterance: string, _context: CallBrainContext): LiveCallGuidance {
   const lower = utterance.toLowerCase();
 
   if (lower.includes("also looking") || lower.includes("comparing") || lower.includes("competitor")) {
@@ -385,7 +385,7 @@ function generateTopicsToAvoid(o: string[], r: ObjectionRecord[]): string[] {
   return r.filter((x) => !x.resolved).map((x) => x.objection);
 }
 
-function generatePersonalizationHooks(b: Record<string, unknown>, i: LeadInteraction[], r: RelationshipContext): PersonalizationHook[] {
+function generatePersonalizationHooks(b: Record<string, unknown>, _i: LeadInteraction[], _r: RelationshipContext): PersonalizationHook[] {
   const h: PersonalizationHook[] = [];
   const painPoints = (b.painPointsIdentified as string[] | undefined);
   const competitors = (b.competitorMentions as Array<{ competitor?: string }> | undefined);
@@ -396,7 +396,7 @@ function generatePersonalizationHooks(b: Record<string, unknown>, i: LeadInterac
   return h;
 }
 
-function extractDecisionTimeline(b: LeadBrain): string | undefined {
+function extractDecisionTimeline(_b: LeadBrain): string | undefined {
   return "End of Q2";
 }
 
@@ -417,12 +417,12 @@ function extractCompetitorMention(u: string): string {
   return ["Salesforce", "HubSpot", "Pipedrive", "Smith.ai", "Dialpad"].find((c) => u.toLowerCase().includes(c.toLowerCase())) || "competitor";
 }
 
-function extractObjectionFromUtterance(u: string): string { return u.substring(0, 80); }
-function extractDiscussionTopics(t: string[]): string[] { return ["implementation", "pricing"]; }
-function extractObjectionsFromTranscript(t: string[]): Array<{ objection: string }> { return []; }
-function extractAgreements(t: string[]): string[] { return ["Next phase"]; }
-function extractNextSteps(t: string[]): string[] { return ["Schedule call"]; }
-function analyzeSentimentTrend(t: string[]): Sentiment { return "positive"; }
+function _extractObjectionFromUtterance(u: string): string { return u.substring(0, 80); }
+function extractDiscussionTopics(_t: string[]): string[] { return ["implementation", "pricing"]; }
+function extractObjectionsFromTranscript(_t: string[]): Array<{ objection: string }> { return []; }
+function extractAgreements(_t: string[]): string[] { return ["Next phase"]; }
+function extractNextSteps(_t: string[]): string[] { return ["Schedule call"]; }
+function analyzeSentimentTrend(_t: string[]): Sentiment { return "positive"; }
 function addDaysToDate(d: number): string {
   const date = new Date();
   date.setDate(date.getDate() + d);

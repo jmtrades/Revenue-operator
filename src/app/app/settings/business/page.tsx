@@ -91,7 +91,7 @@ export default function AppSettingsBusinessPage() {
         setLoading(false);
         toast.error(tSettings("business.loadFailed"));
       });
-  }, []);
+  }, [tSettings]);
 
   const handleSave = async () => {
     if (saving) return;

@@ -670,7 +670,7 @@ async function scheduleFollowupAction(
     try {
       recoveryProfile = await getRecoveryProfile(lead.workspace_id);
     } catch (profileErr) {
-      // Could not fetch recovery profile, using default (error details omitted to protect PII)
+      log("error", "[intelligence/autonomous-executor] Failed to fetch recovery profile", { error: profileErr instanceof Error ? profileErr.message : String(profileErr) });
     }
 
     // Use adaptive follow-up system to choose the right strategy

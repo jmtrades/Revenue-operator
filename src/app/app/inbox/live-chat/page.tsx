@@ -58,7 +58,7 @@ export default function LiveChatInboxPage() {
           }
         }
       } catch (error) {
-        // silenced
+        console.error("[live-chat] Failed to load chat sessions", error instanceof Error ? error.message : String(error));
       }
     };
 
@@ -88,7 +88,7 @@ export default function LiveChatInboxPage() {
           setMessages(data);
         }
       } catch (error) {
-        // silenced
+        console.error("[live-chat] Failed to load chat messages", error instanceof Error ? error.message : String(error));
       }
     };
 

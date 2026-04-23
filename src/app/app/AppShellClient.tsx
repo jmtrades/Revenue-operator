@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
@@ -157,7 +157,7 @@ export default function AppShellClient({
     });
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     // Clean up all cached data to prevent leakage
     try {
       localStorage.removeItem("rt_workspace_me_snapshot");
@@ -179,7 +179,7 @@ export default function AppShellClient({
       }
     }
     router.push("/sign-in");
-  };
+  }, [router]);
 
   useEffect(() => {
     initErrorReporting();
@@ -214,7 +214,7 @@ export default function AppShellClient({
 
     const interval = setInterval(checkSession, 5 * 60 * 1000); // 5 minutes
     return () => clearInterval(interval);
-  }, [sessionExpiredShown]);
+  }, [sessionExpiredShown, handleSignOut]);
 
   useEffect(() => {
     if (!pathname) return;

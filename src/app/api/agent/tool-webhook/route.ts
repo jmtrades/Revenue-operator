@@ -5,8 +5,8 @@ import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 import { log } from "@/lib/logger";
+import { normalizePhone } from "@/lib/security/phone";
 import {
-  detectBookingIntent,
   getAvailableSlots,
   bookAppointment,
   buildSlotPresentationScript,
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     if (token !== webhookSecret) {
       return NextResponse.json({ error: "Unauthorized", result: "Technical issue. Someone will follow up." }, { status: 401 });
     }
-  } else if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+  } else if (process.env.NODE_ENV === "production") {
     // Fail closed in production — webhook secret must be configured
     log("error", "[tool-webhook] TOOL_WEBHOOK_SECRET not configured in production — rejecting request");
     return NextResponse.json({ error: "Unauthorized", result: "Technical issue. Someone will follow up." }, { status: 401 });
@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "check_availability": {
-        const { date, service } = tool_args as { date?: string; service?: string };
+        const { date, service: _service } = tool_args as { date?: string; service?: string };
 
         try {
           // Parse target date if provided
@@ -299,12 +299,19 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ result: "I don't have a phone number to look up. Could you tell me the number on your account?" });
         }
 
-        const normalized = lookupPhone.replace(/\D/g, "");
+        // Phase 78/Phase 3 (D7): validate to strict E.164 before PostgREST
+        // `.or(...)` interpolation. `lookupPhone` comes from LLM-generated
+        // tool_args and must not reach the query string unvalidated.
+        const lookupE164 = normalizePhone(lookupPhone);
+        if (!lookupE164) {
+          return NextResponse.json({ result: "That phone number doesn't look right to me. Could you say the digits one at a time?", found: false });
+        }
+        const lookupDigits = lookupE164.slice(1);
         const { data: lead } = await db
           .from("leads")
           .select("name, email, status, metadata, created_at")
           .eq("workspace_id", workspace_id)
-          .or(`phone.eq.${lookupPhone},phone.eq.${normalized}`)
+          .or(`phone.eq.${lookupE164},phone.eq.${lookupDigits}`)
           .limit(1)
           .maybeSingle();
 
@@ -572,14 +579,22 @@ async function upsertLead(
 ): Promise<string | null> {
   if (!data.phone && !data.email) return null;
 
+  // Phase 78/Phase 3 (D7): normalize phone to strict E.164 before any
+  // PostgREST `.or(...)` interpolation. `data.phone` is LLM-generated tool
+  // args; pass it through the injection-safety boundary before use.
+  const phoneE164 = data.phone ? normalizePhone(data.phone) : null;
+
   try {
     // Try to find existing lead
     let query = db.from("leads").select("id").eq("workspace_id", workspaceId);
-    if (data.phone) {
-      const normalized = data.phone.replace(/\D/g, "");
-      query = query.or(`phone.eq.${data.phone},phone.eq.${normalized}`);
+    if (phoneE164) {
+      const phoneDigits = phoneE164.slice(1);
+      query = query.or(`phone.eq.${phoneE164},phone.eq.${phoneDigits}`);
     } else if (data.email) {
       query = query.eq("email", data.email);
+    } else {
+      // Phone was present but unrecognizable, and no email — nothing to match.
+      return null;
     }
 
     const { data: existing } = await query.limit(1).maybeSingle();
@@ -598,7 +613,7 @@ async function upsertLead(
       db.from("leads").insert({
         workspace_id: workspaceId,
         name: data.name || "New Lead",
-        phone: data.phone,
+        phone: phoneE164 ?? data.phone,
         email: data.email,
         state: "NEW",
         notes: data.notes,

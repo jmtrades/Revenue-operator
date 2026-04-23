@@ -10,6 +10,8 @@ interface CalendarStatus {
   connected: boolean;
 }
 
+// Phase 78 Task 9.3: the name map must cover every CRM provider in
+// `SUPPORTED_CRM_PROVIDERS`. Missing entries are now a tsc error.
 const CRM_PROVIDER_NAMES: Record<CrmProviderId, string> = {
   salesforce: "Salesforce",
   hubspot: "HubSpot",
@@ -19,6 +21,15 @@ const CRM_PROVIDER_NAMES: Record<CrmProviderId, string> = {
   google_contacts: "Google Contacts",
   microsoft_365: "Microsoft 365",
   airtable: "Airtable",
+  close: "Close",
+  follow_up_boss: "Follow Up Boss",
+  active_campaign: "ActiveCampaign",
+  copper: "Copper",
+  monday_crm: "monday CRM",
+  freshsales: "Freshsales",
+  attio: "Attio",
+  keap: "Keap",
+  google_sheets: "Google Sheets",
 };
 
 export function IntegrationsHealthWidget() {

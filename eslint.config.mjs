@@ -80,11 +80,9 @@ const eslintConfig = defineConfig([
     files: ["src/**/*.{ts,tsx}", "e2e/**/*.{ts,tsx}"],
     rules: {
       "react/no-unescaped-entities": "off",
-      "@typescript-eslint/no-explicit-any": "off",
       "react-hooks/set-state-in-effect": "off",
       "react-hooks/purity": "off",
       "react-hooks/preserve-manual-memoization": "off",
-      "react-hooks/exhaustive-deps": "off",
     },
   },
   // Unused imports (auto-fix) + TS unused vars for src/e2e (overrides global block for these paths).

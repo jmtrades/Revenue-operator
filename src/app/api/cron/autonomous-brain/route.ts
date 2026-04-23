@@ -14,6 +14,7 @@ export const maxDuration = 60;
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
           const check = await runMeetingAwareCheck(ws.id);
           meetingActions += check.actions;
         } catch (e) {
-          console.warn(`[autonomous-brain] meeting-aware check failed for workspace ${ws.id}:`, e instanceof Error ? e.message : String(e));
+          log("warn", "[cron/autonomous-brain] meeting-aware check failed", { workspace_id: ws.id, error: e instanceof Error ? e.message : String(e) });
         }
       }
     } catch (err) {
@@ -150,11 +151,11 @@ export async function GET(request: NextRequest) {
                 actionsExecuted++;
               }
             } catch (e) {
-              console.warn(`[autonomous-brain] action execution failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
+              log("warn", "[cron/autonomous-brain] action execution failed", { lead_id: lead.id, error: e instanceof Error ? e.message : String(e) });
             }
           }
         } catch (e) {
-          console.warn(`[autonomous-brain] intelligence cycle failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
+          log("warn", "[cron/autonomous-brain] intelligence cycle failed", { lead_id: lead.id, error: e instanceof Error ? e.message : String(e) });
         }
       }
     } catch (err) {
@@ -196,7 +197,7 @@ export async function GET(request: NextRequest) {
         }
       }
     } catch (e) {
-      console.warn("[autonomous-brain] no_action churn detection failed:", e instanceof Error ? e.message : String(e));
+      log("warn", "[cron/autonomous-brain] no_action churn detection failed", { error: e instanceof Error ? e.message : String(e) });
     }
 
     return {

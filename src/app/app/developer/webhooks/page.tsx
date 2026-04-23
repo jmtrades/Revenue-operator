@@ -60,6 +60,7 @@ function formatTime(iso: string): string {
 
 export default function DeveloperWebhooksPage() {
   const tCommon = useTranslations("common");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tDev = useTranslations("developer.webhooks");
   const { workspaceId } = useWorkspace();
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
@@ -167,7 +168,7 @@ export default function DeveloperWebhooksPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Developer", href: "/app/developer" }, { label: "Webhooks" }]} />
+      <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("developer"), href: "/app/developer" }, { label: tBreadcrumbs("webhooks") }]} />
       <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tDev("title")}</h1>
       <p className="text-sm text-[var(--text-tertiary)] mb-6">
         {tDev("subtitle")}

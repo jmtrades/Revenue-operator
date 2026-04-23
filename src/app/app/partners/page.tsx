@@ -11,6 +11,7 @@ type SummaryResponse = {
 
 export default function PartnersPage() {
   const t = useTranslations("partners");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const { workspaceId, workspaceName } = useWorkspace();
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +47,7 @@ export default function PartnersPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6">
-      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Partners" }]} />
+      <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("partners") }]} />
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="min-w-0">
           <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>

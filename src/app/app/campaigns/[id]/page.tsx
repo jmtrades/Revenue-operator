@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -107,6 +108,7 @@ function StatCard(p: { label: string; value: number; percentage?: number; color?
 }
 
 export default function CampaignDetailPage() {
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const params = useParams();
   const router = useRouter();
   const { workspaceId } = useWorkspace();
@@ -308,7 +310,7 @@ export default function CampaignDetailPage() {
     <div className="p-6 md:p-8 max-w-4xl mx-auto">
       <Breadcrumbs
         items={[
-          { label: "Campaigns", href: "/app/campaigns" },
+          { label: tBreadcrumbs("campaigns"), href: "/app/campaigns" },
           { label: campaign.name },
         ]}
       />

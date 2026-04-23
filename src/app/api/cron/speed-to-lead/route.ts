@@ -1,6 +1,6 @@
 /**
  * Speed-to-lead: call new leads within ~60 seconds.
- * Runs every minute via Vercel cron. Finds leads created in the last 90s with a phone number
+ * Runs every minute via cron scheduler. Finds leads created in the last 90s with a phone number
  * and no existing call_session, then triggers one outbound call per lead (idempotent per lead).
  */
 
@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
 import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
+import { log } from "@/lib/logger";
 
 const NEW_LEAD_WINDOW_SEC = 90;
 const MAX_CALLS_PER_RUN = 10;
@@ -60,7 +61,7 @@ export async function GET(req: NextRequest) {
       const result = await executeLeadOutboundCall(row.workspace_id, row.id);
       if (result.ok) called++;
     } catch (err) {
-      // Error (details omitted to protect PII): `[speed-to-lead] Failed to call lead ${row.id}:`, err instanceof Error ? err.message : err);
+      log("error", "[cron/speed-to-lead] Failed to call lead", { error: err instanceof Error ? err.message : String(err) });
       // Continue to next lead — don't let one failure block others
     }
   }

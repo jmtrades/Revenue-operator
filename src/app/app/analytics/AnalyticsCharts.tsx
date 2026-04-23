@@ -1,18 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Area,
-  AreaChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const Area = dynamic(() => import("recharts").then(m => m.Area), { ssr: false });
+const AreaChart = dynamic(() => import("recharts").then(m => m.AreaChart), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
+const PieChart = dynamic(() => import("recharts").then(m => m.PieChart), { ssr: false });
+const Pie = dynamic(() => import("recharts").then(m => m.Pie), { ssr: false });
+const Cell = dynamic(() => import("recharts").then(m => m.Cell), { ssr: false });
+const Legend = dynamic(() => import("recharts").then(m => m.Legend), { ssr: false });
 import { useTranslations } from "next-intl";
 import { tokens } from "@/lib/design-tokens";
 
@@ -49,7 +49,7 @@ function useChartColors() {
       accent: cs.getPropertyValue("--accent-primary").trim() || fallbackAccent,
       legendText: cs.getPropertyValue("--text-tertiary").trim() || "#71757E",
     });
-  }, []);
+  }, [fallbackAccent]);
 
   return colors;
 }

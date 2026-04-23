@@ -385,6 +385,7 @@ const ADD_FROM_CALL_KEY = "rt_add_to_knowledge";
 
 export default function KnowledgePage() {
   const t = useTranslations("knowledge");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tToast = useTranslations("toast");
   const tCommon = useTranslations("common");
   const tForms = useTranslations("forms.state");
@@ -616,7 +617,7 @@ export default function KnowledgePage() {
         }
       `}</style>
       <div className="p-4 md:p-6 lg:p-8">
-        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Knowledge base" }]} />
+        <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("knowledgeBase") }]} />
         {/* Top bar */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
           <div>

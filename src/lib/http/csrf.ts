@@ -44,8 +44,8 @@ export function assertSameOrigin(req: NextRequest): NextResponse | null {
       if (sameHost) return null;
     }
 
-    // Allow Vercel preview deployments (*.vercel.app)
-    if (originUrl.hostname.endsWith(".vercel.app")) {
+    // Allow Render preview deployments (*.onrender.com)
+    if (originUrl.hostname.endsWith(".onrender.com")) {
       return null;
     }
 

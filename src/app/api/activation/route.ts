@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { DEFAULT_DEAL_VALUE_CENTS } from "@/lib/constants";
 import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
@@ -49,7 +50,7 @@ export async function GET(req: NextRequest) {
     }, {} as Record<string, number>);
     topRecoverable = (leads ?? []).map((l: { id: string; name?: string; company?: string; state: string }) => ({
       ...l,
-      estimated_value_cents: valueByLead[l.id] ?? 5000,
+      estimated_value_cents: valueByLead[l.id] ?? DEFAULT_DEAL_VALUE_CENTS,
     })).sort((a: { estimated_value_cents: number }, b: { estimated_value_cents: number }) => b.estimated_value_cents - a.estimated_value_cents).slice(0, 3);
     recoverableRevenueCents = (topRecoverable as { estimated_value_cents: number }[]).reduce((s, l) => s + l.estimated_value_cents, 0);
   }
@@ -119,7 +120,7 @@ export async function POST(req: NextRequest) {
     const scored = (recoverableLeads ?? [])
       .map((l: { id: string; name?: string; company?: string; state: string }) => ({
         ...l,
-        estimated_value_cents: valueByLead[l.id] ?? 5000,
+        estimated_value_cents: valueByLead[l.id] ?? DEFAULT_DEAL_VALUE_CENTS,
       }))
       .sort((a: { estimated_value_cents: number }, b: { estimated_value_cents: number }) => b.estimated_value_cents - a.estimated_value_cents);
 

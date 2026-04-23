@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * This endpoint is intentionally unauthenticated so the chat widget embed
  * can fetch agent name/greeting without a session.  Security measures:
  *  - Only returns id, name, greeting (no system prompts, config, or workspace data)
- *  - Rate limited via Vercel edge config (not inline, to avoid cold-start overhead)
+ *  - Rate limited via distributed limiter (not inline, to avoid cold-start overhead)
  *  - Agent IDs are UUIDs — not enumerable
  *  - Added workspace_id exclusion from response to prevent cross-workspace leaks
  */

@@ -5,6 +5,12 @@ import { log } from "@/lib/logger";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { parseBody, workspaceIdSchema, safeStringSchema, dncReasonSchema } from "@/lib/api/validate";
+// Phase 78 / Task 7.3 — canonical DNC table is `dnc_entries`; writes go
+// through the unified helper. This route still owns GET (list) and DELETE
+// (remove by id) because they're dashboard concerns, but POST uses the
+// unified `addDncEntry` helper so the reason enum + normalization match
+// everywhere else (SMS STOP, in-call revocation, wrong-number, etc.).
+import { addDncEntry, type DncReason } from "@/lib/voice/dnc";
 
 const addDncSchema = z.object({
   workspace_id: workspaceIdSchema,
@@ -32,7 +38,7 @@ export async function GET(request: NextRequest) {
   try {
     const db = getDb();
     let query = db
-      .from("dnc_list")
+      .from("dnc_entries")
       .select("id, phone_number, reason, source, notes, added_by, created_at")
       .eq("workspace_id", workspaceId)
       .order("created_at", { ascending: false })
@@ -49,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     // Count query
     let countQuery = db
-      .from("dnc_list")
+      .from("dnc_entries")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId);
     if (search) countQuery = countQuery.ilike("phone_number", `%${search}%`);
@@ -81,41 +87,52 @@ export async function POST(request: NextRequest) {
     const authErr = await requireWorkspaceAccess(request, body.workspace_id);
     if (authErr) return authErr;
 
-    // Normalize phone number - strip non-digit chars except leading +
-    const normalized = body.phone_number.startsWith("+")
-      ? "+" + body.phone_number.slice(1).replace(/\D/g, "")
-      : body.phone_number.replace(/\D/g, "");
-
     const db = getDb();
 
-    // Check if already on DNC
-    const { data: existing } = await db
-      .from("dnc_list")
-      .select("id")
-      .eq("workspace_id", body.workspace_id)
-      .eq("phone_number", normalized)
-      .maybeSingle();
+    // Delegate insertion + normalization to the unified helper. It enforces
+    // strict E.164, writes to `dnc_entries(phone_number)`, and upserts on
+    // conflict (workspace_id,phone_number) — matching SMS STOP and in-call
+    // revocation paths.
+    const allowedReasons = new Set<DncReason>([
+      "user_request",
+      "stop_keyword",
+      "ftc_registry",
+      "complaint",
+      "manual",
+      "consent_revoked",
+      "wrong_number",
+      "reassigned_number",
+    ]);
+    const reason: DncReason = allowedReasons.has(body.reason as DncReason)
+      ? (body.reason as DncReason)
+      : "manual";
 
-    if (existing) {
-      return NextResponse.json({ error: "Phone number already on DNC list", existing_id: existing.id }, { status: 409 });
+    const result = await addDncEntry({
+      workspaceId: body.workspace_id,
+      phone: body.phone_number,
+      reason,
+      source: body.source || "dashboard",
+      notes: body.notes ?? null,
+      addedBy: body.added_by || "system",
+    });
+
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: result.error ?? "Failed to add DNC entry" },
+        { status: 400 },
+      );
     }
 
-    const { data, error } = await db
-      .from("dnc_list")
-      .insert({
-        workspace_id: body.workspace_id,
-        phone_number: normalized,
-        reason: body.reason || "manual",
-        source: body.source || "dashboard",
-        notes: body.notes || null,
-        added_by: body.added_by || "system",
-      })
-      .select()
-      .single();
+    // Read back the canonical row for the response (id + created_at fields
+    // the dashboard expects).
+    const { data } = await db
+      .from("dnc_entries")
+      .select("id, phone_number, reason, source, notes, added_by, created_at")
+      .eq("workspace_id", body.workspace_id)
+      .eq("id", result.id ?? "")
+      .maybeSingle();
 
-    if (error) throw error;
-
-    log("info", "api.dnc.added", { phone: normalized, reason: body.reason });
+    log("info", "api.dnc.added", { reason: body.reason });
     return NextResponse.json({ entry: data }, { status: 201 });
   } catch (err) {
     log("error", "api.dnc.add_failed", { error: err instanceof Error ? err.message : String(err) });
@@ -137,7 +154,7 @@ export async function DELETE(request: NextRequest) {
 
   try {
     const db = getDb();
-    await db.from("dnc_list").delete().eq("id", entryId).eq("workspace_id", workspaceId);
+    await db.from("dnc_entries").delete().eq("id", entryId).eq("workspace_id", workspaceId);
     return NextResponse.json({ ok: true });
   } catch (err) {
     log("error", "api.dnc.delete_failed", { error: err instanceof Error ? err.message : String(err) });

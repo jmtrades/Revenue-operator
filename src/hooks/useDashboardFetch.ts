@@ -70,10 +70,23 @@ export function useDashboardFetch<T = unknown>(
   const mountedRef = useRef(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Stash latest transform/params in refs so they don't churn the fetchData identity.
+  const transformRef = useRef(transform);
+  const paramsRef = useRef(params);
+  useEffect(() => {
+    transformRef.current = transform;
+    paramsRef.current = params;
+  }, [transform, params]);
+
+  // Serialize params for stable dependency comparison.
+  const paramsKey = JSON.stringify(params);
+
   const fetchData = useCallback(
     async (isBackground = false) => {
       if (!workspaceId || !enabled) return;
       if (inflightRef.current) return; // deduplicate
+      // Reference paramsKey so the dep array is honest about cache scope.
+      void paramsKey;
 
       inflightRef.current = true;
 
@@ -87,7 +100,7 @@ export function useDashboardFetch<T = unknown>(
       try {
         const searchParams = new URLSearchParams({
           workspace_id: workspaceId,
-          ...params,
+          ...paramsRef.current,
         });
         const res = await fetch(`${url}?${searchParams}`, {
           credentials: "include",
@@ -101,7 +114,8 @@ export function useDashboardFetch<T = unknown>(
 
         if (!mountedRef.current) return;
 
-        const result = transform ? transform(json) : (json as T);
+        const currentTransform = transformRef.current;
+        const result = currentTransform ? currentTransform(json) : (json as T);
         setData(result);
         setLastUpdated(new Date());
         setError(null);
@@ -122,8 +136,7 @@ export function useDashboardFetch<T = unknown>(
         inflightRef.current = false;
       }
     },
-     
-    [workspaceId, url, JSON.stringify(params), enabled]
+    [workspaceId, url, paramsKey, enabled]
   );
 
   // Initial fetch

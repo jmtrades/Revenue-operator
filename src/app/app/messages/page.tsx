@@ -102,12 +102,12 @@ export default function AppMessagesPage() {
     } finally {
       setLoadingThreads(false);
     }
-  }, [leadIdParam, toParam, selected]);
+  }, [leadIdParam, toParam, selected, t]);
 
   useEffect(() => {
     fetchThreads();
-     
-  }, []);
+
+  }, [fetchThreads]);
 
   useEffect(() => {
     if (!toParam || loadingThreads) return;

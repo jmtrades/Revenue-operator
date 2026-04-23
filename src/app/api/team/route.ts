@@ -7,29 +7,34 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { getSession } from "@/lib/auth/request-session";
+import { authorizeOrg } from "@/lib/auth/authorize-org";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  const err = await requireWorkspaceAccess(req, workspaceId);
-  if (err) return err;
+  // Single auth call: verifies session + workspace membership AND returns the
+  // session, so we don't re-fetch it below just to learn who "You" is.
+  const auth = await authorizeOrg(req, workspaceId, "viewer");
+  if (!auth.ok) return auth.response;
+  const currentUserId = auth.session.userId;
   const db = getDb();
   try {
-    const [wsRes, membersRes, session] = await Promise.all([
+    const [wsRes, membersRes] = await Promise.all([
       db.from("workspaces").select("id, name, owner_id").eq("id", workspaceId).maybeSingle(),
       db.from("team_members").select("id, name, email, role, is_on_call, created_at").eq("workspace_id", workspaceId).order("created_at"),
-      getSession(req),
     ]);
     const workspace = wsRes.data as { id: string; name?: string; owner_id?: string } | null;
     const members = (membersRes.data ?? []) as Array<{ id: string; name: string; email: string; role: string; is_on_call?: boolean; created_at?: string }>;
-    const currentUserId = session?.userId ?? null;
     const ownerId = workspace?.owner_id ?? null;
 
     let team = [...members];
     if (ownerId) {
-      const { data: ownerUser } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
+      const { data: ownerUser, error: ownerUserError } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
+      if (ownerUserError) {
+        log("error", "[team] Failed to query owner user", { error: ownerUserError.message });
+        return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+      }
       const ownerEmail = (ownerUser as { email?: string } | null)?.email ?? "";
       const isOwnerInList = members.some((m) => m.role === "owner" || (ownerEmail && m.email === ownerEmail));
       if (!isOwnerInList) {

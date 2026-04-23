@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import type { Agent } from "../AgentsPageClient";
 import { AgentKnowledgePanel } from "./AgentKnowledgePanel";
@@ -25,16 +25,7 @@ export function KnowledgeStepContent({
   const [importError, setImportError] = useState<string | null>(null);
   const autoSeeded = useRef(false);
 
-  // Auto-seed: if agent has fewer than 3 FAQs and hasn't been auto-seeded yet, trigger it
-  useEffect(() => {
-    if (autoSeeded.current) return;
-    if ((agent.faq?.length ?? 0) < 3 && agent.id && !seeding) {
-      autoSeeded.current = true;
-      void seedFive();
-    }
-  }, [agent.id]);  
-
-  const seedFive = async () => {
+  const seedFive = useCallback(async () => {
     setSeeding(true);
     try {
       const res = await fetch("/api/agent/seed-knowledge", {
@@ -63,7 +54,16 @@ export function KnowledgeStepContent({
     } finally {
       setSeeding(false);
     }
-  };
+  }, [agent.id, onChange]);
+
+  // Auto-seed: if agent has fewer than 3 FAQs and hasn't been auto-seeded yet, trigger it
+  useEffect(() => {
+    if (autoSeeded.current) return;
+    if ((agent.faq?.length ?? 0) < 3 && agent.id && !seeding) {
+      autoSeeded.current = true;
+      void seedFive();
+    }
+  }, [agent.id, agent.faq?.length, seedFive, seeding]);
 
   const handleImportFromWebsite = async () => {
     const url = importUrl.trim();

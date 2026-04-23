@@ -1,5 +1,5 @@
 /**
- * Weekly email digest — sends every Monday at 8am via Vercel cron.
+ * Weekly email digest — sends every Monday at 8am via cron scheduler.
  * Summarizes: calls answered, appointments booked, follow-ups sent, revenue recovered.
  * Uses daily_metrics table for aggregation.
  */
@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { sendEmail } from "@/lib/integrations/email";
+import { log } from "@/lib/logger";
 
 interface DailyMetricRow {
   total_calls: number;
@@ -188,7 +189,7 @@ export async function GET(req: NextRequest) {
 
       sent++;
     } catch (err) {
-      // Error (details omitted to protect PII): `[weekly-digest] Error for workspace ${ws.id}:`, err);
+      log("error", "[cron/weekly-digest] Failed to send digest for workspace", { error: err instanceof Error ? err.message : String(err) });
       errors++;
     }
   }

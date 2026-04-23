@@ -1,3 +1,9 @@
+/** Default deal value in cents ($50.00) — used as fallback when a deal has no value_cents. */
+export const DEFAULT_DEAL_VALUE_CENTS = 5000;
+
+/** Estimated per-no-show revenue at risk in cents (20% rebook rate x $250 appointment value). */
+export const NO_SHOW_APPOINTMENT_VALUE_CENTS = 5000;
+
 /** Phone marketplace + API: single source of truth for supported country codes */
 export const SUPPORTED_PHONE_COUNTRIES = [
   "US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE",
@@ -8,8 +14,10 @@ export const SUPPORTED_PHONE_COUNTRIES = [
 export const ROUTES = {
   /** Core flow: Homepage → Start → /activate → onboarding → primary app surface */
   START: "/activate",
-  /** Default destination after sign-in / OAuth / activation (activity hub). */
-  APP_HOME: "/app/activity",
+  /** Default destination after sign-in / OAuth / activation (unified dashboard). */
+  APP_HOME: "/app/dashboard",
+  /** Post-activation welcome / wayfinding screen. */
+  APP_WELCOME: "/app/welcome",
   SIGN_IN: "/sign-in",
   PRICING: "/pricing",
   PRODUCT: "/product",

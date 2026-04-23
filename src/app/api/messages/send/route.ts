@@ -10,7 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { sendOutbound } from "@/lib/delivery/provider";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
@@ -25,8 +25,9 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
-  // Rate limit: max 60 messages per minute per workspace
-  const rl = await checkRateLimit(`msg-send:${workspaceId}`, 60, 60_000);
+  // Rate limit: max 30 messages per minute per IP
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`msg-send:${ip}`, 30, 60_000);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Message rate limit reached. Please try again shortly." }, { status: 429 });
   }
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
 
   // Validate channel - strict validation, no silent defaults
   const supportedChannels = ["sms", "whatsapp", "email"] as const;
-  if (!supportedChannels.includes(channelParam as any)) {
+  if (!supportedChannels.includes(channelParam as typeof supportedChannels[number])) {
     return NextResponse.json(
       { error: `Invalid channel. Supported channels: ${supportedChannels.join(", ")}` },
       { status: 400 }

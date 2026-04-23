@@ -1,33 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
-import crypto from "crypto";
 import { fireWebhookEvent } from "@/lib/integrations/webhook-events";
+import {
+  verifyTwilioRequest,
+  buildTwilioCandidateUrls,
+  TwilioSignatureConfigError,
+} from "@/lib/security/twilio-signature";
+// Phase 78 / Task 7.2 — STOP keyword must ALSO hang up any call still
+// in-flight for this phone in this workspace, not just mark the lead
+// opted-out. See src/lib/voice/revocation.ts for the full contract.
+import { revokeAndHangup } from "@/lib/voice/revocation";
 
 export const dynamic = "force-dynamic";
-
-// Twilio signature verification
-function verifyTwilioSignature(
-  url: string,
-  params: Record<string, string>,
-  signature: string
-): boolean {
-  const token = process.env.TWILIO_AUTH_TOKEN;
-  if (!token) return false;
-  const sorted = Object.keys(params)
-    .sort()
-    .reduce((acc, key) => acc + key + params[key], "");
-  const data = url + sorted;
-  const expected = crypto
-    .createHmac("sha1", token)
-    .update(Buffer.from(data, "utf-8"))
-    .digest("base64");
-  try {
-    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
-  } catch {
-    return false;
-  }
-}
 
 // STOP words per TCPA/CTIA
 const STOP_WORDS = new Set([
@@ -66,14 +51,12 @@ export async function POST(request: NextRequest) {
       new URLSearchParams(bodyText)
     ) as Record<string, string>;
 
-    // Verify signature in production
+    // Phase 78/Phase 4 (P0-4): always-on Twilio signature verification — runs
+    // in every environment, fail-closed on missing TWILIO_AUTH_TOKEN.
     const sig = request.headers.get("x-twilio-signature");
-    if (process.env.TWILIO_AUTH_TOKEN && process.env.NODE_ENV === "production") {
-      const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/sms`;
-      if (!sig || !verifyTwilioSignature(url, params, sig)) {
-        log("warn", "sms_webhook.invalid_signature", {});
-        return new NextResponse("Unauthorized", { status: 401 });
-      }
+    if (!verifyTwilioRequest(buildTwilioCandidateUrls(request), params, sig)) {
+      log("warn", "sms_webhook.invalid_signature", {});
+      return new NextResponse("Unauthorized", { status: 403 });
     }
 
     const from = params.From ?? "";
@@ -133,6 +116,26 @@ export async function POST(request: NextRequest) {
           .eq("id", lead.id);
         // Also record in canonical lead_opt_out table for unified checks
         await recordOptOut(lead.workspace_id, `lead:${lead.id}`, lead.id);
+      }
+
+      // Phase 78 / Task 7.2 — STOP during an active call must immediately
+      // hang the call up via Twilio REST, not just mark the lead opted-out.
+      // Dedupe workspaces across leads (multi-workspace collisions on a
+      // shared phone are rare but possible) and fail-safe: never let a
+      // hangup error block the CTIA confirmation reply to the caller.
+      const workspacesTouched = Array.from(
+        new Set(leadList.map((l) => l.workspace_id)),
+      );
+      for (const wsId of workspacesTouched) {
+        try {
+          await revokeAndHangup(wsId, normalizedPhone);
+        } catch (err) {
+          log("error", "sms_webhook.revoke_and_hangup_failed", {
+            workspaceId: wsId,
+            phone: normalizedPhone,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        }
       }
 
       log("info", "sms_webhook.opt_out", {
@@ -380,6 +383,12 @@ export async function POST(request: NextRequest) {
       { status: 200, headers: { "Content-Type": "text/xml" } }
     );
   } catch (err) {
+    // Phase 78/Phase 4: missing TWILIO_AUTH_TOKEN is a deploy-time misconfig —
+    // return 500 (loud) so ops notices rather than silently dropping SMS.
+    if (err instanceof TwilioSignatureConfigError) {
+      log("error", "sms_webhook.signature_config_error", { message: err.message });
+      return new NextResponse("Server misconfigured", { status: 500 });
+    }
     log("error", "sms_webhook.failed", {
       error: err instanceof Error ? err.message : String(err),
     });

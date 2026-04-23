@@ -8,6 +8,7 @@ import { createHash, randomBytes } from "crypto";
 import { getDb } from "@/lib/db/queries";
 import { isSettlementReady } from "@/lib/operational-perception/settlement-readiness";
 import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 const DEFAULT_TTL_HOURS = 24 * 7; // 7 days
 const APP_URL = process.env.APP_URL ?? "";
@@ -201,8 +202,8 @@ export async function createStripeCheckoutSessionForSettlement(workspaceId: stri
     log("error", "ensureSettlementPriceSeed failed", { error: e instanceof Error ? e.message : String(e) });
   });
 
-  const Stripe = (await import("stripe")).default;
-  const stripe = new Stripe(secretKey);
+  // Phase 78/Phase 6: shared factory with pinned apiVersion
+  const stripe = getStripe();
   const db = getDb();
   const now = new Date().toISOString();
 
@@ -216,6 +217,9 @@ export async function createStripeCheckoutSessionForSettlement(workspaceId: stri
   if (!customerId) {
     const customer = await stripe.customers.create({
       metadata: { workspace_id: workspaceId },
+    }, {
+      // Phase 78/Phase 6.2: never create two settlement customers per workspace
+      idempotencyKey: stripeIdempotencyKey("settlement-customer-create", workspaceId),
     });
     customerId = customer.id;
     await db
@@ -234,6 +238,9 @@ export async function createStripeCheckoutSessionForSettlement(workspaceId: stri
     cancel_url: `${baseUrl}/public/settlement/cancel?wid=${encodeURIComponent(workspaceId)}`,
     client_reference_id: workspaceId,
     metadata: { workspace_id: workspaceId, settlement: "true" },
+  }, {
+    // Phase 78/Phase 6.2: reuse settlement checkout on repeat authorization clicks
+    idempotencyKey: stripeIdempotencyKey("settlement-checkout", workspaceId, defaultPriceId),
   });
   const url = session.url ?? "";
   if (!url) throw new SettlementNotConfiguredError();
@@ -359,8 +366,8 @@ function resolveSubscriptionItemId(
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) return Promise.resolve(null);
   return (async () => {
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(secretKey);
+    // Phase 78/Phase 6: shared factory with pinned apiVersion
+    const stripe = getStripe();
     const sub = await stripe.subscriptions.retrieve(subscriptionId, { expand: ["items.data.price"] });
     const items = sub.items?.data ?? [];
     const preferred = defaultPriceId

@@ -200,7 +200,7 @@ export function generateVariant(control: string, variationType: VariationType): 
 export function createExperiment(params: ExperimentParams): Experiment {
   const {
     experimentId, testType, controlContent, targetMetrics,
-    trafficSplitRatio = 0.5, startDate, maxDurationDays = 30, confidenceLevel = 95,
+    trafficSplitRatio = 0.5, startDate, maxDurationDays: _maxDurationDays = 30, confidenceLevel = 95,
   } = params;
   const variantBType: VariationType = "shorter";
   const variantB = generateVariant(controlContent, variantBType);

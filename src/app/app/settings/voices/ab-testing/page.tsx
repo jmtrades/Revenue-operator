@@ -39,6 +39,7 @@ function formatDate(dateStr: string): string {
 
 export default function AbTestingPage() {
   const t = useTranslations("voiceAbTesting");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const searchParams = useSearchParams();
   const workspaceId = searchParams.get("workspace_id") ?? "";
   const [tests, setTests] = useState<AbTest[]>([]);
@@ -130,10 +131,10 @@ export default function AbTestingPage() {
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
       <Breadcrumbs items={[
-        { label: "Home", href: "/app" },
-        { label: "Settings", href: "/app/settings" },
-        { label: "Voices", href: "/app/settings/voices" },
-        { label: "A/B testing" }
+        { label: tBreadcrumbs("home"), href: "/app" },
+        { label: tBreadcrumbs("settings"), href: "/app/settings" },
+        { label: tBreadcrumbs("voices"), href: "/app/settings/voices" },
+        { label: tBreadcrumbs("abTesting") }
       ]} />
       <div className="flex items-center justify-between mb-6 mt-6">
         <div>

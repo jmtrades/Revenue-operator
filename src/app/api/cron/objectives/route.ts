@@ -11,6 +11,7 @@ import { evaluateWorkspaceObjective, evaluateRevenueObjective } from "@/lib/obje
 import { planWorkspaceStrategy } from "@/lib/strategy/planner";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
         evaluated++;
       }
     } catch (err) {
-      // Workspace error; skip
+      log("error", "[cron/objectives] Failed to evaluate workspace objective", { error: err instanceof Error ? err.message : String(err) });
     }
   }
 

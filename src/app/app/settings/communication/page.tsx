@@ -32,6 +32,7 @@ const DEFAULT_CONFIG: CommunicationConfig = {
 
 export default function CommunicationSettingsPage() {
   const t = useTranslations("communication");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tComm = useTranslations("settings.communication");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
@@ -64,7 +65,7 @@ export default function CommunicationSettingsPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   const canSave = useMemo(() => {
     return Boolean(effectiveWorkspaceId);
@@ -97,9 +98,9 @@ export default function CommunicationSettingsPage() {
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
       <Breadcrumbs items={[
-        { label: "Home", href: "/app" },
-        { label: "Settings", href: "/app/settings" },
-        { label: "Communication" }
+        { label: tBreadcrumbs("home"), href: "/app" },
+        { label: tBreadcrumbs("settings"), href: "/app/settings" },
+        { label: tBreadcrumbs("communication") }
       ]} />
 
       <div className="mt-6 flex items-start justify-between gap-3">

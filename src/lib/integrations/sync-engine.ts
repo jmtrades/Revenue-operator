@@ -9,6 +9,7 @@ import type { CrmProviderId } from "./field-mapper";
 import { getValidTokens } from "./token-refresh";
 import { pushContactToCrm } from "./crm-clients";
 import { log } from "@/lib/logger";
+import { normalizePhone } from "@/lib/security/phone";
 import { triggerBrainAfterSignal } from "@/lib/intelligence/brain-trigger";
 
 export type SyncDirection = "inbound" | "outbound";
@@ -363,13 +364,20 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         existingLead = data as { id: string; metadata?: Record<string, unknown> } | null;
       }
       if (!existingLead && matchPhone) {
-        const phoneDigits = matchPhone.replace(/\D/g, "");
-        if (phoneDigits.length >= 10) {
+        // Phase 78/Phase 3 (D7): CRM payloads can carry attacker-shaped phone
+        // strings. Normalize to strict E.164 before any PostgREST
+        // interpolation. The last-10-digits fallback is preserved for
+        // US/CA-style match-across-formats, but the slice is guaranteed to
+        // contain only digits (it comes from E.164, minus the leading `+`).
+        const phoneE164 = normalizePhone(matchPhone);
+        if (phoneE164) {
+          const phoneDigits = phoneE164.slice(1);
+          const tail10 = phoneDigits.slice(-10);
           const { data } = await db
             .from("leads")
             .select("id, metadata")
             .eq("workspace_id", row.workspace_id)
-            .or(`phone.eq.${matchPhone},phone.like.%${phoneDigits.slice(-10)}`)
+            .or(`phone.eq.${phoneE164},phone.eq.${phoneDigits},phone.like.%${tail10}`)
             .limit(1)
             .maybeSingle();
           existingLead = data as { id: string; metadata?: Record<string, unknown> } | null;
@@ -600,19 +608,13 @@ export async function enqueueBatchOutbound(params: {
   return { enqueued };
 }
 
-const CRM_PROVIDERS: CrmProviderId[] = [
-  "salesforce",
-  "hubspot",
-  "zoho_crm",
-  "pipedrive",
-  "gohighlevel",
-  "google_contacts",
-  "microsoft_365",
-  "airtable",
-];
+import { SUPPORTED_CRM_PROVIDERS, isSupportedCrmProvider } from "@/lib/crm/providers";
 
 /**
  * Return provider ids that have an active connection for the workspace (for outbound enqueue on lead create/update).
+ *
+ * Phase 78 Task 9.3: the allowlist is `SUPPORTED_CRM_PROVIDERS` from
+ * `@/lib/crm/providers` (single source of truth).
  */
 export async function getConnectedCrmProviders(workspaceId: string): Promise<CrmProviderId[]> {
   const db = getDb();
@@ -621,7 +623,7 @@ export async function getConnectedCrmProviders(workspaceId: string): Promise<Crm
     .select("provider")
     .eq("workspace_id", workspaceId)
     .eq("status", "active")
-    .in("provider", CRM_PROVIDERS);
-  const providers = (data ?? []).map((r: { provider: string }) => r.provider as CrmProviderId);
-  return providers.filter((p): p is CrmProviderId => CRM_PROVIDERS.includes(p));
+    .in("provider", [...SUPPORTED_CRM_PROVIDERS]);
+  const providers = (data ?? []).map((r: { provider: string }) => r.provider);
+  return providers.filter(isSupportedCrmProvider);
 }

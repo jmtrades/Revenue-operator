@@ -13,6 +13,7 @@ import { processMaintainsOperation } from "@/lib/operability-anchor";
 import { workspaceHasUnresolvedResponsibility, getSituationStatement, STATEMENT_RELATED_OUTCOME_UNRESOLVED } from "@/lib/operational-responsibilities";
 import { workspaceHasThreadPropagatingUncertainty } from "@/lib/outcome-dependencies";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const MAX_LINE = 90;
 const FORBIDDEN = /\b(you|your|we|us|click|optimize|ROI|KPI|dashboard|assistant|metric|percentage)\b/gi;
@@ -70,8 +71,13 @@ export async function GET(request: NextRequest) {
       workspaceHasUnresolvedResponsibility(workspaceId),
       workspaceHasThreadPropagatingUncertainty(workspaceId),
     ]);
-  } catch {
-    // Partial mocks or missing table: treat as no unresolved responsibility
+  } catch (err) {
+    // Fail closed: assume unresolved issues exist if check fails
+    hasUnresolved = true;
+    log("error", "Failed to check unresolved responsibility state", {
+      workspace_id: workspaceId,
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
   let line: string;
   if (handoffCount > 0) {

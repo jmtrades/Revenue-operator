@@ -9,6 +9,7 @@ import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner
 import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
 import { AuthorityHeader } from "@/components/institutional";
 import { track } from "@/lib/analytics/posthog";
+import { parseCsv as parseCsvRfc4180 } from "@/lib/csv/parser";
 
 const PURPOSE_VALUES = ["qualify", "confirm", "collect", "reactivate", "route", "recover"] as const;
 
@@ -26,11 +27,13 @@ export default function ImportPage() {
   const [result, setResult] = useState<{ ingested: number; duplicates: number } | null>(null);
   const [listPurpose, setListPurpose] = useState<string>("qualify");
 
+  // Phase 78 Task 10.4: delegate to the shared RFC-4180 parser so quoted
+  // fields with embedded commas / newlines survive the import preview.
   const parseCsv = (text: string): { headers: string[]; rows: string[][] } => {
-    const lines = text.split(/\r?\n/).filter((l) => l.trim());
-    if (lines.length === 0) return { headers: [], rows: [] };
-    const headers = lines[0].split(",").map((h) => h.trim());
-    const rows = lines.slice(1).map((line) => line.split(",").map((c) => c.trim()));
+    const allRows = parseCsvRfc4180(text);
+    if (allRows.length === 0) return { headers: [], rows: [] };
+    const headers = allRows[0].map((h) => h.trim());
+    const rows = allRows.slice(1).map((r) => r.map((c) => c.trim()));
     return { headers, rows };
   };
 

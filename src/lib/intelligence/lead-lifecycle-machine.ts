@@ -230,7 +230,7 @@ export function evaluateTransition(
       });
     } else if (event.type === 'silence' && daysInStage >= 14) {
       newStage = 'AT_RISK';
-      reason = 'Stalled qualification, showing risk',
+      reason = 'Stalled qualification, showing risk';
       confidence = 0.78;
       transitioned = true;
     }

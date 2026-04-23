@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 export default function CoachingAnalyticsPage() {
   const t = useTranslations("common");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
 
   useEffect(() => {
     document.title = t("coaching.pageTitle", { defaultValue: "Coaching Analytics — Revenue Operator" });
@@ -16,8 +17,8 @@ export default function CoachingAnalyticsPage() {
     <div className="space-y-6 px-1">
       <Breadcrumbs
         items={[
-          { label: "Analytics", href: "/app/analytics" },
-          { label: "Coaching" },
+          { label: tBreadcrumbs("analytics"), href: "/app/analytics" },
+          { label: tBreadcrumbs("coaching") },
         ]}
       />
 

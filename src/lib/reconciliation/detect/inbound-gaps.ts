@@ -4,7 +4,16 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { normalizePhone } from "@/lib/security/phone";
 import { getMessagingProvider } from "../providers/messaging";
+
+/**
+ * Minimal, strict email validator for PostgREST interpolation safety. This
+ * does not aim for full RFC 5322 coverage — it exists to reject the punctuation
+ * that lets PostgREST parse extra filter clauses (`,` `.or.` `(` `)` quote),
+ * while accepting normal addresses.
+ */
+const SAFE_EMAIL = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 const LOOKBACK_HOURS = 2;
 
@@ -76,14 +85,33 @@ export async function detectInboundGaps(workspaceId: string): Promise<InboundDis
 }
 
 async function resolveLeadFromParticipant(workspaceId: string, from: string, _conversationKey: string): Promise<string | null> {
+  // Phase 78/Phase 3 (D7): `from` comes from external messaging providers and
+  // is treated as adversarial. Strict-validate against either E.164 or a
+  // conservative email regex before PostgREST interpolation.
+  const phoneE164 = normalizePhone(from);
+  const emailSafe = !phoneE164 && SAFE_EMAIL.test(from) ? from : null;
+
   const db = getDb();
-  const phone = from.replace(/[^0-9+]/g, "");
-  const { data: lead } = await db
-    .from("leads")
-    .select("id")
-    .eq("workspace_id", workspaceId)
-    .or(`phone.eq.${phone},email.eq.${from}`)
-    .limit(1)
-    .maybeSingle();
-  return (lead as { id: string } | null)?.id ?? null;
+  if (phoneE164) {
+    const phoneDigits = phoneE164.slice(1);
+    const { data: lead } = await db
+      .from("leads")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .or(`phone.eq.${phoneE164},phone.eq.${phoneDigits}`)
+      .limit(1)
+      .maybeSingle();
+    return (lead as { id: string } | null)?.id ?? null;
+  }
+  if (emailSafe) {
+    const { data: lead } = await db
+      .from("leads")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("email", emailSafe)
+      .limit(1)
+      .maybeSingle();
+    return (lead as { id: string } | null)?.id ?? null;
+  }
+  return null;
 }

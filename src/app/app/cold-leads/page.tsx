@@ -74,7 +74,9 @@ function persistColdLeadsSnapshot(workspaceId: string, leads: ColdLead[]) {
   safeSetItem(`${COLD_LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(envelope));
 }
 
-function formatRelativeTime(dateStr?: string, t?: any): string {
+type TFn = (key: string, opts?: Record<string, string | number | Date>) => string;
+
+function formatRelativeTime(dateStr?: string, t?: TFn): string {
   if (!dateStr) return t ? t("formatTime.never") : "Never";
   const now = new Date();
   const past = new Date(dateStr);
@@ -98,7 +100,7 @@ function formatRelativeTime(dateStr?: string, t?: any): string {
   return past.toLocaleDateString();
 }
 
-function getReasonLabel(reason: ColdLeadReason, t: any): string {
+function getReasonLabel(reason: ColdLeadReason, t: TFn): string {
   const map: Record<ColdLeadReason, string> = {
     no_activity_30d: t("reason.noActivity30d"),
     no_reply_14d: t("reason.noReply14d"),
@@ -145,7 +147,7 @@ interface StatsProps {
 }
 
 interface StatsBarProps extends StatsProps {
-  t: any;
+  t: TFn;
 }
 
 function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {
@@ -197,6 +199,7 @@ interface ReengageDialogState {
 
 export default function ColdLeadsPage() {
   const t = useTranslations("coldLeads");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
@@ -539,7 +542,7 @@ export default function ColdLeadsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto">
-      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Cold leads" }]} />
+      <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("coldLeads") }]} />
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">

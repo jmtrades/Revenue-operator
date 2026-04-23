@@ -10,6 +10,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 function log(_event: string, _data: Record<string, unknown>): void {
   if (process.env.NODE_ENV === "development") {
@@ -60,12 +62,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, reason: "no_customer" }, { status: 404 });
     }
 
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(stripeSecretKey);
+    // Phase 78/Phase 6: shared factory with pinned apiVersion
+    const stripe = getStripe();
 
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: returnUrl,
+    }, {
+      // Phase 78/Phase 6.2: repeat clicks on "Manage billing" reuse the same session
+      idempotencyKey: stripeIdempotencyKey("portal-session", workspaceId, returnUrl),
     });
 
     return NextResponse.json({ ok: true, url: session.url });

@@ -25,6 +25,7 @@ interface WhiteLabelConfig {
 
 export default function WhiteLabelSettingsPage() {
   const t = useTranslations("whiteLabel");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [config, setConfig] = useState<WhiteLabelConfig>({
@@ -63,7 +64,7 @@ export default function WhiteLabelSettingsPage() {
       }
     };
     loadConfig();
-  }, []);
+  }, [t]);
 
   const handleSave = async () => {
     if (saving) return;
@@ -105,9 +106,9 @@ export default function WhiteLabelSettingsPage() {
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <Breadcrumbs items={[
-        { label: "Home", href: "/app" },
-        { label: "Settings", href: "/app/settings" },
-        { label: "White label" }
+        { label: tBreadcrumbs("home"), href: "/app" },
+        { label: tBreadcrumbs("settings"), href: "/app/settings" },
+        { label: tBreadcrumbs("whiteLabel") }
       ]} />
       <div className="mb-8 mt-6">
         <h1 className="text-2xl md:text-3xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>

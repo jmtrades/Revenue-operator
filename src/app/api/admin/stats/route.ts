@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   const weekAgoIso = new Date(todayStart.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const monthAgoIso = new Date(todayStart.getFullYear(), todayStart.getMonth() - 1, todayStart.getDate()).toISOString();
 
-  const result: Record<string, any> = {};
+  const result: Record<string, unknown> = {};
 
   // Users stats
   try {
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       today: usersToday ?? 0,
       this_week: usersWeek ?? 0,
       this_month: usersMonth ?? 0,
-      recent: (recentUsers ?? []).map((u: any) => ({
+      recent: (recentUsers ?? []).map((u: { id: string; email: string | null; full_name: string | null; created_at: string }) => ({
         id: u.id,
         email_masked: u.email ? u.email.replace(/(.{2}).*(@.*)/, "$1***$2") : null,
         name: u.full_name,
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
     // Count workspaces by billing_tier (no RPC available)
     const { data: allWs } = await db.from("workspaces").select("billing_tier");
     const billingDist: Record<string, number> = {};
-    (allWs ?? []).forEach((w: any) => {
+    (allWs ?? []).forEach((w: { billing_tier: string | null }) => {
       const tier = w.billing_tier || "none";
       billingDist[tier] = (billingDist[tier] || 0) + 1;
     });
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
         monthly: monthlyBilling ?? 0,
         annual: annualBilling ?? 0,
       },
-      recent: (recentWorkspaces ?? []).map((w: any) => ({
+      recent: (recentWorkspaces ?? []).map((w: { id: string; name: string | null; billing_tier: string | null; billing_status: string | null; created_at: string }) => ({
         id: w.id,
         name: w.name,
         billing_tier: w.billing_tier,
@@ -147,7 +147,7 @@ export async function GET(req: NextRequest) {
       .gte("created_at", new Date(todayStart.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString());
 
     const growthByDay: Record<string, number> = {};
-    (growth ?? []).forEach((u: any) => {
+    (growth ?? []).forEach((u: { created_at: string }) => {
       const dateStr = u.created_at.split("T")[0];
       growthByDay[dateStr] = (growthByDay[dateStr] || 0) + 1;
     });

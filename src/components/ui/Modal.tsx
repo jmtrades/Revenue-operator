@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -19,10 +19,52 @@ interface ModalProps {
 const easeOutExpo = [0.23, 1, 0.32, 1] as const;
 
 export function Modal({ open, onClose, title, size = "md", children }: ModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); },
     [onClose],
   );
+
+  // Capture the element that triggered the modal open
+  useEffect(() => {
+    if (open) {
+      triggerRef.current = document.activeElement as HTMLElement;
+    } else if (triggerRef.current) {
+      triggerRef.current.focus();
+      triggerRef.current = null;
+    }
+  }, [open]);
+
+  // Focus trap: cycle Tab through focusable elements inside the modal
+  useEffect(() => {
+    if (!open) return;
+    const modal = modalRef.current;
+    if (!modal) return;
+    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusable = modal.querySelectorAll<HTMLElement>(focusableSelector);
+    const first = focusable[0];
+    const _last = focusable[focusable.length - 1];
+    first?.focus();
+
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      // Re-query in case children changed
+      const currentFocusable = modal.querySelectorAll<HTMLElement>(focusableSelector);
+      const currentFirst = currentFocusable[0];
+      const currentLast = currentFocusable[currentFocusable.length - 1];
+      if (e.shiftKey && document.activeElement === currentFirst) {
+        e.preventDefault();
+        currentLast?.focus();
+      } else if (!e.shiftKey && document.activeElement === currentLast) {
+        e.preventDefault();
+        currentFirst?.focus();
+      }
+    };
+    modal.addEventListener("keydown", handleTab);
+    return () => modal.removeEventListener("keydown", handleTab);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -55,6 +97,7 @@ export function Modal({ open, onClose, title, size = "md", children }: ModalProp
 
           {/* Dialog — scale from center (correct for modals per Emil) */}
           <motion.div
+            ref={modalRef}
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}

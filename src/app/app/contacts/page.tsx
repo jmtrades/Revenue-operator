@@ -210,6 +210,7 @@ function typeBadgeStyles(type: ContactType) {
 
 export default function AppContactsPage() {
   const t = useTranslations("contacts");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tCommon = useTranslations("common");
   const { workspaceId, loading: wsLoading } = useWorkspace();
 
@@ -307,7 +308,7 @@ export default function AppContactsPage() {
     };
 
     loadFromApi();
-  }, [workspaceId, wsLoading]);
+  }, [workspaceId, wsLoading, t]);
 
   const filtered = useMemo(() => {
     const term = debouncedSearch.trim().toLowerCase();
@@ -529,7 +530,7 @@ export default function AppContactsPage() {
           animation: fadeInUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
         }
       `}</style>
-      <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Contacts" }]} />
+      <Breadcrumbs items={[{ label: tBreadcrumbs("dashboard"), href: "/app" }, { label: tBreadcrumbs("contacts") }]} />
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-lg md:text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">

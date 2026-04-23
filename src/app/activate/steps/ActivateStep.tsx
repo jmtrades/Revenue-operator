@@ -18,6 +18,22 @@ interface ActivateStepProps {
   agentName?: string;
   voiceId?: string;
   greeting?: string;
+  /**
+   * Phase 78 Task 10.2: gate the "Your agent is live" success card and the
+   * Confetti component on a real provisioning signal. Before this prop
+   * existed, both rendered unconditionally — so the user saw confetti and
+   * success language the moment they reached step 6, *before* they had
+   * clicked Activate and *before* any onboard API call completed. That
+   * misrepresented the state of the world and is a P0 "fake success UI"
+   * defect.
+   *
+   * Today the wizard navigates to /app/welcome immediately on successful
+   * onboard, so this prop is wired as `false` by default and the success
+   * card effectively never renders inside this step. If a future refactor
+   * keeps the user on the activate page past provisioning, the caller can
+   * pass `provisioned={true}` to legitimately render the success UI.
+   */
+  provisioned?: boolean;
 }
 
 export function ActivateStep({
@@ -28,14 +44,20 @@ export function ActivateStep({
   agentName = "Agent",
   voiceId = "default",
   greeting = "Hi, how can I help you today?",
+  provisioned = false,
 }: ActivateStepProps) {
   const t = useTranslations("activate.final");
   const [carrier, setCarrier] = useState<"att" | "verizon" | "tmobile" | "other">("att");
 
+  // Phase 78 Task 10.2: interpolate the actual phoneNumber prop instead of
+  // a bracketed literal instruction that used to ship to users. If no
+  // number is known yet, the `phoneNumber ?? ""` fallback renders a blank
+  // space rather than bracketed copy — the forwarding section text above
+  // already explains the flow for users who don't yet have a number.
   let code: string;
-  if (carrier === "att") code = "*21*[your Revenue Operator number]#";
-  else if (carrier === "verizon") code = "*72[your Revenue Operator number]";
-  else if (carrier === "tmobile") code = "**21*[your Revenue Operator number]#";
+  if (carrier === "att") code = `*21*${phoneNumber ?? ""}#`;
+  else if (carrier === "verizon") code = `*72${phoneNumber ?? ""}`;
+  else if (carrier === "tmobile") code = `**21*${phoneNumber ?? ""}#`;
   else code = t("forwardOtherHint");
 
   const carrierOptions = [
@@ -47,7 +69,7 @@ export function ActivateStep({
 
   return (
     <div className="space-y-6">
-      <Confetti key="step5-confetti" />
+      {provisioned && <Confetti key="step5-confetti" />}
       <div>
         <h2 className="text-lg md:text-xl font-semibold text-slate-50">
           <span className="inline-flex items-center gap-2">
@@ -131,38 +153,40 @@ export function ActivateStep({
         </div>
       )}
 
-      <div className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 p-6 text-center space-y-4">
-        <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-          <PhoneCall className="w-8 h-8 text-emerald-500" />
+      {provisioned && (
+        <div className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 p-6 text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+            <PhoneCall className="w-8 h-8 text-emerald-500" />
+          </div>
+          <h3 className="text-xl font-bold text-[var(--text-primary)]">{t("agentLiveHeading", { defaultValue: "Your agent is live" })}</h3>
+          <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">
+            {t("agentLiveDescription", { defaultValue: "Call your new number now to hear your AI operator in action. It uses your business details to greet callers and can be further customized in settings." })}
+          </p>
+          {phoneNumber && (
+            <div className="flex items-center justify-center gap-3">
+              <a
+                href={`tel:${phoneNumber}`}
+                aria-label="Call your AI agent for a test"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors active:scale-95"
+              >
+                <Phone className="w-5 h-5" />
+                {t("callNumber", { defaultValue: "Call {number}", number: phoneNumber })}
+              </a>
+            </div>
+          )}
+          <p className="text-xs text-[var(--text-tertiary)]">{t("freeTestCall", { defaultValue: "Free test call — no minutes deducted" })}</p>
+          {voiceId && voiceId !== "default" && greeting && (
+            <div className="mt-4">
+              <VoicePreviewPlayer
+                voiceId={voiceId}
+                greeting={greeting}
+                agentName={agentName}
+                className="mt-3"
+              />
+            </div>
+          )}
         </div>
-        <h3 className="text-xl font-bold text-[var(--text-primary)]">{t("agentLiveHeading", { defaultValue: "Your agent is live" })}</h3>
-        <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">
-          {t("agentLiveDescription", { defaultValue: "Call your new number now to hear your AI operator in action. It uses your business details to greet callers and can be further customized in settings." })}
-        </p>
-        {phoneNumber && (
-          <div className="flex items-center justify-center gap-3">
-            <a
-              href={`tel:${phoneNumber}`}
-              aria-label="Call your AI agent for a test"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors active:scale-95"
-            >
-              <Phone className="w-5 h-5" />
-              {t("callNumber", { defaultValue: "Call {number}", number: phoneNumber })}
-            </a>
-          </div>
-        )}
-        <p className="text-xs text-[var(--text-tertiary)]">{t("freeTestCall", { defaultValue: "Free test call — no minutes deducted" })}</p>
-        {voiceId && voiceId !== "default" && greeting && (
-          <div className="mt-4">
-            <VoicePreviewPlayer
-              voiceId={voiceId}
-              greeting={greeting}
-              agentName={agentName}
-              className="mt-3"
-            />
-          </div>
-        )}
-      </div>
+      )}
 
       <div className="flex items-center justify-between gap-3 pt-3">
         <button type="button" onClick={goBack} disabled={finalizing} className="text-xs md:text-sm text-slate-400 hover:text-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed transition-colors">

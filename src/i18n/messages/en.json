@@ -737,7 +737,8 @@
       "title": "Active subscription required",
       "description": "You need an active subscription to purchase phone numbers. Choose a plan below to get started, then return to the phone marketplace."
     },
-    "paymentFailedBanner": "Payment failed. Billing needs attention.",
+    "paymentFailedBanner": "Your payment method failed. Please update your payment information.",
+    "paymentFailedDescription": "We couldn't charge your payment method. Update your information to avoid service interruption.",
     "updatePaymentMethod": "Update Payment Method",
     "downgradeScheduled": "Plan downgrade scheduled for {date}.",
     "minutesUsage": "Minutes Usage",
@@ -3625,6 +3626,9 @@
     "pageTitle": "Inbound Operating Policy — Revenue Operator",
     "heading": "Inbound Operating Policy",
     "description": "Define call handling behavior across business and non-business hours.",
+    "breadcrumbHome": "Home",
+    "breadcrumbSettings": "Settings",
+    "breadcrumbCallRules": "Call rules",
     "businessHours": "Operating hours",
     "days": {
       "mon": "Mon",
@@ -4365,6 +4369,7 @@
       "saveFailed": "Could not save profile. Try again.",
       "saved": "Profile saved."
     },
+    "syncing": "Syncing…",
     "emailLabel": "Email",
     "revisitOnboarding": "Need to revisit onboarding?",
     "revisitOnboardingDesc": "Run the 5-step setup again to tune your AI operator and phone settings.",
@@ -7903,7 +7908,10 @@
       "actions": "Actions",
       "settings": "Settings",
       "Pages": "Pages",
-      "Actions": "Actions"
+      "Actions": "Actions",
+      "Leads": "Leads",
+      "Agents": "Operators",
+      "Contacts": "Contacts"
     },
     "page": {
       "dashboard": "Dashboard",
@@ -7930,6 +7938,7 @@
     },
     "empty": "No matches. Try a different search.",
     "noMatches": "No matches.",
+    "searching": "Searching…",
     "shortcuts": "Keyboard shortcuts",
     "showShortcuts": "Show shortcuts",
     "close": "Close"
@@ -9796,9 +9805,40 @@
     "transferWhen": "Transfer when"
   },
   "breadcrumbs": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "team": "Team",
+    "inbox": "Inbox",
+    "followUps": "Follow-ups",
+    "recordings": "Recordings",
+    "knowledgeBase": "Knowledge base",
+    "campaigns": "Campaigns",
+    "leads": "Leads",
+    "contacts": "Contacts",
+    "appointments": "Appointments",
+    "reports": "Reports",
+    "analytics": "Analytics",
+    "coaching": "Coaching",
+    "operations": "Operations",
+    "recommendations": "Recommendations",
+    "partners": "Partners",
+    "developer": "Developer",
+    "webhooks": "Webhooks",
+    "coldLeads": "Cold leads",
+    "callIntelligence": "Call intelligence",
+    "voices": "Voices",
+    "abTesting": "A/B testing",
+    "whiteLabel": "White label",
+    "communication": "Communication",
+    "outbound": "Outbound",
+    "autoSetup": "Auto setup",
+    "chatWidget": "Chat widget",
+    "compliance": "Compliance",
+    "agent": "Agent",
     "help": "Help",
     "newAgent": "New agent",
-    "settings": "Settings"
+    "calls": "Calls"
   },
   "businessStep": {
     "businessName": "Business name",

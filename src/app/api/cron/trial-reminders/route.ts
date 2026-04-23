@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
@@ -117,7 +118,7 @@ export async function GET(req: NextRequest) {
         .eq("id", workspaceId);
       sent2d++;
     } catch (error) {
-      // Error (details omitted to protect PII)
+      log("error", "[cron/trial-reminders] Failed to send 2-day trial reminder", { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -156,7 +157,7 @@ export async function GET(req: NextRequest) {
         .eq("id", workspaceId);
       sent24h++;
     } catch (error) {
-      // Error (details omitted to protect PII)
+      log("error", "[cron/trial-reminders] Failed to send 24-hour trial reminder", { error: error instanceof Error ? error.message : String(error) });
     }
   }
 

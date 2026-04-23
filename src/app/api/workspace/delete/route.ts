@@ -9,16 +9,20 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getTelephonyService } from "@/lib/telephony";
 import { assertSameOrigin } from "@/lib/http/csrf";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 
 export const dynamic = "force-dynamic";
 
 async function cancelStripeSubscription(subscriptionId: string | null): Promise<void> {
   if (!subscriptionId || !process.env.STRIPE_SECRET_KEY) return;
   try {
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    await stripe.subscriptions.cancel(subscriptionId);
+    // Phase 78/Phase 6: shared factory with pinned apiVersion
+    const stripe = getStripe();
+    await stripe.subscriptions.cancel(subscriptionId, {
+      idempotencyKey: stripeIdempotencyKey("sub-cancel", subscriptionId),
+    });
   } catch {
     // Non-blocking: workspace still transitions to deletion pending.
   }
@@ -71,8 +75,9 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
-  // Rate limit: 3 workspace delete attempts per hour per user
-  const rl = await checkRateLimit(`workspace_delete:${session.userId}`, 3, 3600000);
+  // Rate limit: 3 workspace delete attempts per minute per IP
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`workspace-delete:${ip}`, 3, 60_000);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many delete attempts. Please wait before trying again." }, { status: 429 });
   }

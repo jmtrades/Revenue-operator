@@ -61,6 +61,7 @@ function persistAgentSettingsSnapshot(workspaceId: string, config: AgentConfig) 
 
 export default function AppSettingsAgentPage() {
   const tSettings = useTranslations("settings");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tToast = useTranslations("toast");
   useEffect(() => {
     document.title = tSettings("agentPageTitle");
@@ -400,9 +401,9 @@ export default function AppSettingsAgentPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[
-        { label: "Home", href: "/app" },
-        { label: "Settings", href: "/app/settings" },
-        { label: "Operator settings" }
+        { label: tBreadcrumbs("home"), href: "/app" },
+        { label: tBreadcrumbs("settings"), href: "/app/settings" },
+        { label: tBreadcrumbs("agent") }
       ]} />
       <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2 mt-4">{tSettings("agent.heading")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("agent.description")}</p>

@@ -17,7 +17,6 @@ import { PhoneOnlyStep } from "./steps/PhoneOnlyStep";
 import { CustomizeStep } from "./steps/CustomizeStep";
 import { ActivateStep } from "./steps/ActivateStep";
 import { track } from "@/lib/analytics/posthog";
-import { ROUTES } from "@/lib/constants";
 
 export function ActivateWizard() {
   const t = useTranslations("activate");
@@ -39,6 +38,7 @@ export function ActivateWizard() {
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
   const [accountEmail, setAccountEmail] = useState<string | null>(prefillEmail);
   const [resending, setResending] = useState(false);
+  const [resendStatus, setResendStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [selectedPlan, setSelectedPlan] = useState<PlanSlug | null>((prefillPlan as PlanSlug) || (savedProgress?.plan as PlanSlug) || null);
   const [state, setState] = useState<ActivationState>(() => ({
     businessName: savedProgress?.state?.businessName ?? "",
@@ -57,6 +57,7 @@ export function ActivateWizard() {
     preferredLanguage: savedProgress?.state?.preferredLanguage ?? "en",
     voiceId: savedProgress?.state?.voiceId ?? DEFAULT_RECALL_VOICE_ID,
     goals: savedProgress?.state?.goals ?? [],
+    persona: savedProgress?.state?.persona ?? null,
   }));
 
   // Auto-save progress to localStorage on step/state changes
@@ -93,17 +94,30 @@ export function ActivateWizard() {
     [step],
   );
 
+  // Phase 78 Task 10.1: steps 1-6 are rendered one at a time. Previously step 4
+  // stacked PackBusinessStep + CustomizeStep + ActivateStep in a single branch,
+  // which defeated the progress bar and let users "Activate" without ever
+  // completing the intermediate business/customize fields.
   const canGoNext = useMemo(() => {
     if (step === 1) {
       return selectedPlan !== null;
     }
     if (step === 2) {
-      return state.goals.length > 0;
+      return state.goals.length > 0 && state.persona !== null;
     }
     if (step === 3) {
       const digits = state.businessPhone.replace(/\D/g, "");
       // Require 10-15 digits and not all zeros
       return digits.length >= 10 && digits.length <= 15 && !/^0+$/.test(digits);
+    }
+    if (step === 4) {
+      // Business step: require a non-empty business name. Industry + location
+      // remain optional because the industry packs ship sensible defaults.
+      return state.businessName.trim().length > 0;
+    }
+    if (step === 5) {
+      // Customize step: agent name required. Voice and greeting have defaults.
+      return state.agentName.trim().length > 0;
     }
     return true;
   }, [step, state, selectedPlan]);
@@ -124,14 +138,23 @@ export function ActivateWizard() {
     }
 
     const current = step;
-    if (current >= 1 && current <= 4) {
-      const name =
-        current === 1 ? "plan" : current === 2 ? "goals" : current === 3 ? "phone" : "activate";
+    if (current >= 1 && current <= 6) {
+      const STEP_NAMES: Record<number, string> = {
+        1: "plan",
+        2: "goals",
+        3: "phone",
+        4: "business",
+        5: "customize",
+        6: "activate",
+      };
+      const name = STEP_NAMES[current] ?? String(current);
       track("onboarding_step_completed", { step: current, name });
     }
     setStep((prev) => {
-      const next = prev < 4 ? ((prev + 1) as StepId) : prev;
-      if (prev === 2) {
+      const next = prev < 6 ? ((prev + 1) as StepId) : prev;
+      // Persist business name as soon as it's entered on the business step so
+      // a refresh mid-wizard doesn't lose it.
+      if (prev === 4) {
         try {
           const bn = state.businessName.trim();
           if (bn) localStorage.setItem("rt_business_name", bn);
@@ -230,6 +253,8 @@ export function ActivateWizard() {
             preferredLanguage: state.preferredLanguage || "en",
             voiceId: state.voiceId || undefined,
             billingTier: selectedPlan || undefined,
+            persona: state.persona ?? undefined,
+            primaryGoals: state.goals?.length ? state.goals : undefined,
           }),
           signal: controller.signal,
         });
@@ -262,7 +287,8 @@ export function ActivateWizard() {
       localStorage.setItem("rt_onboarded", "true");
       localStorage.removeItem(STORAGE_KEY); // Clear saved progress after successful setup
     }
-    window.location.href = ROUTES.APP_HOME;
+    // Phase 2 wayfinding: land on the welcome/success screen before the dashboard.
+    window.location.href = "/app/welcome?from=activate";
   }, [state, selectedPlan, t, finalizing, emailVerified]);
 
   return (
@@ -297,6 +323,7 @@ export function ActivateWizard() {
                 onClick={async () => {
                   if (!accountEmail || resending) return;
                   setResending(true);
+                  setResendStatus("sending");
                   try {
                     const res = await fetch("/api/auth/resend-verification", {
                       method: "POST",
@@ -306,20 +333,29 @@ export function ActivateWizard() {
                     });
                     if (res.ok) {
                       setError(null);
-                      // Show brief success inline
-                      setResending(true);
-                      setTimeout(() => setResending(false), 3000);
+                      setResendStatus("sent");
+                    } else {
+                      setResendStatus("error");
                     }
                   } catch {
-                    // best-effort
+                    setResendStatus("error");
                   } finally {
-                    setTimeout(() => setResending(false), 3000);
+                    setResending(false);
+                    // Let the label revert to the CTA after 5s so a user who
+                    // still hasn't received the mail can click again.
+                    setTimeout(() => setResendStatus("idle"), 5000);
                   }
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold px-6 py-2 hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 disabled={!accountEmail || resending}
               >
-                {resending ? t("verificationSent", { defaultValue: "Verification email sent! Check your inbox." }) : t("resendVerificationCta")}
+                {resendStatus === "sent"
+                  ? t("verificationSent", { defaultValue: "Verification email sent! Check your inbox." })
+                  : resendStatus === "error"
+                  ? t("verificationResendFailed", { defaultValue: "Couldn't resend — try again" })
+                  : resending
+                  ? t("verificationSending", { defaultValue: "Sending…" })
+                  : t("resendVerificationCta")}
               </button>
             </div>
           </div>
@@ -336,6 +372,7 @@ export function ActivateWizard() {
                 onClick={async () => {
                   if (!accountEmail || resending) return;
                   setResending(true);
+                  setResendStatus("sending");
                   try {
                     const res = await fetch("/api/auth/resend-verification", {
                       method: "POST",
@@ -344,19 +381,27 @@ export function ActivateWizard() {
                       body: JSON.stringify({ email: accountEmail }),
                     });
                     if (res.ok) {
-                      setResending(true);
-                      setTimeout(() => setResending(false), 3000);
+                      setResendStatus("sent");
+                    } else {
+                      setResendStatus("error");
                     }
                   } catch {
-                    // best-effort
+                    setResendStatus("error");
                   } finally {
-                    setTimeout(() => setResending(false), 3000);
+                    setResending(false);
+                    setTimeout(() => setResendStatus("idle"), 5000);
                   }
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--accent-warning)] text-white font-semibold px-4 py-2 hover:bg-[var(--accent-warning)]/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm"
                 disabled={resending}
               >
-                {resending ? t("verificationResent", { defaultValue: "Verification email sent!" }) : t("resendVerification", { defaultValue: "Resend verification email" })}
+                {resendStatus === "sent"
+                  ? t("verificationResent", { defaultValue: "Verification email sent!" })
+                  : resendStatus === "error"
+                  ? t("verificationResendFailed", { defaultValue: "Couldn't resend — try again" })
+                  : resending
+                  ? t("verificationSending", { defaultValue: "Sending…" })
+                  : t("resendVerification", { defaultValue: "Resend verification email" })}
               </button>
               <button
                 type="button"
@@ -439,7 +484,7 @@ export function ActivateWizard() {
 
         <section
           className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-5 py-6 md:px-7 md:py-7 shadow-[0_18px_50px_rgba(15,23,42,0.7)] transition-[opacity,transform] duration-200"
-          onKeyDown={step <= 3 ? handleKeyDownAdvance : undefined}
+          onKeyDown={step <= 5 ? handleKeyDownAdvance : undefined}
         >
           {step === 1 && (
             <PlanStep
@@ -462,29 +507,31 @@ export function ActivateWizard() {
             />
           )}
           {step === 4 && (
-            <>
-              <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
-              <CustomizeStep
-                state={state}
-                setState={setState}
-                voices={voices}
-                industryServices={industryServices}
-                effectiveServices={effectiveServices}
-                onPlayGreeting={handlePlayTestGreeting}
-                goBack={goBack}
-                goNext={goNext}
-                canGoNext={canGoNext}
-              />
-              <ActivateStep
-                onFinalize={handleFinalize}
-                goBack={goBack}
-                finalizing={finalizing}
-                phoneNumber={state.businessPhone}
-                agentName={state.agentName}
-                voiceId={state.voiceId}
-                greeting={state.greeting}
-              />
-            </>
+            <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
+          )}
+          {step === 5 && (
+            <CustomizeStep
+              state={state}
+              setState={setState}
+              voices={voices}
+              industryServices={industryServices}
+              effectiveServices={effectiveServices}
+              onPlayGreeting={handlePlayTestGreeting}
+              goBack={goBack}
+              goNext={goNext}
+              canGoNext={canGoNext}
+            />
+          )}
+          {step === 6 && (
+            <ActivateStep
+              onFinalize={handleFinalize}
+              goBack={goBack}
+              finalizing={finalizing}
+              phoneNumber={state.businessPhone}
+              agentName={state.agentName}
+              voiceId={state.voiceId}
+              greeting={state.greeting}
+            />
           )}
         </section>
       </div>

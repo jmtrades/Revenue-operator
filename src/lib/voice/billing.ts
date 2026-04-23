@@ -654,3 +654,97 @@ export async function creditMinutePack(
 
   return { credited: true, minutes: pack.minutes };
 }
+
+/**
+ * Phase 78 / Task 6.3: Reverse a minute pack credit on Stripe refund or dispute.
+ *
+ * Idempotency: `minute_pack_refunds.stripe_event_id` is UNIQUE. A replay of the
+ * same `charge.refunded` or `charge.dispute.created` event will fail the insert
+ * and short-circuit with `reversed: false`, so the bonus_minutes decrement runs
+ * at most once per Stripe event.
+ *
+ * If no matching purchase row exists for the payment intent, the charge was not
+ * a minute pack purchase — returns `{ reversed: false, minutes: 0 }`.
+ *
+ * The decrement uses the `decrement_bonus_minutes` RPC which floors at 0 so a
+ * partially-consumed pack cannot drive the balance negative.
+ */
+export async function reverseMinutePackCredit(
+  workspaceId: string,
+  stripePaymentIntentId: string,
+  stripeEventId: string,
+  stripeChargeId: string | null,
+  reason: "refund" | "dispute",
+): Promise<{ reversed: boolean; minutes: number }> {
+  if (!workspaceId || !stripePaymentIntentId || !stripeEventId) {
+    return { reversed: false, minutes: 0 };
+  }
+
+  const db = getDb();
+
+  // Find the original purchase by payment intent (stripe_payment_intent_id is UNIQUE)
+  const { data: purchase } = await db
+    .from("minute_pack_purchases")
+    .select("id, minutes, workspace_id")
+    .eq("stripe_payment_intent_id", stripePaymentIntentId)
+    .maybeSingle();
+
+  if (!purchase) {
+    // Not a minute pack charge — nothing to reverse
+    return { reversed: false, minutes: 0 };
+  }
+
+  const p = purchase as { id: string; minutes: number; workspace_id: string };
+
+  // Defense in depth: the webhook claimed the event for `workspaceId`, but the
+  // purchase row is the source of truth for which workspace originally got the
+  // credit. If they diverge, trust the purchase row and reverse *that* workspace.
+  const reversedWorkspaceId = p.workspace_id || workspaceId;
+
+  // Atomic idempotency gate: insert the refund row first. Unique on stripe_event_id
+  // means only one of N concurrent handlers for the same event will succeed.
+  const { error: insertErr } = await db.from("minute_pack_refunds").insert({
+    workspace_id: reversedWorkspaceId,
+    purchase_id: p.id,
+    stripe_payment_intent_id: stripePaymentIntentId,
+    stripe_charge_id: stripeChargeId,
+    stripe_event_id: stripeEventId,
+    minutes_reversed: p.minutes,
+    reason,
+  });
+
+  if (insertErr) {
+    // Most common case: unique violation on stripe_event_id — already reversed.
+    // Log at info only (this is the expected idempotent replay).
+    log("info", "voice/billing.reverse_minute_pack_skipped_duplicate", {
+      workspace_id: reversedWorkspaceId,
+      stripe_event_id: stripeEventId,
+      error: insertErr.message ?? String(insertErr),
+    });
+    return { reversed: false, minutes: 0 };
+  }
+
+  // Atomic decrement (floors at 0)
+  const { error: rpcErr } = await db.rpc("decrement_bonus_minutes", {
+    p_workspace_id: reversedWorkspaceId,
+    p_minutes: p.minutes,
+  });
+  if (rpcErr) {
+    // Fallback: non-atomic read-then-write with a max(0, ...) floor.
+    const { data: bal } = await db
+      .from("workspace_minute_balance")
+      .select("bonus_minutes")
+      .eq("workspace_id", reversedWorkspaceId)
+      .maybeSingle();
+    const current = (bal as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+    await db
+      .from("workspace_minute_balance")
+      .update({
+        bonus_minutes: Math.max(0, current - p.minutes),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("workspace_id", reversedWorkspaceId);
+  }
+
+  return { reversed: true, minutes: p.minutes };
+}

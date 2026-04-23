@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getDb } from "@/lib/db/queries";
 import { getStripe } from "@/lib/billing/stripe-client";
+import { stripeIdempotencyKey } from "@/lib/billing/stripe-idempotency";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 
@@ -55,6 +56,9 @@ export async function POST(req: NextRequest) {
     if (!customerId) {
       const customer = await stripe.customers.create({
         metadata: { workspace_id },
+      }, {
+        // Phase 78/Phase 6.2: never create two Stripe customers per workspace (dev route)
+        idempotencyKey: stripeIdempotencyKey("dev-verify-customer-create", workspace_id),
       });
       customerId = customer.id;
       await db
@@ -74,6 +78,9 @@ export async function POST(req: NextRequest) {
       items: [{ price: priceId }],
       trial_period_days: 14,
       metadata: { workspace_id },
+    }, {
+      // Phase 78/Phase 6.2: avoid double-creating subscriptions on retry (dev route)
+      idempotencyKey: stripeIdempotencyKey("dev-verify-sub-create", workspace_id, priceId),
     });
 
     // Simulate checkout.session.completed (not used, but kept for reference)

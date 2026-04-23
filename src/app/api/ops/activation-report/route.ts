@@ -42,6 +42,37 @@ export async function GET(req: NextRequest) {
     .order("created_at", { ascending: false })
     .limit(100);
 
+  // Filter workspaces with valid emails and collect IDs
+  const validWorkspaces: Array<{ id: string; created_at: string; email: string }> = [];
+  for (const ws of workspaces || []) {
+    const workspaceId = (ws as { id: string }).id;
+    const createdAt = (ws as { created_at: string }).created_at;
+    const user = (ws as { users?: { email?: string } | null })?.users;
+    const email = user && typeof user === "object" && "email" in user ? user.email : null;
+    if (email) {
+      validWorkspaces.push({ id: workspaceId, created_at: createdAt, email });
+    }
+  }
+
+  const workspaceIds = validWorkspaces.map((ws) => ws.id);
+
+  // Batch query: all activation events for all workspaces in one call
+  const { data: allEvents } = workspaceIds.length > 0
+    ? await db
+        .from("activation_events")
+        .select("workspace_id, step, created_at")
+        .in("workspace_id", workspaceIds)
+    : { data: [] };
+
+  // Group events by workspace_id
+  const eventsByWorkspace = new Map<string, Array<{ step: string; created_at: string }>>();
+  for (const e of allEvents || []) {
+    const evt = e as { workspace_id: string; step: string; created_at: string };
+    const list = eventsByWorkspace.get(evt.workspace_id) ?? [];
+    list.push(evt);
+    eventsByWorkspace.set(evt.workspace_id, list);
+  }
+
   const results: Array<{
     workspace_id: string;
     email: string;
@@ -52,32 +83,20 @@ export async function GET(req: NextRequest) {
     dashboard_viewed_next_day: boolean;
   }> = [];
 
-  for (const ws of workspaces || []) {
-    const workspaceId = (ws as { id: string }).id;
-    const createdAt = (ws as { created_at: string }).created_at;
-    const user = (ws as { users?: { email?: string } | null })?.users;
-    const email = user && typeof user === "object" && "email" in user ? user.email : null;
-
-    if (!email) continue;
-
-    // Get activation events for this workspace
-    const { data: events } = await db
-      .from("activation_events")
-      .select("step, created_at")
-      .eq("workspace_id", workspaceId);
-
-    const steps = new Set((events || []).map((e) => e.step));
-    const signedUp = new Date(createdAt);
+  for (const ws of validWorkspaces) {
+    const events = eventsByWorkspace.get(ws.id) ?? [];
+    const steps = new Set(events.map((e) => e.step));
+    const signedUp = new Date(ws.created_at);
     const nextDay = new Date(signedUp.getTime() + 24 * 60 * 60 * 1000);
-    
+
     // Check if dashboard_viewed_next_day happened within 48 hours of signup
-    const dashboardEvent = (events || []).find(
+    const dashboardEvent = events.find(
       (e) => e.step === "dashboard_viewed_next_day" && new Date(e.created_at) <= new Date(nextDay.getTime() + 24 * 60 * 60 * 1000)
     );
 
     results.push({
-      workspace_id: workspaceId,
-      email,
+      workspace_id: ws.id,
+      email: ws.email,
       signed_up: signedUp.toISOString(),
       connected_number: steps.has("connected_number"),
       inbound_received: steps.has("inbound_received"),

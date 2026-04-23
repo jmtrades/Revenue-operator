@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
+import { normalizePhone } from "@/lib/security/phone";
 import {
   verifyTelnyxWebhook,
   parseTelnyxEvent,
@@ -95,30 +96,37 @@ export async function POST(req: NextRequest) {
         const inboundText = (messageInfo.text ?? "").trim().toLowerCase();
         const fromPhone = messageInfo.from;
         const toPhone = messageInfo.to;
+        // Phase 78/Phase 3 (D7): validate to strict E.164 before PostgREST
+        // interpolation. messageInfo.from/to come from a parsed JSON body and
+        // are attacker-controlled; injecting a comma would graft an extra
+        // filter clause onto `.or(...)`.
+        const fromE164 = normalizePhone(fromPhone);
+        const toE164 = normalizePhone(toPhone);
 
-        if (inboundText && fromPhone) {
-          log("info", "telnyx_sms.inbound_received", { from: fromPhone, to: toPhone, text: inboundText.slice(0, 50) });
+        if (inboundText && fromE164 && toE164) {
+          log("info", "telnyx_sms.inbound_received", { from: fromE164, to: toE164, text: inboundText.slice(0, 50) });
 
           // Look up the workspace from the receiving number
           const { data: phoneConfig } = await db
             .from("phone_configs")
             .select("workspace_id")
-            .eq("proxy_number", toPhone)
+            .eq("proxy_number", toE164)
             .eq("status", "active")
             .maybeSingle();
 
           const workspaceId = (phoneConfig as { workspace_id?: string } | null)?.workspace_id;
+          const fromDigits = fromE164.slice(1);
 
           if (workspaceId) {
             // Check for opt-out keywords (TCPA compliance)
             if (OPT_OUT_KEYWORDS.has(inboundText)) {
-              log("info", "telnyx_sms.opt_out", { from: fromPhone, workspaceId });
+              log("info", "telnyx_sms.opt_out", { from: fromE164, workspaceId });
               // Find matching leads to record opt-out in unified table
               const { data: matchedLeads } = await db
                 .from("leads")
                 .select("id")
                 .eq("workspace_id", workspaceId)
-                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+                .or(`phone.eq.${fromE164},phone.eq.${fromDigits}`);
               const { recordOptOut } = await import("@/lib/lead-opt-out");
               for (const lead of (matchedLeads ?? []) as Array<{ id: string }>) {
                 await recordOptOut(workspaceId, `lead:${lead.id}`, lead.id);
@@ -132,16 +140,16 @@ export async function POST(req: NextRequest) {
                   updated_at: new Date().toISOString(),
                 })
                 .eq("workspace_id", workspaceId)
-                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+                .or(`phone.eq.${fromE164},phone.eq.${fromDigits}`);
             }
             // Check for opt-in keywords (re-subscribe)
             else if (OPT_IN_KEYWORDS.has(inboundText)) {
-              log("info", "telnyx_sms.opt_in", { from: fromPhone, workspaceId });
+              log("info", "telnyx_sms.opt_in", { from: fromE164, workspaceId });
               const { data: matchedLeads } = await db
                 .from("leads")
                 .select("id")
                 .eq("workspace_id", workspaceId)
-                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+                .or(`phone.eq.${fromE164},phone.eq.${fromDigits}`);
               const { removeOptOut } = await import("@/lib/lead-opt-out");
               for (const lead of (matchedLeads ?? []) as Array<{ id: string }>) {
                 await removeOptOut(workspaceId, `lead:${lead.id}`, lead.id);
@@ -150,7 +158,7 @@ export async function POST(req: NextRequest) {
                 .from("leads")
                 .update({ opt_out: false, updated_at: new Date().toISOString() })
                 .eq("workspace_id", workspaceId)
-                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+                .or(`phone.eq.${fromE164},phone.eq.${fromDigits}`);
             }
 
             // Store inbound message for inbox

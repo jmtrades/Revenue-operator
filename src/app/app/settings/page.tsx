@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { log } from "@/lib/logger";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ReadinessChecklist } from "@/components/settings/ReadinessChecklist";
@@ -60,6 +61,7 @@ type ConfirmType = "data" | "account" | null;
 
 export default function AppSettingsPage() {
   const tSettings = useTranslations("settings");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tToast = useTranslations("toast");
   const { workspaceId } = useWorkspace();
   const [signingOut, setSigningOut] = useState(false);
@@ -164,7 +166,7 @@ export default function AppSettingsPage() {
           setSystemHealthData({ passed, total });
         }
       })
-      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { log("warn", "[page] readiness check failed", { error: e instanceof Error ? e.message : String(e) }); });
   }, [workspaceId]);
 
   const handleSaveProfile = async () => {
@@ -245,7 +247,7 @@ export default function AppSettingsPage() {
 
         <div className="relative z-10">
           <div className="mb-4">
-            <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Settings" }]} />
+            <Breadcrumbs items={[{ label: tBreadcrumbs("dashboard"), href: "/app" }, { label: tBreadcrumbs("settings") }]} />
           </div>
           <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
           <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">{tSettings("pageSubtitle")}</p>
@@ -266,7 +268,7 @@ export default function AppSettingsPage() {
           {syncing && (
             <div className="mb-4 text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
               <div className="inline-block w-1.5 h-1.5 bg-[var(--text-tertiary)] rounded-full animate-pulse" />
-              Syncing...
+              {tSettings("syncing")}
             </div>
           )}
           <div className="space-y-4">

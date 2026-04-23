@@ -17,6 +17,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
+import { normalizePhone } from "@/lib/security/phone";
 import { handleInboundCall } from "@/lib/voice/call-flow";
 import {
   verifyTelnyxWebhook,
@@ -208,13 +209,22 @@ export async function POST(req: NextRequest) {
 
         log("info", "telnyx_voice.call_initiated_inbound", { sessionId: callInfo.callSessionId, to: callInfo.to, from: callInfo.from });
 
+        // Phase 78/Phase 3 (D7): strictly normalize both phone numbers to E.164
+        // before any PostgREST `.or(...)` / `.eq(...)` interpolation. Webhook
+        // payload fields are attacker-controlled; a comma in `from` would
+        // otherwise graft a second filter clause onto the `.or(...)` below.
+        const toE164 = normalizePhone(callInfo.to);
+        const fromE164 = normalizePhone(callInfo.from);
+
         // 1. Look up workspace from phone_configs using the 'to' (called) number
-        const { data: phoneConfig } = await db
-          .from("phone_configs")
-          .select("workspace_id")
-          .eq("proxy_number", callInfo.to)
-          .eq("status", "active")
-          .maybeSingle();
+        const { data: phoneConfig } = toE164
+          ? await db
+              .from("phone_configs")
+              .select("workspace_id")
+              .eq("proxy_number", toE164)
+              .eq("status", "active")
+              .maybeSingle()
+          : { data: null };
 
         const workspaceId = (phoneConfig as { workspace_id?: string } | null)?.workspace_id ?? null;
 
@@ -231,13 +241,13 @@ export async function POST(req: NextRequest) {
 
         // 2. Look up or create a lead from the 'from' (caller) number
         let leadId: string | null = null;
-        const phone = (callInfo.from ?? "").replace(/\D/g, "");
-        if (phone.length >= 10) {
+        if (fromE164) {
+          const fromDigits = fromE164.slice(1);
           const { data: existingLead } = await db
             .from("leads")
             .select("id")
             .eq("workspace_id", workspaceId)
-            .or(`phone.eq.${callInfo.from},phone.eq.${phone}`)
+            .or(`phone.eq.${fromE164},phone.eq.${fromDigits}`)
             .limit(1)
             .maybeSingle();
 
@@ -249,7 +259,7 @@ export async function POST(req: NextRequest) {
               .insert({
                 workspace_id: workspaceId,
                 name: "Inbound caller",
-                phone: callInfo.from ?? undefined,
+                phone: fromE164,
                 state: "NEW",
               })
               .select("id")
@@ -705,7 +715,7 @@ export async function POST(req: NextRequest) {
             .eq("workspace_id", resolvedWorkspaceId);
 
           // Trigger post-call processing asynchronously
-          const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL;
           if (!appUrl) {
             log("error", "telnyx_voice.app_url_not_configured");
           } else {

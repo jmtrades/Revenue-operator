@@ -340,7 +340,7 @@ export function prioritizeMultipleCallResolutions(calls: CallData[]): Prioritize
 // INTERNAL HELPERS
 // ============================================================================
 
-function determinePrimaryAction(outcome: CallOutcomeType, callData: CallData): Action {
+function determinePrimaryAction(outcome: CallOutcomeType, _callData: CallData): Action {
   const actionMap: Record<CallOutcomeType, Action> = {
     booked_appointment: { type: "send_message", channel: "email", timing: { type: "immediate" }, reason: "Confirm appointment", automatable: true },
     requested_callback: { type: "schedule_call", channel: "phone", timing: { type: "exact_time" }, reason: "Respect requested callback time", automatable: false },
@@ -364,7 +364,7 @@ function determinePrimaryAction(outcome: CallOutcomeType, callData: CallData): A
   return actionMap[outcome];
 }
 
-function determineSecondaryActions(outcome: CallOutcomeType, callData: CallData): Action[] {
+function determineSecondaryActions(outcome: CallOutcomeType, _callData: CallData): Action[] {
   const actions: Action[] = [];
   if (["booked_appointment", "interested_but_not_now"].includes(outcome)) {
     actions.push({ type: "no_action", channel: "in_app", timing: { type: "immediate" }, reason: "Update engagement score", automatable: true });
@@ -391,7 +391,7 @@ function calculatePriorityScore(outcome: CallOutcomeType, callData: CallData): n
   return Math.min(10, Math.max(1, score));
 }
 
-function calculateConfidence(callData: CallData, outcome: CallOutcomeType): number {
+function calculateConfidence(callData: CallData, _outcome: CallOutcomeType): number {
   let confidence = 0.7;
   confidence += callData.topicsDiscussed.length * 0.05;
   confidence += callData.keyMoments.length * 0.02;

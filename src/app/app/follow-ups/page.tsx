@@ -233,6 +233,7 @@ type AutonomousAction = {
 export default function AppFollowUpsPage() {
   const { workspaceId } = useWorkspace();
   const t = useTranslations("followUps");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tToast = useTranslations("toast");
   const [tab, setTab] = useState<"templates" | "active" | "brain">("templates");
   const [sequences, setSequences] = useState<Sequence[]>([]);
@@ -373,7 +374,7 @@ export default function AppFollowUpsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
-      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Follow-ups" }]} />
+      <Breadcrumbs items={[{ label: tBreadcrumbs("home"), href: "/app" }, { label: tBreadcrumbs("followUps") }]} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
         <Link href="/app/follow-ups/create">

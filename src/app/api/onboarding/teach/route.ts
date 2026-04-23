@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { assertStepAllowed } from "@/lib/onboarding/state-machine";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -18,6 +19,17 @@ export async function POST(req: NextRequest) {
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   const authErr = await requireWorkspaceAccess(req, workspace_id);
   if (authErr) return authErr;
+
+  // Phase 69 — state machine guard: can't teach the agent until identity,
+  // scrape, and agent creation are all complete.
+  const gate = await assertStepAllowed(workspace_id, "teach");
+  if (!gate.ok) {
+    return NextResponse.json(
+      { error: "Previous onboarding step not complete", missing: gate.missing },
+      { status: 409 },
+    );
+  }
+
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id, name").eq("id", workspace_id).maybeSingle();
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });

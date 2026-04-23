@@ -7,6 +7,12 @@ import { enqueue } from "@/lib/queue";
 import { getPastMeetingParticipants, getRecording } from "./client";
 import { matchCallToLead } from "./call-to-lead";
 import { analyzeClosingCall } from "./analysis";
+// Phase 12f — pipe Zoom transcripts through the unified Phase 12c/12e intel
+// stack so we get the same structured CallIntelligenceResult for every source.
+import { parseZoomVtt } from "@/lib/calls/ingest/adapters/zoom-cloud";
+import { normalizeManualUpload } from "@/lib/calls/ingest/adapters/manual-upload";
+import { runIngestion } from "@/lib/calls/ingest/persist";
+import { createSupabaseIngestionWriter } from "@/lib/calls/ingest/persist-supabase";
 
 export async function processZoomWebhook(
   webhookId: string,
@@ -128,10 +134,21 @@ export async function fetchRecordingAndTranscript(
 
 export async function runAnalyzeCall(callSessionId: string, workspaceId: string): Promise<void> {
   const db = getDb();
-  const { data: session } = await db.from("call_sessions").select("transcript_text, matched_lead_id").eq("id", callSessionId).maybeSingle();
+  const { data: session } = await db
+    .from("call_sessions")
+    .select("transcript_text, matched_lead_id, external_meeting_id, external_meeting_uuid, call_started_at, call_ended_at")
+    .eq("id", callSessionId)
+    .maybeSingle();
   if (!session) return;
 
-  const s = session as { transcript_text?: string | null; matched_lead_id?: string | null };
+  const s = session as {
+    transcript_text?: string | null;
+    matched_lead_id?: string | null;
+    external_meeting_id?: string | null;
+    external_meeting_uuid?: string | null;
+    call_started_at?: string | null;
+    call_ended_at?: string | null;
+  };
   const transcript = s.transcript_text ?? "";
   const { data: lead } = s.matched_lead_id ? await db.from("leads").select("name, company").eq("id", s.matched_lead_id).maybeSingle() : { data: null };
   const context = lead ? { leadName: (lead as { name?: string }).name, company: (lead as { company?: string }).company } : undefined;
@@ -145,6 +162,31 @@ export async function runAnalyzeCall(callSessionId: string, workspaceId: string)
     confidence: analysis.confidence,
     analysis_source: "zoom_transcript",
   });
+
+  // Phase 12f — also run the unified Phase 12c intelligence stack so this call
+  // ends up in `call_intelligence_results` alongside HubSpot / manual uploads.
+  // Any failure here is swallowed — the legacy analysis above is what gates
+  // the post-call plan; this is additive.
+  if (transcript && s.external_meeting_id) {
+    try {
+      const turns = /WEBVTT/i.test(transcript.slice(0, 80))
+        ? parseZoomVtt(transcript, null)
+        : undefined;
+      const normalized = normalizeManualUpload({
+        externalId: s.external_meeting_uuid || s.external_meeting_id,
+        workspaceId,
+        leadId: s.matched_lead_id ?? null,
+        startedAtIso: s.call_started_at ?? new Date().toISOString(),
+        direction: "unknown",
+        sourceLabel: "zoom_cloud",
+        turns: turns && turns.length > 0 ? turns : undefined,
+        rawText: turns && turns.length > 0 ? null : transcript,
+      });
+      await runIngestion(normalized, { writer: createSupabaseIngestionWriter() });
+    } catch {
+      // additive — never fail the post-call flow on unified-intel errors
+    }
+  }
 
   if (s.matched_lead_id) {
     await enqueue({

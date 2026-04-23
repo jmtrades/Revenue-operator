@@ -86,7 +86,7 @@ const QuickActionCard = ({
   </Link>
 );
 
-const getCampaignTypeLabel = (type?: string, t?: any): string => {
+const getCampaignTypeLabel = (type?: string, t?: (key: string) => string): string => {
   const typeMap: Record<string, string> = {
     cold_outreach: t?.("campaignTypes.coldOutreach") ?? "Cold Outreach",
     follow_up: t?.("campaignTypes.followUp") ?? "Follow-Up",
@@ -268,6 +268,7 @@ const CallActivityCard = ({ call }: { call: CallRecord }) => {
 
 export default function OperationsPage() {
   const t = useTranslations("operations");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const { workspaceId } = useWorkspace();
   const [data, setData] = useState<OperationsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -322,7 +323,7 @@ export default function OperationsPage() {
         setData({
           ...data,
           campaigns: data.campaigns.map((c) =>
-            c.id === campaignId ? { ...c, status: newStatus as any } : c
+            c.id === campaignId ? { ...c, status: newStatus as Campaign["status"] } : c
           ),
         });
       }
@@ -347,8 +348,8 @@ export default function OperationsPage() {
     <div className="space-y-8 p-6">
       <Breadcrumbs
         items={[
-          { label: "Dashboard", href: "/app/dashboard" },
-          { label: "Operations", href: "/app/operations" },
+          { label: tBreadcrumbs("dashboard"), href: "/app/dashboard" },
+          { label: tBreadcrumbs("operations"), href: "/app/operations" },
         ]}
       />
 

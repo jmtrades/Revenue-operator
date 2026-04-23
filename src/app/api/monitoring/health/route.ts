@@ -119,7 +119,7 @@ export async function GET() {
   }
 
   const uptime_ms = Date.now() - startTime;
-  const version = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev";
+  const version = process.env.GIT_COMMIT_SHA?.slice(0, 7) || "dev";
 
   const response: HealthCheckResponse = {
     status,

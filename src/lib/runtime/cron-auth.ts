@@ -2,10 +2,9 @@
  * Cron authentication: require Bearer CRON_SECRET on every invocation.
  * Runs environment validation on first call (once per cold start).
  *
- * Security: We do NOT trust the x-vercel-cron header alone because it can
- * be spoofed by any external caller. On Vercel, configure cron routes to
- * include an Authorization header, or set CRON_SECRET as a query param
- * that the vercel.json cron URL includes.
+ * Security: require a proper Authorization header — do not trust
+ * platform-injected headers alone as they can be spoofed by external callers.
+ * Configure your external cron scheduler to send: Authorization: Bearer $CRON_SECRET
  */
 
 import { NextResponse } from "next/server";

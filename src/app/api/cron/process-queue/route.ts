@@ -37,6 +37,17 @@ async function processPayload(payload: {
   escalationId?: string;
   decisionNeeded?: string;
   escalationIds?: string[];
+  // Phase 13b — inbound email reply routing.
+  receivedAt?: string;
+  text?: string;
+  subject?: string;
+  fromEmail?: string;
+  messageId?: string | null;
+  // Phase 14 — inbound SMS reply routing.
+  fromNumber?: string;
+  toNumber?: string;
+  provider?: "twilio" | "bandwidth" | "telnyx" | "generic";
+  mediaUrls?: string[];
 }) {
   let workspaceId: string | undefined;
   if (payload.type === "process_signal" && payload.signalId) {
@@ -100,6 +111,44 @@ async function processPayload(payload: {
   } else if (payload.type === "handoff_notify_batch" && payload.escalationIds?.length && payload.workspaceId) {
     const { runHandoffBatchSend } = await import("@/lib/operational-transfer/handoff-notifications");
     await runHandoffBatchSend(payload.workspaceId, payload.escalationIds);
+    workspaceId = payload.workspaceId;
+  } else if (
+    payload.type === "process_email_reply" &&
+    payload.workspaceId &&
+    payload.leadId &&
+    payload.fromEmail
+  ) {
+    // Phase 13b — route inbound email replies through reactive-event-processor.
+    const { runProcessEmailReply } = await import("@/lib/intelligence/run-email-reply");
+    await runProcessEmailReply({
+      workspaceId: payload.workspaceId,
+      leadId: payload.leadId,
+      text: payload.text ?? "",
+      subject: payload.subject ?? "",
+      fromEmail: payload.fromEmail,
+      messageId: payload.messageId ?? null,
+      receivedAt: payload.receivedAt ?? new Date().toISOString(),
+    });
+    workspaceId = payload.workspaceId;
+  } else if (
+    payload.type === "process_sms_reply" &&
+    payload.workspaceId &&
+    payload.leadId &&
+    payload.fromNumber
+  ) {
+    // Phase 14 — route inbound SMS replies through reactive-event-processor.
+    const { runProcessSmsReply } = await import("@/lib/intelligence/run-sms-reply");
+    await runProcessSmsReply({
+      workspaceId: payload.workspaceId,
+      leadId: payload.leadId,
+      text: payload.text ?? "",
+      fromNumber: payload.fromNumber,
+      toNumber: payload.toNumber ?? "",
+      provider: payload.provider ?? "generic",
+      messageId: payload.messageId ?? null,
+      mediaUrls: payload.mediaUrls ?? [],
+      receivedAt: payload.receivedAt ?? new Date().toISOString(),
+    });
     workspaceId = payload.workspaceId;
   }
   if (workspaceId) {

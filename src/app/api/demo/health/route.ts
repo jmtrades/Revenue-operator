@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
   const webhookUrl = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL;
   checks.WEBHOOK_URL = webhookUrl
     ? { status: "ok", detail: "Configured" }
-    : { status: "warning", detail: "Not explicitly set — will use VERCEL_URL fallback" };
+    : { status: "warning", detail: "Not explicitly set" };
 
   // 5. Test Telnyx API connectivity (list phone numbers)
   if (apiKey) {

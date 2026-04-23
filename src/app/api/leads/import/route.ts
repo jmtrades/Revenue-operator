@@ -9,67 +9,12 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
+import { E164_REGEX } from "@/lib/security/phone";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
+import { parseCsvWithHeaders } from "@/lib/csv/parser";
 import { log } from "@/lib/logger";
-
-/**
- * CSV parser that properly handles quoted fields with commas
- * Supports both single and double quoted fields
- */
-function parseCSV(text: string): Record<string, string>[] {
-  const lines = text.split(/\r?\n/).filter((l) => l.trim());
-  if (lines.length < 2) return [];
-
-  // Parse header row — normalize to snake_case, collapse consecutive underscores
-  const headers = parseCSVLine(lines[0]).map((h) =>
-    h.trim().toLowerCase().replace(/[^a-z0-9_]/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "")
-  );
-
-  // Parse data rows
-  return lines.slice(1).map((line) => {
-    const values = parseCSVLine(line);
-    const row: Record<string, string> = {};
-    headers.forEach((h, i) => {
-      row[h] = (values[i] ?? "").trim();
-    });
-    return row;
-  });
-}
-
-/**
- * Parse a single CSV line respecting quoted fields
- */
-function parseCSVLine(line: string): string[] {
-  const result: string[] = [];
-  let current = "";
-  let inQuotes = false;
-  let quoteChar = "";
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    const nextChar = line[i + 1];
-
-    if (!inQuotes && (char === '"' || char === "'")) {
-      inQuotes = true;
-      quoteChar = char;
-    } else if (inQuotes && char === quoteChar && nextChar !== quoteChar) {
-      inQuotes = false;
-    } else if (inQuotes && char === quoteChar && nextChar === quoteChar) {
-      // Escaped quote
-      current += char;
-      i++;
-    } else if (!inQuotes && char === ",") {
-      result.push(current);
-      current = "";
-    } else {
-      current += char;
-    }
-  }
-  result.push(current);
-  return result;
-}
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_BATCH_SIZE = 10000;
@@ -100,7 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   const contentType = req.headers.get("content-type") || "";
-  let rows: Array<{ name?: string; phone?: string; email?: string; service_requested?: string; notes?: string }> = [];
+  let rows: Array<{ name?: string; phone?: string; email?: string; service_requested?: string; notes?: string; tcpa_consent?: boolean }> = [];
 
   // Check if CSV or form data
   if (contentType.includes("multipart/form-data") || contentType.includes("text/csv")) {
@@ -116,7 +61,9 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const csvRows = parseCSV(text);
+      // Phase 78 Task 10.4: RFC-4180 parser handles quoted newlines correctly
+      // (a notes cell with an embedded \n no longer shreds the row).
+      const csvRows = parseCsvWithHeaders(text);
 
       // Enforce max batch size
       if (csvRows.length > MAX_BATCH_SIZE) {
@@ -132,6 +79,11 @@ export async function POST(req: NextRequest) {
         email: r.email || r.email_address || r.contact_email || r.e_mail || "",
         service_requested: r.company || r.service || r.service_requested || r.company_name || r.organization || r.business_name || "",
         notes: r.notes || r.comments || r.description || r.note || "",
+        // Phase 6 TCPA: accept optional per-row consent columns.
+        // Any truthy-looking value in `consent`/`tcpa_consent`/`opted_in` counts as affirmative.
+        tcpa_consent: /^(1|true|yes|y|opted_in|consent|granted)$/i.test(
+          (r.consent || r.tcpa_consent || r.opted_in || r.opt_in || "").trim(),
+        ),
       }));
     } catch (e) {
       if (e instanceof Error && e.message.includes("exceeds maximum")) {
@@ -141,7 +93,7 @@ export async function POST(req: NextRequest) {
     }
   } else {
     // JSON format
-    let body: { leads?: Array<{ name?: string; phone?: string; email?: string; service_requested?: string; notes?: string }> };
+    let body: { leads?: Array<{ name?: string; phone?: string; email?: string; service_requested?: string; notes?: string; tcpa_consent?: boolean }> };
     try {
       body = await req.json();
     } catch {
@@ -166,6 +118,7 @@ export async function POST(req: NextRequest) {
       email: (r.email ?? "").toString().trim() || null,
       service_requested: (r.service_requested ?? "").toString().trim() || null,
       notes: (r.notes ?? "").toString().trim() || null,
+      tcpa_consent: r.tcpa_consent === true ? true : null,
     }))
     .filter((r) => {
       // Validate: name required, phone must contain only digits and be 10-15 chars
@@ -196,8 +149,13 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   log("info", "leads.import.started", { workspace_id: workspaceId, total_rows: valid.length });
 
-  // Deduplicate: collect all phones and emails from the import batch
-  const normalizedPhones = valid.map((r) => normalizePhoneE164(r.phone)).filter(Boolean);
+  // Deduplicate: collect all phones and emails from the import batch.
+  // Phase 78/Phase 3 (D7a): `normalizePhoneE164` can silently round-trip
+  // malformed input. Filter to strict E.164 before any PostgREST interpolation
+  // via `.in(...)` — defense-in-depth against crafted CSV rows.
+  const normalizedPhones = valid
+    .map((r) => normalizePhoneE164(r.phone))
+    .filter((v): v is string => !!v && E164_REGEX.test(v));
   const normalizedEmails = valid.map((r) => r.email).filter(Boolean) as string[];
 
   // Fetch existing leads by phone or email to prevent duplicates
@@ -239,6 +197,7 @@ export async function POST(req: NextRequest) {
         duplicateCount++;
         return null;
       }
+      const consented = r.tcpa_consent === true;
       return {
         workspace_id: workspaceId,
         name: r.name,
@@ -246,6 +205,11 @@ export async function POST(req: NextRequest) {
         email: r.email,
         company: r.service_requested,
         state: "NEW",
+        // Phase 6 TCPA: preserve affirmative consent + source/timestamp for audit.
+        // Null (not false) when unspecified so we never retroactively deny.
+        tcpa_consent: consented ? true : null,
+        consent_source: consented ? "csv_import" : null,
+        consent_captured_at: consented ? new Date().toISOString() : null,
         metadata: { source: "csv_import", service_requested: r.service_requested, notes: r.notes, score: 40 },
       };
     })

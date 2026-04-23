@@ -4,34 +4,33 @@
  * Never surfaces to UI.
  */
 
+import { log } from "@/lib/logger";
+
 export function logApiFailure(endpoint: string, error: unknown, workspaceId?: string): void {
   if (typeof window !== "undefined") return; // Server-side only
-  console.error("[api-failure]", {
+  log("error", "[reliability] API failure", {
     endpoint,
-    workspaceId,
+    workspace_id: workspaceId,
     error: error instanceof Error ? error.message : String(error),
-    timestamp: new Date().toISOString(),
   });
 }
 
 export function logWebhookFailure(webhookType: string, error: unknown, workspaceId?: string): void {
   if (typeof window !== "undefined") return;
-  console.error("[webhook-failure]", {
-    webhookType,
-    workspaceId,
+  log("error", "[reliability] Webhook failure", {
+    webhook_type: webhookType,
+    workspace_id: workspaceId,
     error: error instanceof Error ? error.message : String(error),
-    timestamp: new Date().toISOString(),
   });
 }
 
 export function logRetry(endpoint: string, attempt: number, workspaceId?: string): void {
   if (typeof window !== "undefined") return;
   if (process.env.NODE_ENV === "production") return;
-  console.error("[retry]", {
+  log("warn", "[reliability] Retry", {
     endpoint,
     attempt,
-    workspaceId,
-    timestamp: new Date().toISOString(),
+    workspace_id: workspaceId,
   });
 }
 
@@ -39,11 +38,10 @@ export function logQueueDelay(jobType: string, delayMs: number, workspaceId?: st
   if (typeof window !== "undefined") return;
   if (process.env.NODE_ENV === "production") return;
   if (delayMs > 30_000) {
-    console.warn("[queue-delay]", {
-      jobType,
-      delayMs,
-      workspaceId,
-      timestamp: new Date().toISOString(),
+    log("warn", "[reliability] Queue delay exceeded threshold", {
+      job_type: jobType,
+      delay_ms: delayMs,
+      workspace_id: workspaceId,
     });
   }
 }
@@ -51,10 +49,9 @@ export function logQueueDelay(jobType: string, delayMs: number, workspaceId?: st
 export function logSessionRestore(userId: string, workspaceId: string): void {
   // Server-side only - but allow client-side calls (they just won't log)
   if (typeof window === "undefined" && process.env.NODE_ENV !== "production") {
-    console.error("[session-restore]", {
-      userId,
-      workspaceId,
-      timestamp: new Date().toISOString(),
+    log("info", "[reliability] Session restore", {
+      user_id: userId,
+      workspace_id: workspaceId,
     });
   }
 }

@@ -534,7 +534,7 @@ export default function AppointmentsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
-        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Appointments" }]} />
+        <Breadcrumbs items={[{ label: t("breadcrumbs.dashboard"), href: "/app" }, { label: t("breadcrumbs.appointments") }]} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("appointments.heading", { defaultValue: "Appointments" })}</h1>

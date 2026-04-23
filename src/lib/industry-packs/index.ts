@@ -30,6 +30,15 @@ import { travelPack } from "./travel";
 import { recruitingPack } from "./recruiting";
 import { cleaningPack } from "./cleaning";
 import { landscapingPack } from "./landscaping";
+// Phase 13e — expanded industry coverage
+import { autoDealershipPack } from "./auto-dealership";
+import { saasPack } from "./saas";
+import { nonprofitPack } from "./nonprofit";
+import { movingPack } from "./moving";
+import { seniorCarePack } from "./senior-care";
+import { mentalHealthPack } from "./mental-health";
+import { cateringPack } from "./catering";
+import { childcarePack } from "./childcare";
 import type { IndustryPack } from "./types";
 
 export const INDUSTRY_PACKS: Record<string, IndustryPack> = {
@@ -65,6 +74,15 @@ export const INDUSTRY_PACKS: Record<string, IndustryPack> = {
   recruiting: recruitingPack,
   cleaning: cleaningPack,
   landscaping: landscapingPack,
+  // Phase 13e — expanded coverage
+  auto_dealership: autoDealershipPack,
+  saas: saasPack,
+  nonprofit: nonprofitPack,
+  moving: movingPack,
+  senior_care: seniorCarePack,
+  mental_health: mentalHealthPack,
+  catering: cateringPack,
+  childcare: childcarePack,
 };
 
 /** Common aliases — normalize user-entered strings to pack IDs */
@@ -143,6 +161,42 @@ export const INDUSTRY_ALIASES: Record<string, string> = {
   lawn_care: "landscaping",
   yard_maintenance: "landscaping",
   tree_service: "landscaping",
+  // Phase 13e aliases
+  dealership: "auto_dealership",
+  car_dealership: "auto_dealership",
+  new_cars: "auto_dealership",
+  used_cars: "auto_dealership",
+  software: "saas",
+  b2b_software: "saas",
+  tech_company: "saas",
+  startup: "saas",
+  charity: "nonprofit",
+  "501c3": "nonprofit",
+  foundation: "nonprofit",
+  ngo: "nonprofit",
+  movers: "moving",
+  moving_company: "moving",
+  storage: "moving",
+  relocation: "moving",
+  elder_care: "senior_care",
+  assisted_living: "senior_care",
+  nursing_home: "senior_care",
+  memory_care: "senior_care",
+  home_health: "senior_care",
+  therapy: "mental_health",
+  therapist: "mental_health",
+  counselor: "mental_health",
+  counseling: "mental_health",
+  psychologist: "mental_health",
+  psychiatrist: "mental_health",
+  caterer: "catering",
+  food_catering: "catering",
+  event_catering: "catering",
+  daycare: "childcare",
+  preschool: "childcare",
+  after_school: "childcare",
+  montessori: "childcare",
+  early_learning: "childcare",
 };
 
 /**

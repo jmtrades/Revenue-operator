@@ -4,6 +4,7 @@
  */
 
 import type { BillingTier } from "@/lib/feature-gate/types";
+import { getStripe } from "@/lib/billing/stripe-client";
 
 export type BillingInterval = "month" | "year";
 
@@ -89,8 +90,8 @@ export async function getPriceId(
     return { ok: false, reason: "stripe_unreachable" };
   }
   try {
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(stripeKey);
+    // Phase 78/Phase 6: shared factory with pinned apiVersion
+    const stripe = getStripe();
     const price = await stripe.prices.retrieve(priceId);
     if (price.type !== "recurring") {
       return { ok: false, reason: "wrong_price_mode" };

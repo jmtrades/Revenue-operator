@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 
 const TESTIMONIALS_KEYS = [
   "items.0",
@@ -16,9 +16,15 @@ const TESTIMONIALS_KEYS = [
   "items.6",
 ];
 
+const AUTO_ADVANCE_MS = 10_000;
+
 export function TestimonialsSection() {
   const t = useTranslations("homepage.testimonials");
   const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const count = TESTIMONIALS_KEYS.length;
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % count), [count]);
@@ -27,10 +33,23 @@ export function TestimonialsSection() {
     [count]
   );
 
+  // Respect user motion preferences — WCAG 2.3.3 / 2.2.2.
   useEffect(() => {
-    const id = setInterval(next, 10000);
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPrefersReducedMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  // Auto-advance — paused on hover, focus-within, explicit toggle, or reduced-motion.
+  useEffect(() => {
+    const shouldAdvance = !paused && !hovered && !focused && !prefersReducedMotion;
+    if (!shouldAdvance) return;
+    const id = setInterval(next, AUTO_ADVANCE_MS);
     return () => clearInterval(id);
-  }, [next]);
+  }, [next, paused, hovered, focused, prefersReducedMotion]);
 
   const testimonialKey = TESTIMONIALS_KEYS[current];
 
@@ -38,6 +57,7 @@ export function TestimonialsSection() {
     <section
       className="marketing-section py-20 md:py-28"
       style={{ background: "var(--bg-primary)" }}
+      aria-labelledby="testimonials-heading"
     >
       <Container>
         <AnimateOnScroll className="text-center mb-12">
@@ -48,6 +68,7 @@ export function TestimonialsSection() {
             {t("label")}
           </p>
           <h2
+            id="testimonials-heading"
             className="font-semibold max-w-2xl mx-auto"
             style={{
               fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
@@ -66,19 +87,38 @@ export function TestimonialsSection() {
           </p>
         </AnimateOnScroll>
 
-        <div className="max-w-3xl mx-auto">
+        <div
+          className="max-w-3xl mx-auto"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onFocus={() => setFocused(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocused(false);
+          }}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Customer testimonials"
+        >
           <div
+            aria-live={paused || prefersReducedMotion ? "polite" : "off"}
+            aria-atomic="true"
             className="relative rounded-xl p-8 md:p-10 transition-shadow"
             style={{
               border: "1px solid var(--border-default)",
               background: "var(--bg-surface)",
             }}
           >
-            {/* Stars */}
-            <div className="flex items-center justify-center gap-0.5 mb-6">
+            {/* Star rating — accessible label describes "5 out of 5"; SVGs are presentational. */}
+            <div
+              className="flex items-center justify-center gap-0.5 mb-6"
+              role="img"
+              aria-label="Rated 5 out of 5 stars"
+            >
               {Array.from({ length: 5 }).map((_, i) => (
                 <svg
                   key={i}
+                  aria-hidden="true"
+                  focusable="false"
                   className="w-4 h-4"
                   viewBox="0 0 20 20"
                   fill="var(--accent-warning, #F59E0B)"
@@ -133,7 +173,7 @@ export function TestimonialsSection() {
                 background: "var(--bg-primary)",
               }}
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -146,32 +186,58 @@ export function TestimonialsSection() {
                 background: "var(--bg-primary)",
               }}
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
 
-          {/* Dots — padded for 44px touch target */}
-          <div className="flex items-center justify-center gap-1 mt-6">
-            {TESTIMONIALS_KEYS.map((_, i) => (
+          {/* Controls row — dots + play/pause for WCAG 2.2.2 */}
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <div className="flex items-center gap-1" role="tablist" aria-label="Select testimonial">
+              {TESTIMONIALS_KEYS.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === current}
+                  aria-label={t("goToTestimonial", { number: i + 1 })}
+                  onClick={() => setCurrent(i)}
+                  className="p-2.5 rounded-full transition-[background-color,border-color,color,transform] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="block w-2 h-2 rounded-full transition-[background-color,opacity]"
+                    style={{
+                      background:
+                        i === current
+                          ? "var(--accent-primary)"
+                          : "var(--border-default)",
+                      transform: i === current ? "scale(1.3)" : "scale(1)",
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
+
+            {!prefersReducedMotion && (
               <button
-                key={i}
                 type="button"
-                onClick={() => setCurrent(i)}
-                aria-label={t("goToTestimonial", { number: i + 1 })}
-                className="p-2.5 rounded-full transition-[background-color,border-color,color,transform] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+                onClick={() => setPaused((p) => !p)}
+                aria-pressed={paused}
+                aria-label={paused ? "Play testimonial carousel" : "Pause testimonial carousel"}
+                className="w-11 h-11 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+                style={{
+                  border: "1px solid var(--border-default)",
+                  color: "var(--text-secondary)",
+                  background: "var(--bg-surface)",
+                }}
               >
-                <span
-                  className="block w-2 h-2 rounded-full transition-[background-color,opacity]"
-                  style={{
-                    background:
-                      i === current
-                        ? "var(--accent-primary)"
-                        : "var(--border-default)",
-                    transform: i === current ? "scale(1.3)" : "scale(1)",
-                  }}
-                />
+                {paused ? (
+                  <Play className="w-4 h-4" aria-hidden="true" />
+                ) : (
+                  <Pause className="w-4 h-4" aria-hidden="true" />
+                )}
               </button>
-            ))}
+            )}
           </div>
 
         </div>

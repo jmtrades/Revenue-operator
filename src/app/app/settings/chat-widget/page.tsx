@@ -29,6 +29,7 @@ const DEFAULT_CONFIG: WidgetConfig = {
 
 export default function ChatWidgetSettingsPage() {
   const t = useTranslations("chatWidget");
+  const tBreadcrumbs = useTranslations("breadcrumbs");
   const tWidget = useTranslations("settings.chatWidget");
   const { workspaceId } = useWorkspace();
   const [config, setConfig] = useState<WidgetConfig>(DEFAULT_CONFIG);
@@ -59,7 +60,7 @@ export default function ChatWidgetSettingsPage() {
     };
 
     loadConfig();
-  }, [workspaceId]);
+  }, [workspaceId, t]);
 
   // Save configuration
   const handleSave = async () => {
@@ -125,9 +126,9 @@ export default function ChatWidgetSettingsPage() {
       <div className="border-b border-[var(--border-default)] px-6 py-4">
         <div className="mb-4">
           <Breadcrumbs items={[
-            { label: "Home", href: "/app" },
-            { label: "Settings", href: "/app/settings" },
-            { label: "Chat widget" }
+            { label: tBreadcrumbs("home"), href: "/app" },
+            { label: tBreadcrumbs("settings"), href: "/app/settings" },
+            { label: tBreadcrumbs("chatWidget") }
           ]} />
         </div>
         <div className="flex items-center gap-3 mb-2">

@@ -76,7 +76,7 @@ export default function FollowUpCreatePage() {
       };
       setName(triggerNames[trigger] || "");
     }
-  }, [trigger]);
+  }, [trigger, name]);
 
   useEffect(() => {
     if (!effectiveWorkspaceId) return;

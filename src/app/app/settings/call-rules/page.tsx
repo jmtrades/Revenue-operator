@@ -124,9 +124,9 @@ export default function AppSettingsCallRulesPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[
-        { label: "Home", href: "/app" },
-        { label: "Settings", href: "/app/settings" },
-        { label: "Call rules" }
+        { label: tRules("breadcrumbHome"), href: "/app" },
+        { label: tRules("breadcrumbSettings"), href: "/app/settings" },
+        { label: tRules("breadcrumbCallRules") }
       ]} />
       <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{tRules("heading")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tRules("description")}</p>
@@ -146,6 +146,7 @@ export default function AppSettingsCallRulesPage() {
                 <button
                   type="button"
                   onClick={handleCopyToWeekdays}
+                  aria-label={tRules("businessHoursCopyToWeekdays")}
                   className="text-xs font-medium text-[var(--accent-primary)] hover:opacity-80 transition-opacity"
                 >
                   {tRules("businessHoursCopyToWeekdays")}
@@ -166,14 +167,18 @@ export default function AppSettingsCallRulesPage() {
                       <span className="text-xs font-medium text-[var(--text-tertiary)] w-12">{dayLabels[day]}</span>
                       {hours.enabled ? (
                         <div className="flex items-center gap-2 ml-auto">
+                          <label htmlFor={`open-${day}`} className="sr-only">{tRules("businessHoursOpen")} {dayLabels[day]}</label>
                           <input
+                            id={`open-${day}`}
                             type="time"
                             value={hours.open}
                             onChange={(e) => handleBusinessHourChange(day, "open", e.target.value)}
                             className="w-24 px-2 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-xs focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
                           />
                           <span className="text-xs text-[var(--text-tertiary)]">{tRules("businessHoursTo")}</span>
+                          <label htmlFor={`close-${day}`} className="sr-only">{tRules("businessHoursClose")} {dayLabels[day]}</label>
                           <input
+                            id={`close-${day}`}
                             type="time"
                             value={hours.close}
                             onChange={(e) => handleBusinessHourChange(day, "close", e.target.value)}

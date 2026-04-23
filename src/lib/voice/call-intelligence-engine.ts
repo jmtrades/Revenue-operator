@@ -18,7 +18,6 @@ import {
   detectObjectionType,
   detectCallerEmotion,
   routeObjection,
-  formatObjectionCoachingHint,
 } from "./dynamic-objection-router";
 
 /* ── Types ──────────────────────────────────────────────────────────────── */
