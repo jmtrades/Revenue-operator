@@ -16,6 +16,20 @@ const TIER_ROI_KEYS: Record<string, string> = {
   Agency: "enterprise",
 };
 
+/**
+ * Phase 83 — "Who this is for" chip, one per tier. Addresses P1 #4 from
+ * the critical-analysis evidence doc: visitors can't tell at a glance
+ * which tier matches their self-identification, which produces decision
+ * paralysis and "I'll come back later" bounces. A 3-4 word chip lets the
+ * reader self-select in one glance before reading the feature list.
+ */
+const TIER_FIT: Record<string, string> = {
+  Starter: "Solo — just starting",
+  Growth: "Small team — scaling",
+  Business: "Mid-market — serious",
+  Agency: "Agency — multi-client",
+};
+
 export function PricingPreview() {
   const t = useTranslations("homepage.pricingPreview");
   const [annual, setAnnual] = useState(false);
@@ -167,6 +181,14 @@ export function PricingPreview() {
                 >
                   {name}
                 </h3>
+                {TIER_FIT[tier.name] ? (
+                  <p
+                    className="text-[11px] font-medium uppercase tracking-[0.12em] mb-3"
+                    style={{ color: "var(--text-tertiary)" }}
+                  >
+                    {TIER_FIT[tier.name]}
+                  </p>
+                ) : null}
                 <p
                   className="num-editorial mb-4"
                   style={{
