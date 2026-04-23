@@ -39,7 +39,7 @@ export function PackBusinessStep({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg md:text-xl font-semibold text-slate-50">{t("businessStep.heading")}</h2>
+        <h2 className="font-editorial-small text-slate-50" style={{ fontSize: "1.375rem", lineHeight: 1.2 }}>{t("businessStep.heading")}</h2>
         <p className="mt-1 text-sm text-slate-400">{t("businessStep.subtitle")}</p>
       </div>
       <div className="space-y-2">

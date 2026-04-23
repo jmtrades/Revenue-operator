@@ -71,7 +71,7 @@ export function ActivateStep({
     <div className="space-y-6">
       {provisioned && <Confetti key="step5-confetti" />}
       <div>
-        <h2 className="text-lg md:text-xl font-semibold text-slate-50">
+        <h2 className="font-editorial-small text-slate-50" style={{ fontSize: "1.375rem", lineHeight: 1.2 }}>
           <span className="inline-flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-400" />
             {t("heading")}

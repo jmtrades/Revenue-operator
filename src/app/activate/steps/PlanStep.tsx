@@ -43,7 +43,7 @@ export function PlanStep({ selectedPlan, onSelectPlan, onNext, canGoNext }: Plan
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+        <h2 className="font-editorial-small mb-2" style={{ fontSize: "1.375rem", lineHeight: 1.2, color: "var(--text-primary)" }}>
           {t("planSelection.title", { defaultValue: "Choose Your Plan" })}
         </h2>
         <p className="text-sm text-[var(--text-secondary)]">

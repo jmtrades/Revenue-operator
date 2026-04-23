@@ -434,13 +434,19 @@ export function ActivateWizard() {
           </div>
         )}
         <header className="mb-10">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-sky-400">
+          <p className="eyebrow-editorial text-sky-400">
             {t("wizardHeading")}
           </p>
-          <h1 className="mt-3 text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
+          <h1
+            className="font-editorial mt-3"
+            style={{
+              fontSize: "clamp(2rem, 4vw, 2.75rem)",
+              color: "var(--text-primary)",
+            }}
+          >
             {t("wizardTitle")}
           </h1>
-          <p className="mt-2 text-sm text-[var(--text-tertiary)] max-w-xl">
+          <p className="mt-3 text-sm text-[var(--text-tertiary)] max-w-xl leading-relaxed">
             {t("wizardSubtitle")}
           </p>
         </header>

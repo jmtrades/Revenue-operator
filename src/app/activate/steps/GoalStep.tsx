@@ -82,7 +82,7 @@ export function GoalStep({
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+        <h2 className="font-editorial-small" style={{ fontSize: "1.375rem", lineHeight: 1.2, color: "var(--text-primary)" }}>
           What kind of operator are you?
         </h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -128,7 +128,7 @@ export function GoalStep({
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t("heading")}</h2>
+        <h2 className="font-editorial-small" style={{ fontSize: "1.375rem", lineHeight: 1.2, color: "var(--text-primary)" }}>{t("heading")}</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("subtitle")}</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
