@@ -379,12 +379,114 @@ export function Hero() {
             <br className="hidden sm:block" />{" "}
             <em className="ital">{t("heading2")}</em>
           </h1>
+          {/* Phase 83 — plain-English concrete clarifier.
+              The abstract headline tells visitors the outcome; this line
+              tells them the MECHANISM in two seconds so they don't bounce
+              because they "don't know what this is." */}
+          <p
+            className="text-lg md:text-xl max-w-2xl mx-auto leading-snug mb-4 font-medium"
+            style={{ color: "var(--text-primary)" }}
+          >
+            An AI operator that answers your phone, books your meetings,
+            and calls every lead back &mdash; 24/7, in your voice.
+          </p>
           <p
             className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
             style={{ color: "var(--text-secondary)" }}
           >
             {t("description")}
           </p>
+
+          {/* Phase 83 — trust strip. Addresses the three main signup
+              deterrents (setup friction, lock-in anxiety, purchase risk)
+              in a single glanceable row. */}
+          <div
+            className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs"
+            style={{ color: "var(--text-tertiary)" }}
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <svg
+                className="w-3.5 h-3.5 shrink-0"
+                style={{ color: "var(--accent-secondary)" }}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Live in 5 minutes
+            </span>
+            <span
+              className="hidden sm:block"
+              style={{ color: "var(--border-default)" }}
+            >
+              &middot;
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <svg
+                className="w-3.5 h-3.5 shrink-0"
+                style={{ color: "var(--accent-secondary)" }}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Cancel anytime
+            </span>
+            <span
+              className="hidden sm:block"
+              style={{ color: "var(--border-default)" }}
+            >
+              &middot;
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <svg
+                className="w-3.5 h-3.5 shrink-0"
+                style={{ color: "var(--accent-secondary)" }}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              30-day money-back
+            </span>
+            <span
+              className="hidden sm:block"
+              style={{ color: "var(--border-default)" }}
+            >
+              &middot;
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <svg
+                className="w-3.5 h-3.5 shrink-0"
+                style={{ color: "var(--accent-secondary)" }}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Works with your existing number
+            </span>
+          </div>
         </div>
 
         {/* Hairline chapter-rule between claim and proof. */}
