@@ -142,20 +142,38 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
       }}
     >
       <Container className="flex items-center justify-between w-full">
-        {/* Wordmark: Playfair Display — editorial signature.
-            Phase 81 — matches the hero display typography so the brand
-            voice is consistent from masthead to footer. */}
+        {/* Wordmark + clarifier tagline.
+            Phase 81 gave the wordmark Playfair. Phase 83 adds a one-line
+            subscript so first-time visitors know at a glance this is
+            software (not a human service or consultancy). Addresses
+            deterrent #3 in docs/superpowers/evidence/phase-83-critical-
+            analysis.md: "Revenue Operator" reads ambiguously as a role. */}
         <Link
           href="/"
-          className="font-editorial-small no-underline"
-          style={{
-            color: "var(--text-primary)",
-            fontSize: "1.1875rem",
-            letterSpacing: "-0.018em",
-            lineHeight: 1,
-          }}
+          className="no-underline inline-flex flex-col leading-none"
+          style={{ color: "var(--text-primary)" }}
+          aria-label="Revenue Operator — home"
         >
-          Revenue <em style={{ fontStyle: "italic", fontWeight: 500 }}>Operator</em>
+          <span
+            className="font-editorial-small"
+            style={{
+              fontSize: "1.1875rem",
+              letterSpacing: "-0.018em",
+              lineHeight: 1,
+            }}
+          >
+            Revenue{" "}
+            <em style={{ fontStyle: "italic", fontWeight: 500 }}>Operator</em>
+          </span>
+          <span
+            className="hidden sm:block mt-0.5 text-[10px] font-medium uppercase"
+            style={{
+              letterSpacing: "0.14em",
+              color: "var(--text-tertiary)",
+            }}
+          >
+            AI Revenue Operations Platform
+          </span>
         </Link>
 
         {/* Desktop nav */}

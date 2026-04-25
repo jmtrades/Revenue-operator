@@ -68,6 +68,26 @@ export function PricingPreview() {
           </h2>
         </AnimateOnScroll>
 
+        {/* Phase 83 — "Start free" lead + confidence strip above the cards.
+            Addresses P2 #7 ("free-trial invisibility") and P1 #4 (risk
+            reversal needs to land adjacent to the ask). Kept minimal so
+            it doesn't steal focus from the tier cards themselves. */}
+        <div className="max-w-2xl mx-auto text-center mb-6">
+          <p
+            className="font-editorial-small mb-2"
+            style={{
+              fontSize: "1.125rem",
+              color: "var(--text-primary)",
+            }}
+          >
+            Start free. Keep it running only if it&apos;s working.
+          </p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            No credit card to start &middot; 30-day money-back on paid plans
+            &middot; Cancel anytime
+          </p>
+        </div>
+
         <div className="flex items-center justify-center gap-3 mb-10">
           <span
             className="text-sm font-medium"
