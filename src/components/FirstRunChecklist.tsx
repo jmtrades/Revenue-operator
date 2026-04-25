@@ -74,7 +74,7 @@ export function FirstRunChecklist({
         ? `Pick up your phone and dial ${workspaceNumber}. Hear it work in 30 seconds.`
         : "Dial your assigned number to hear it answer in your voice in 30 seconds.",
       icon: PhoneCall,
-      cta: { label: "How to test →", href: "/docs/first-call" },
+      cta: { label: "Run the 6-scenario test →", href: "/app/test-agent" },
       highlight: !hasFirstCall && hasAgentLive,
     },
     {
