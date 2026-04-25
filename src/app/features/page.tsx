@@ -121,8 +121,18 @@ export default function FeaturesPage() {
               className="font-editorial mb-5"
               style={{ fontSize: "clamp(2.25rem, 5vw, 3.5rem)", color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.15 }}
             >
-              Everything your phone needs. Nothing it doesn&apos;t.
+              Everything your phone needs. <em className="ital">Nothing it doesn&apos;t.</em>
             </h1>
+            {/* Phase 87 — same plain-English mechanism clarifier as the
+                homepage hero, so paid-ad landings see the same 2-second
+                "what is this" answer. Closes pre-mortem A2. */}
+            <p
+              className="text-lg md:text-xl max-w-2xl mx-auto leading-snug mb-4 font-medium"
+              style={{ color: "var(--text-primary)" }}
+            >
+              An AI operator that answers your phone, books your meetings,
+              and calls every lead back &mdash; 24/7, in your voice.
+            </p>
             <p
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}

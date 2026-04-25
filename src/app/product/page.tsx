@@ -123,6 +123,15 @@ export default async function ProductPage() {
             >
               {t("heading")}
             </h1>
+            {/* Phase 87 — plain-English mechanism clarifier mirrors the
+                homepage hero. Closes pre-mortem A2. */}
+            <p
+              className="text-lg md:text-xl mb-4 font-medium leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              An AI operator that answers your phone, books your meetings,
+              and calls every lead back &mdash; 24/7, in your voice.
+            </p>
             <p
               className="text-lg"
               style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
