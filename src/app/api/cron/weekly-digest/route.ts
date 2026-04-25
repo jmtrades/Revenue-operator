@@ -106,77 +106,89 @@ export async function GET(req: NextRequest) {
 
       const workspaceName = ws.name || "Your business";
 
+      // Phase 86 — Editorial-light email. Matches the marketing surface
+      // brand we shipped in Phase 81 (Playfair Display, ivory cards,
+      // Hermès-spaced eyebrows). Email-client-safe: table layout, inline
+      // styles, no flexbox, no CSS grid, no <link> font references —
+      // Playfair falls back gracefully to Georgia → serif.
       const html = `
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #09090b; color: #fafafa; margin: 0; padding: 0; }
-    .container { max-width: 560px; margin: 0 auto; padding: 40px 24px; }
-    .header { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .subheader { font-size: 14px; color: #a1a1aa; margin-bottom: 32px; }
-    .hero { background: linear-gradient(135deg, #18181b, #27272a); border: 1px solid #3f3f46; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px; }
-    .hero-amount { font-size: 36px; font-weight: 800; color: #22c55e; }
-    .hero-label { font-size: 13px; color: #a1a1aa; margin-top: 4px; }
-    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
-    .stat { background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 16px; }
-    .stat-value { font-size: 24px; font-weight: 700; }
-    .stat-label { font-size: 12px; color: #a1a1aa; margin-top: 2px; }
-    .cta { display: inline-block; background: #fafafa; color: #09090b; font-weight: 600; font-size: 14px; padding: 10px 24px; border-radius: 8px; text-decoration: none; margin-top: 8px; }
-    .footer { font-size: 12px; color: #71717a; margin-top: 32px; text-align: center; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your Revenue Operator weekly recap</title>
 </head>
-<body>
-  <div class="container">
-    <div class="header">Your Weekly Revenue Recap</div>
-    <div class="subheader">${workspaceName} — ${startDate} to ${endDate}</div>
+<body style="margin:0;padding:0;background:#FAFBFC;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Helvetica,Arial,sans-serif;color:#0A0A0B;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FAFBFC;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:12px;overflow:hidden;">
+          <tr>
+            <td style="padding:28px 32px 0 32px;">
+              <p style="margin:0 0 6px 0;font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6A6D76;">Your week with Revenue Operator</p>
+              <h1 style="margin:0 0 4px 0;font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:28px;line-height:1.15;letter-spacing:-0.02em;color:#0A0A0B;">${workspaceName}</h1>
+              <p style="margin:0 0 24px 0;font-size:14px;color:#4A4E58;line-height:1.5;">Here&apos;s what your AI operator did from <strong style="color:#0A0A0B;">${startDate}</strong> to <strong style="color:#0A0A0B;">${endDate}</strong>.</p>
+            </td>
+          </tr>
 
-    <div class="hero">
-      <div class="hero-amount">$${revenue}</div>
-      <div class="hero-label">Estimated revenue recovered this week</div>
-    </div>
+          <tr>
+            <td style="padding:0 32px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;border-spacing:0 6px;">
+                <tr>
+                  <td style="padding:20px 22px;background:#F7F8FA;border:1px solid rgba(0,0,0,0.06);border-radius:10px;text-align:center;">
+                    <p style="margin:0 0 6px 0;font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6A6D76;">Estimated revenue recovered</p>
+                    <p style="margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:36px;line-height:1;color:#16A34A;letter-spacing:-0.025em;">$${revenue}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="50%" style="padding:14px 16px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:10px;vertical-align:top;">
+                          <p style="margin:0 0 2px 0;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6A6D76;">Total calls</p>
+                          <p style="margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:24px;line-height:1.1;color:#0A0A0B;">${totals.total_calls}</p>
+                        </td>
+                        <td width="8"></td>
+                        <td width="50%" style="padding:14px 16px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:10px;vertical-align:top;">
+                          <p style="margin:0 0 2px 0;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6A6D76;">Appointments booked</p>
+                          <p style="margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:24px;line-height:1.1;color:#0A0A0B;">${totals.total_appointments}</p>
+                        </td>
+                      </tr>
+                      <tr><td colspan="3" height="6"></td></tr>
+                      <tr>
+                        <td width="50%" style="padding:14px 16px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:10px;vertical-align:top;">
+                          <p style="margin:0 0 2px 0;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6A6D76;">Leads captured</p>
+                          <p style="margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:24px;line-height:1.1;color:#0A0A0B;">${totals.total_leads}</p>
+                        </td>
+                        <td width="8"></td>
+                        <td width="50%" style="padding:14px 16px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:10px;vertical-align:top;">
+                          <p style="margin:0 0 2px 0;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6A6D76;">Calls recovered</p>
+                          <p style="margin:0;font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:24px;line-height:1.1;color:#0A0A0B;">${totals.recovered_calls}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
-      <tr>
-        <td width="50%" style="padding: 6px;">
-          <div class="stat">
-            <div class="stat-value">${totals.total_calls}</div>
-            <div class="stat-label">Total calls</div>
-          </div>
-        </td>
-        <td width="50%" style="padding: 6px;">
-          <div class="stat">
-            <div class="stat-value">${totals.total_appointments}</div>
-            <div class="stat-label">Appointments booked</div>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td width="50%" style="padding: 6px;">
-          <div class="stat">
-            <div class="stat-value">${totals.total_leads}</div>
-            <div class="stat-label">Leads captured</div>
-          </div>
-        </td>
-        <td width="50%" style="padding: 6px;">
-          <div class="stat">
-            <div class="stat-value">${totals.recovered_calls}</div>
-            <div class="stat-label">Calls recovered</div>
-          </div>
-        </td>
-      </tr>
-    </table>
+          <tr>
+            <td style="padding:24px 32px 32px 32px;text-align:center;">
+              <a href="https://www.recall-touch.com/app/analytics" style="display:inline-block;padding:12px 24px;background:#0A0A0B;color:#FFFFFF;text-decoration:none;border-radius:10px;font-size:14px;font-weight:500;">Open dashboard &rarr;</a>
+            </td>
+          </tr>
 
-    <div style="text-align: center;">
-      <a href="https://recall-touch.com/app/analytics" class="cta">View Full Dashboard →</a>
-    </div>
-
-    <div class="footer">
-      Revenue Operator — The AI Revenue Execution System<br>
-      <a href="https://recall-touch.com/app/settings/notifications" style="color: #71717a;">Manage email preferences</a>
-    </div>
-  </div>
+          <tr>
+            <td style="padding:0 32px 28px 32px;">
+              <p style="margin:0;font-size:12px;color:#6A6D76;line-height:1.6;text-align:center;">Recovered estimate is directional &mdash; the real attribution-backed metric will replace it on your dashboard once analytics catches up. <a href="https://www.recall-touch.com/app/settings/notifications" style="color:#2563EB;text-decoration:none;">Update preferences</a>.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>`;
 
