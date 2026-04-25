@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
 import { PRICING_TIERS, ROUTES } from "@/lib/constants";
+import { PricingMiniRoi } from "@/components/sections/PricingMiniRoi";
 
 const TIER_ROI_KEYS: Record<string, string> = {
   Starter: "solo",
@@ -67,6 +68,10 @@ export function PricingPreview() {
             {t("heading")}
           </h2>
         </AnimateOnScroll>
+
+        {/* Phase 84 — Personal-ROI strip. Keeps the visitor's own $-number
+            visible at the moment they're being asked to pick a tier. */}
+        <PricingMiniRoi />
 
         {/* Phase 83 — "Start free" lead + confidence strip above the cards.
             Addresses P2 #7 ("free-trial invisibility") and P1 #4 (risk
