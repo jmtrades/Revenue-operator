@@ -54,8 +54,12 @@ export function CookieConsent() {
   if (!visible) return null;
 
   return (
+    // Phase 85 — sit ABOVE the StickyMobileCTA on mobile so we don't hide
+    // the primary "Get started" button. StickyMobileCTA is ~64px tall +
+    // safe-area-inset; we offset by 76px below tablet break and 0 on
+    // desktop where the StickyMobileCTA isn't shown.
     <div
-      className="fixed bottom-0 left-0 right-0 z-[9999] px-4 py-3 sm:px-6 sm:py-4"
+      className="fixed bottom-[calc(76px+env(safe-area-inset-bottom,0px))] sm:bottom-0 left-0 right-0 z-[9999] px-4 py-3 sm:px-6 sm:py-4"
       style={{ background: "var(--bg-elevated)", borderTop: "1px solid var(--border-default)" }}
       role="dialog"
       aria-label="Cookie consent"
