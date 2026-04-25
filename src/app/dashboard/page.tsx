@@ -10,6 +10,7 @@ import { Shell } from "@/components/Shell";
 import { HandoffList } from "@/components/HandoffList";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
+import { FirstRunChecklist } from "@/components/FirstRunChecklist";
 import {
   Phone,
   TrendingUp,
@@ -187,13 +188,30 @@ export default function SituationPage() {
 
       {/* Welcome Section */}
       <div className="mb-12">
-        <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+        <h1
+          className="font-editorial mb-2"
+          style={{
+            fontSize: "clamp(2.25rem, 4vw, 3rem)",
+            color: "var(--text-primary)",
+          }}
+        >
           {t("welcomeBack")}
         </h1>
         <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
           {businessName}
         </p>
       </div>
+
+      {/* Phase 84 — First-run checklist. Renders only while the workspace
+          has zero recorded calls. Once the first real call lands, this
+          component disappears and the metrics tell the story. Closes
+          deterrent P3 #16 (post-onboarding "what should I do?" cliff). */}
+      {(stats?.recent_calls ?? 0) === 0 && (
+        <FirstRunChecklist
+          hasAgentLive={true}
+          hasFirstCall={(stats?.recent_calls ?? 0) > 0}
+        />
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
