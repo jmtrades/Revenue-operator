@@ -1,7 +1,11 @@
 /**
  * GET /api/dashboard/quick-stats?workspace_id=...
- * Returns three key numbers for the main dashboard cards:
- *   active_leads, recent_calls (7d), pending_followups
+ * Returns key numbers for the main dashboard cards:
+ *   active_leads, recent_calls (7d), pending_followups,
+ *   recovered_revenue_cents (7d, real attribution), attribution_method.
+ *
+ * Phase 88 — recovered_revenue_cents replaces the prior dashboard
+ * heuristic (recent_calls × $47). Closes pre-mortem D2.
  */
 
 export const dynamic = "force-dynamic";
@@ -10,6 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { log } from "@/lib/logger";
+import { getRevenueRecovered } from "@/lib/analytics/revenue-recovered";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -64,5 +69,28 @@ export async function GET(req: NextRequest) {
     log("error", "dashboard.quick-stats.followups", { workspaceId, error });
   }
 
-  return NextResponse.json({ active_leads, recent_calls, pending_followups });
+  // Phase 88 — real recovered-$ attribution.
+  // Best-effort: any failure here keeps the rest of the response intact
+  // so the dashboard always renders, even if the deals/appointments
+  // schema isn't fully provisioned in this environment.
+  let recovered_revenue_cents = 0;
+  let attribution_method: "deal_values" | "workspace_average" | "estimate" | "unavailable" =
+    "unavailable";
+  try {
+    const startDate = sevenDaysAgo.toISOString().slice(0, 10);
+    const endDate = new Date().toISOString().slice(0, 10);
+    const breakdown = await getRevenueRecovered(workspaceId, startDate, endDate);
+    recovered_revenue_cents = breakdown.total_revenue_recovered;
+    attribution_method = breakdown.attribution_method;
+  } catch (error) {
+    log("error", "dashboard.quick-stats.recovered_revenue", { workspaceId, error });
+  }
+
+  return NextResponse.json({
+    active_leads,
+    recent_calls,
+    pending_followups,
+    recovered_revenue_cents,
+    attribution_method,
+  });
 }

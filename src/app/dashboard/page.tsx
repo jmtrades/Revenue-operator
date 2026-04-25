@@ -44,6 +44,11 @@ interface QuickStats {
   active_leads: number;
   recent_calls: number;
   pending_followups: number;
+  // Phase 88 — real attribution-backed recovered $$ (cents). Replaces the
+  // prior recent_calls × $47 heuristic. May be 0 if no qualifying calls
+  // closed in the window or the deals schema isn't provisioned.
+  recovered_revenue_cents?: number;
+  attribution_method?: "deal_values" | "workspace_average" | "estimate" | "unavailable";
 }
 interface RevenueAtRisk {
   total_at_risk: number;
@@ -233,15 +238,73 @@ export default function SituationPage() {
               <TrendingUp size={20} color="white" />
             </div>
           </div>
-          {(stats?.recent_calls ?? 0) > 0 ? (
-            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-              ${((stats?.recent_calls ?? 0) * 47).toLocaleString()}
-            </p>
-          ) : (
-            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
-              {t("stats.startsAfterFirstCall")}
-            </p>
-          )}
+          {(() => {
+            // Phase 88 — show real attribution-backed recovered $$ when
+            // available; only fall back to the prior recent_calls × $47
+            // heuristic when the attribution function returned 0 OR
+            // marked the source as "unavailable" (schema not provisioned)
+            // AND the workspace has handled at least one call.
+            const cents = stats?.recovered_revenue_cents;
+            const method = stats?.attribution_method;
+            const calls = stats?.recent_calls ?? 0;
+            if (cents !== undefined && cents > 0) {
+              return (
+                <>
+                  <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+                    ${Math.round(cents / 100).toLocaleString()}
+                  </p>
+                  {method && method !== "unavailable" && (
+                    <p
+                      className="text-[10px] uppercase font-semibold mb-1"
+                      style={{
+                        letterSpacing: "0.12em",
+                        color: "var(--text-tertiary)",
+                      }}
+                      title={
+                        method === "deal_values"
+                          ? "Computed from your real closed-deal values."
+                          : method === "workspace_average"
+                          ? "Computed from your configured average deal value."
+                          : "Estimate — set your average deal value in Settings for a tighter number."
+                      }
+                    >
+                      {method === "deal_values"
+                        ? "Real deal values"
+                        : method === "workspace_average"
+                        ? "Workspace average"
+                        : "Estimate"}
+                    </p>
+                  )}
+                </>
+              );
+            }
+            if (calls > 0) {
+              // Schema not yet provisioned in this workspace — keep the
+              // visitor from staring at $0. Heuristic is clearly tagged
+              // so users don't mistake it for attribution-backed.
+              return (
+                <>
+                  <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+                    ${(calls * 47).toLocaleString()}
+                  </p>
+                  <p
+                    className="text-[10px] uppercase font-semibold mb-1"
+                    style={{
+                      letterSpacing: "0.12em",
+                      color: "var(--text-tertiary)",
+                    }}
+                  >
+                    Estimate · set deals to refine
+                  </p>
+                </>
+              );
+            }
+            return (
+              <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+                {t("stats.startsAfterFirstCall")}
+              </p>
+            );
+          })()}
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.estRevenueRecovered")}</p>
         </div>
 
