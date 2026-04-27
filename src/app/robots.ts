@@ -23,6 +23,8 @@ export default function robots(): MetadataRoute.Robots {
           "/outbound",
           "/enterprise",
           "/security",
+          "/safety",
+          "/trust",
           "/results",
           "/privacy",
           "/terms",
