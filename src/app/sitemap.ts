@@ -15,7 +15,19 @@ const INDUSTRY_SLUGS = [
   "insurance",
   "construction",
 ];
-const COMPARE_SLUGS = ["smith-ai", "ruby", "gohighlevel", "hiring-receptionist"];
+const COMPARE_SLUGS = [
+  "smith-ai",
+  "ruby",
+  "gohighlevel",
+  "hiring-receptionist",
+  // Phase 92 — direct AI-voice-agent rivals (registered in
+  // src/lib/data/ai-competitors.ts and served by the dynamic
+  // /compare/[competitor] route).
+  "vapi",
+  "bland-ai",
+  "retell-ai",
+  "synthflow",
+];
 
 const BLOG_SLUGS = [
   "how-ai-phone-agents-work",
